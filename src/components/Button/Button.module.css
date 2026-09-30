@@ -1,0 +1,53 @@
+/* Figma strokes sit inside the box, so every variant carries a 1px border and the padding
+   is reduced by that width. Outlined and filled buttons then share one height (C3). */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  margin: 0;
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-control);
+  font-family: var(--font-sans);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.button:disabled {
+  cursor: default;
+}
+
+/* Sizes */
+.default {
+  font-size: var(--size-ui);
+  padding: calc(var(--space-10) - var(--border-width)) calc(var(--space-16) - var(--border-width));
+}
+
+.small {
+  font-size: var(--size-small);
+  padding: calc(var(--space-8) - var(--border-width)) calc(var(--space-14) - var(--border-width));
+}
+
+/* Variants */
+.primary {
+  background: var(--color-pen-blue);
+  color: var(--color-on-fill);
+}
+
+.secondary {
+  background: var(--color-sheet);
+  border-color: var(--color-rule);
+  color: var(--color-ink);
+}
+
+.text {
+  background: transparent;
+  color: var(--color-ink-70);
+}
+
+.destructive {
+  background: var(--color-wax-red);
+  color: var(--color-on-fill);
+}
