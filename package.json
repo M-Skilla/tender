@@ -9,7 +9,9 @@
     "start": "SOPS_AGE_KEY_FILE=\"${SOPS_AGE_KEY_FILE:-./key.txt}\" sops exec-env .amanadb-wallet.enc.json \"next start\"",
     "typecheck": "tsc --noEmit",
     "seed": "SOPS_AGE_KEY_FILE=\"${SOPS_AGE_KEY_FILE:-./key.txt}\" sops exec-env .amanadb-wallet.enc.json \"node --conditions=react-server --import tsx scripts/seed.ts\"",
-    "setup": "SOPS_AGE_KEY_FILE=\"${SOPS_AGE_KEY_FILE:-./key.txt}\" sops exec-env .amanadb-wallet.enc.json \"node --conditions=react-server --import tsx scripts/setup.ts\""
+    "setup": "SOPS_AGE_KEY_FILE=\"${SOPS_AGE_KEY_FILE:-./key.txt}\" sops exec-env .amanadb-wallet.enc.json \"node --conditions=react-server --import tsx scripts/setup.ts\"",
+    "tamper-demo": "SOPS_AGE_KEY_FILE=\"${SOPS_AGE_KEY_FILE:-./key.txt}\" sops exec-env .amanadb-wallet.enc.json \"node --conditions=react-server --import tsx scripts/tamper-demo.ts\"",
+    "tamper-demo:restore": "node --conditions=react-server --import tsx scripts/tamper-demo.ts --restore"
   },
   "dependencies": {
     "@amanadb/sdk": "^1.1.1",

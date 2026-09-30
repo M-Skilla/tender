@@ -76,6 +76,12 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **Pagination:** A1 shows only Previous and Next; followed. The total ("of 1,842 operations") is real: the whole log is read (GAPS open item 1).
 - **"Verified" rows by "System":** A1 shows verification entries; the app does not write verification records (checks run on each page load), so there are none.
 
+### Found in task 4 (A2)
+
+- **A2 alert copy:** "Security alert: database mismatch" and "differ in content hash from the original ledger receipt … may have been tampered with or corrupted" use words the brief bans and guess at the cause. It reads "Stored document does not match" and "The document submitted with Kilimo Works Ltd's bid on 22 Sep 2026, 11:20 no longer matches the fingerprint recorded when the bid was revealed. The recorded bid is unchanged."
+- **A2 table heading:** "Fingerprint Status" (title case); "Fingerprint", with the mark beside the chip as drawn.
+- **Highlighter on the tampered row:** kept as drawn (user's choice), although the brief reserves Highlighter for changes between versions.
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).
@@ -177,3 +183,11 @@ Agreed after the task 1 review ("insert your own appropriate states"). Later tas
 | Empty | "No operations match these filters. Clear the filters to see the whole log." with "Clear filters". |
 | Export | CSV of the filtered view: time (ISO), actor, action, collection, record, version, full fingerprint, transaction id. Auditors and procuring entity admins only. |
 | Access | Auditors and procuring entity admins; others see "This page is not available to your account"; export returns 403. |
+
+### Task 4 decisions (A2)
+
+| Question | Decision |
+|---|---|
+| What A2 detects | After opening, each revealed bid's document (`storage/documents/<fingerprint>/`) is re-hashed on every load. A copy that no longer matches the fingerprint recorded at reveal fails that bid's row, the "Bids received" node and the page (Tampered, A2's banner). AmanaDB's records are unchanged. |
+| Detail panel | The alert takes the place of the "Bids received" heading, as drawn; the table follows with the tampered row on Highlighter, a wax red chip and "Does not match". |
+| Tamper demo | `pnpm tamper-demo` (optionally `TAMPER_BIDDER="Zuri Civil"`) appends a line to a revealed bid's stored document and keeps a backup; `pnpm tamper-demo:restore` puts it back byte for byte. |
