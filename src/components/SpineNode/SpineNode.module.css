@@ -168,6 +168,7 @@
 /* Upcoming and sealed events: title and note only. Figma sets them at Ink 40 percent
    (2.3:1 on Paper); raised to Ink 70 percent. The hollow marker and the word carry the state. */
 .pendingBody {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -177,4 +178,10 @@
 .pendingBody .title,
 .pendingBody .meta {
   color: var(--color-ink-70);
+}
+
+/* A selected pending event (for example "Bids received" before any bid) has no record box;
+   its title turns pen blue. */
+.node[data-selected] .pendingBody .title {
+  color: var(--color-pen-blue);
 }

@@ -36,7 +36,7 @@ export type SpineNodeProps = {
   note?: string;
   /** Shows the record box. Only one node on a spine is selected. */
   selected?: boolean;
-  /** Link that selects this node's record. Upcoming events have no record and no link. */
+  /** Link that selects this node's record. Omit for events with nothing to show yet. */
   href?: string;
 };
 
@@ -72,7 +72,7 @@ export function SpineNode({
   const mismatch = state === "mismatch";
 
   let heading: ReactNode = title;
-  if (href && !pending) {
+  if (href) {
     heading = (
       <a href={href} className={styles.link} aria-current={selected ? "true" : undefined}>
         {title}

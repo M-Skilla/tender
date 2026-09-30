@@ -1,0 +1,79 @@
+/* Sheet with an inside 1px Rule stroke and 24px padding (P2 tender-header-sheet). */
+.sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  width: 100%;
+  padding: var(--space-24);
+  outline: var(--border-width) solid var(--color-rule);
+  outline-offset: calc(-1 * var(--border-width));
+  background: var(--color-sheet);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-24);
+}
+
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: var(--reading-width);
+}
+
+/* P2 sets the title at 30/38. */
+.title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--size-title);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-title);
+  color: var(--color-ink);
+}
+
+.reference {
+  font-family: var(--font-mono);
+  font-size: var(--size-ui);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+.rule {
+  width: 100%;
+  height: var(--border-width);
+  margin: 0;
+  border: 0;
+  background: var(--color-rule);
+}
+
+.fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-16) var(--space-48);
+  margin: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.label {
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+.value {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--size-body);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+}
