@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes } from "react";
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
 import styles from "./Button.module.css";
 
 export type ButtonVariant = "primary" | "secondary" | "text" | "destructive";
@@ -41,4 +41,16 @@ export function Button({
       {loading && loadingLabel ? loadingLabel : children}
     </button>
   );
+}
+
+type ButtonLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
+  href: string;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+};
+
+/** A link that looks like a Button, for navigation (pagination, "Open bids"). */
+export function ButtonLink({ variant = "primary", size = "default", className, ...rest }: ButtonLinkProps) {
+  const classes = [styles.button, styles[variant], styles[size], styles.link, className].filter(Boolean).join(" ");
+  return <a className={classes} {...rest} />;
 }

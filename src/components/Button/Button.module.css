@@ -15,6 +15,19 @@
   cursor: pointer;
 }
 
+/* Links styled as buttons keep the button look. */
+.link {
+  text-decoration: none;
+}
+
+/* Disabled look for elements that cannot use the disabled attribute (links, spans). */
+.button[aria-disabled="true"] {
+  background: var(--color-field-disabled);
+  border-color: var(--color-rule);
+  color: var(--color-ink-70);
+  cursor: not-allowed;
+}
+
 /* Sizes */
 .default {
   font-size: var(--size-ui);
