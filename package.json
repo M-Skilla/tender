@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "sops exec-env .amanadb-wallet.enc.json \"next dev\"",
+    "dev": "SOPS_AGE_KEY_FILE=\"${SOPS_AGE_KEY_FILE:-./key.txt}\" sops exec-env .amanadb-wallet.enc.json \"next dev\"",
     "dev:raw": "next dev",
     "build": "next build",
-    "start": "sops exec-env .amanadb-wallet.enc.json \"next start\"",
+    "start": "SOPS_AGE_KEY_FILE=\"${SOPS_AGE_KEY_FILE:-./key.txt}\" sops exec-env .amanadb-wallet.enc.json \"next start\"",
     "typecheck": "tsc --noEmit",
-    "seed": "sops exec-env .amanadb-wallet.enc.json \"node --conditions=react-server --import tsx scripts/seed.ts\"",
-    "setup": "sops exec-env .amanadb-wallet.enc.json \"node --conditions=react-server --import tsx scripts/setup.ts\""
+    "seed": "SOPS_AGE_KEY_FILE=\"${SOPS_AGE_KEY_FILE:-./key.txt}\" sops exec-env .amanadb-wallet.enc.json \"node --conditions=react-server --import tsx scripts/seed.ts\"",
+    "setup": "SOPS_AGE_KEY_FILE=\"${SOPS_AGE_KEY_FILE:-./key.txt}\" sops exec-env .amanadb-wallet.enc.json \"node --conditions=react-server --import tsx scripts/setup.ts\""
   },
   "dependencies": {
     "@amanadb/sdk": "^1.1.0",

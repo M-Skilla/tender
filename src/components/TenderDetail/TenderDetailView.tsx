@@ -110,7 +110,7 @@ function PublishedDetail({ tenderCase }: { tenderCase: TenderCase }) {
               value: (
                 <span className={styles.proof}>
                   <FingerprintChip value={tenderCase.tenderFingerprint} />
-                  <VerificationMark result={tenderCase.tenderResult} />
+                  <VerificationMark result={tenderCase.tenderRecordResult} />
                 </span>
               ),
             },

@@ -54,17 +54,18 @@ async function main() {
   });
   console.log(`Published tender ${tenderKey}`);
 
-  const bidders: [string, number, string][] = [
-    ["Kilimo Works Ltd", 2310000000, "2026-10-28T11:20:00"],
-    ["Mtera Builders", 2260500000, "2026-10-28T12:45:00"],
-    ["Zuri Civil", 1980000000, "2026-10-28T13:10:00"],
-    ["Dodoma Earthworks", 2180000000, "2026-10-28T13:30:00"],
-    ["Pemba Construction", 2420000000, "2026-10-28T13:45:00"],
-    ["Tanga Roads Co", 2105000000, "2026-10-28T13:58:00"],
+  // Bids are stamped with the time they are actually sealed, so they follow publication.
+  const bidders: [string, number][] = [
+    ["Kilimo Works Ltd", 2310000000],
+    ["Mtera Builders", 2260500000],
+    ["Zuri Civil", 1980000000],
+    ["Dodoma Earthworks", 2180000000],
+    ["Pemba Construction", 2420000000],
+    ["Tanga Roads Co", 2105000000],
   ];
 
   const receipts = [];
-  for (const [index, [bidderName, amount, at]] of bidders.entries()) {
+  for (const [index, [bidderName, amount]] of bidders.entries()) {
     const bidDocHash = await storeDocument(`${bidderName.replace(/\W+/g, "-")}-bid.txt`, `${bidderName} bid for TND-2026-0142`);
     const salt = randomBytes(16).toString("hex");
     const commitment = await bidCommitment({ amount, docHash: bidDocHash, salt });
@@ -73,7 +74,7 @@ async function main() {
       bidderId: `seed-bidder-${index + 1}`,
       bidderName,
       commitment,
-      submittedAt: eat(at),
+      submittedAt: new Date().toISOString(),
     });
     receipts.push({ bidKey, bidderName, amount, docHash: bidDocHash, salt, commitment });
     console.log(`Sealed bid ${bidKey} from ${bidderName}`);

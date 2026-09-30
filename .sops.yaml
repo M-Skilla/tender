@@ -1,0 +1,3 @@
+creation_rules:
+  - path_regex: \.amanadb-wallet\.enc\.json$
+    age: age1trw4krnw7jdlw6z2jp5mepeu6a2fwwqp0ksu8pxp770vnav5ryksflmnqg

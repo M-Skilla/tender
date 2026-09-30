@@ -50,7 +50,8 @@ export type TenderCase = {
   status: Status;
   document?: { name: string; fingerprint: string; result: VerificationResult };
   tenderFingerprint: string;
-  tenderResult: VerificationResult;
+  /** The tender record's own check (integrity and audit), without its document. */
+  tenderRecordResult: VerificationResult;
   publishedAt: string;
   events: CaseEvent[];
   bids: BidRow[];
@@ -245,7 +246,7 @@ export async function buildTenderCase(input: TenderCaseInput): Promise<TenderCas
         ? { name: t.docName, fingerprint: t.docHash, result: documentResult }
         : undefined,
     tenderFingerprint: events[0].fingerprint as string,
-    tenderResult,
+    tenderRecordResult: tenderAudit,
     publishedAt: formatDateTime(publishedAt),
     events,
     bids: bidRows,
