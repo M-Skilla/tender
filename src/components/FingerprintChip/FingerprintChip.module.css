@@ -1,0 +1,26 @@
+/* Inside-stroke from Figma: 1px border plus padding reduced by 1px keeps the 4/8 inset. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  margin: 0;
+  padding: calc(var(--space-4) - var(--border-width)) calc(var(--space-8) - var(--border-width));
+  border: var(--border-width) solid var(--color-rule);
+  border-radius: var(--radius-control);
+  background: var(--color-sheet);
+  cursor: pointer;
+}
+
+.value {
+  font-family: var(--font-mono);
+  font-size: var(--size-small);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-mono);
+  color: var(--color-ink-70);
+  white-space: nowrap;
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--color-ink-40);
+}
