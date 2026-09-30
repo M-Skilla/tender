@@ -1,0 +1,37 @@
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  width: 100%;
+}
+
+.summary {
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+.pages {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Previous and Next use 12px sides in P1; page numbers keep the small button's 14px. */
+.pages .edge,
+.pages .edge:is(a, span) {
+  padding-left: calc(var(--space-12) - var(--border-width));
+  padding-right: calc(var(--space-12) - var(--border-width));
+}
+
+.gap {
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  color: var(--color-ink-70);
+}

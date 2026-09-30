@@ -1,0 +1,201 @@
+/* A ruled document: white sheet, 1px Rule lines, no radius (brief section 2).
+   Figma strokes sit inside the box, so every rule here is an inset outline or shadow
+   that takes no space: rows keep Figma's 48px and 39px heights. */
+.sheet {
+  --cell-padding: var(--space-16);
+  --rule-below: inset 0 calc(-1 * var(--border-width)) 0 var(--color-rule);
+  width: 100%;
+  outline: var(--border-width) solid var(--color-rule);
+  outline-offset: calc(-1 * var(--border-width));
+  border-radius: var(--radius-record);
+  background: var(--color-sheet);
+}
+
+.sheet[data-density="compact"] {
+  --cell-padding: var(--space-12);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.head {
+  padding: var(--cell-padding);
+  background: var(--color-paper);
+  box-shadow: var(--rule-below);
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+  text-align: left;
+}
+
+.row > .cell {
+  box-shadow: var(--rule-below);
+}
+
+/* The sheet outline closes the last row. */
+.table tbody tr:last-child > td {
+  box-shadow: none;
+}
+
+.cell {
+  padding: var(--cell-padding);
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+  text-align: left;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+/* Hover (decided): Paper fill, the same fill A1 gives an expanded row. */
+.row:hover > .cell,
+.row[data-expanded] > .cell {
+  background: var(--color-paper);
+}
+
+/* Selected: 4px pen blue left edge, drawn inside the first cell. */
+.row[data-selected] > .cell:first-child {
+  box-shadow: inset var(--selected-edge-width) 0 0 var(--color-pen-blue), var(--rule-below);
+}
+
+.table tbody tr[data-selected]:last-child > .cell:first-child {
+  box-shadow: inset var(--selected-edge-width) 0 0 var(--color-pen-blue);
+}
+
+/* Expand toggle (decided): chevron button at the row's end. */
+.toggleCol {
+  width: calc(var(--icon-14) + 2 * var(--space-10) + 2 * var(--space-12));
+}
+
+.toggleCell {
+  padding-top: 0;
+  padding-bottom: 0;
+  text-align: right;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--icon-14) + 2 * var(--space-10));
+  height: calc(var(--icon-14) + 2 * var(--space-10));
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--color-ink-70);
+  cursor: pointer;
+}
+
+.toggle:hover {
+  background: var(--color-ink-6);
+  color: var(--color-ink);
+}
+
+.toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+/* Expansion panel (A1): 16px padding under the row, ruled below. */
+.panel {
+  padding: var(--space-16);
+  box-shadow: var(--rule-below);
+  background: var(--color-sheet);
+}
+
+/* Skeleton (decided): static bars, no shimmer. */
+.skeleton {
+  display: block;
+  width: 60%;
+  height: var(--size-ui);
+  border-radius: var(--radius-control);
+  background: var(--color-ink-6);
+}
+
+/* Empty state: one sentence and one action, no illustration (brief section 7). */
+.empty {
+  padding: var(--space-24) var(--cell-padding);
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+.empty > p + * {
+  margin-top: var(--space-12);
+}
+
+/* Mobile: rows become stacked records with the field names kept (brief section 10).
+   Breakpoint matches the 390px mobile frames; media queries cannot read tokens. */
+@media (max-width: 599px) {
+  .table,
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table thead,
+  .table colgroup {
+    display: none;
+  }
+
+  .row {
+    padding: var(--space-12) var(--space-16);
+    box-shadow: var(--rule-below);
+  }
+
+  .table tbody tr:last-child {
+    box-shadow: none;
+  }
+
+  .row > .cell {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: var(--space-12);
+    padding: var(--space-4) 0;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .row > .cell::before {
+    content: attr(data-label);
+    font-size: var(--size-small);
+    color: var(--color-ink-70);
+  }
+
+  .row[data-expanded] {
+    background: var(--color-paper);
+  }
+
+  .row > .toggleCell {
+    display: block;
+    text-align: left;
+  }
+
+  .toggle {
+    width: var(--tap-target);
+    height: var(--tap-target);
+  }
+
+  .row > .toggleCell::before {
+    content: none;
+  }
+
+  .row[data-selected] {
+    box-shadow: inset var(--selected-edge-width) 0 0 var(--color-pen-blue), var(--rule-below);
+  }
+
+  .row[data-selected] > .cell:first-child {
+    box-shadow: none;
+  }
+}
