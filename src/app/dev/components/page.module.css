@@ -84,3 +84,66 @@
   display: block;
   padding-top: var(--space-40);
 }
+
+/* Task 2 review layouts: widths match the Figma containers (P2 spine column 520, detail
+   column 680, C3 modal columns, P3 drawer 516). */
+.spines {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-40);
+}
+
+.spineColumn {
+  width: 100%;
+  padding-top: var(--space-16);
+  padding-right: var(--space-24);
+}
+
+.detailWidth {
+  width: calc(var(--content-width) * 0.53125);
+}
+
+.drawerWidth {
+  width: calc(var(--content-width) * 0.403);
+}
+
+.diffColumns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-24);
+  max-width: calc(var(--content-width) * 0.7);
+}
+
+.diffColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.secondary {
+  color: var(--color-ink-70);
+}
+
+.recordLink {
+  color: var(--color-pen-blue);
+  text-decoration: none;
+}
+
+.titleLink {
+  color: var(--color-pen-blue);
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+}
+
+.panelContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.panelTitle {
+  font-family: var(--font-sans);
+  font-size: var(--size-tag);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-70);
+}

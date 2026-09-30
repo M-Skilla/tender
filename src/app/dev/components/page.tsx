@@ -9,6 +9,7 @@ import {
   VerificationMark,
 } from "@/components/VerificationMark/VerificationMark";
 import styles from "./page.module.css";
+import { fp, Task2Sections } from "./sections";
 
 export const metadata = { title: "Components" };
 
@@ -19,7 +20,7 @@ const BUTTONS: { variant: ButtonVariant; label: string; loadingLabel: string; na
   { variant: "destructive", label: "Cancel tender", loadingLabel: "Cancelling tender", name: "Destructive" },
 ];
 
-const TENDER_STATUSES: Status[] = ["draft", "published", "closed", "awarded", "cancelled"];
+const TENDER_STATUSES: Status[] = ["draft", "published", "closed", "awarded", "cancelled", "tampered"];
 const BID_STATUSES: Status[] = ["sealed", "opened", "opened-matches", "opened-does-not-match", "withdrawn"];
 
 const FINGERPRINTS = [
@@ -189,6 +190,11 @@ export default function ComponentsPage() {
             </Sample>
           ))}
         </Row>
+        <Row name="Mismatch">
+          <Sample state="A2 tone">
+            <FingerprintChip value={fp("7be1", "90d")} tone="mismatch" />
+          </Sample>
+        </Row>
         <Row name="Focus">
           <Sample state="Focus shows the full value">
             <span className={`${styles.forceFocus} ${styles.forceTooltip}`}>
@@ -219,6 +225,8 @@ export default function ComponentsPage() {
           </VerificationBanner>
         </div>
       </section>
+
+      <Task2Sections />
     </main>
   );
 }
