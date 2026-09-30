@@ -1,6 +1,18 @@
 // Record shapes stored in AmanaDB (spec section 3), plus the fields the design needs.
 // Additions to the spec are marked; see GAPS.md for why each exists.
 
+export type UserRole = "pe_admin" | "evaluator" | "bidder" | "auditor";
+
+/** App users (spec section 3). Never returned by a public route; passwordHash never leaves the server. */
+export type User = {
+  email: string;
+  name: string;
+  role: UserRole;
+  passwordHash: string;
+  active: boolean;
+  createdAt: string;
+};
+
 export type TenderStatus = "DRAFT" | "PUBLISHED" | "CLOSED" | "AWARDED" | "CANCELLED";
 
 export type Tender = {
@@ -20,6 +32,10 @@ export type Tender = {
   docName?: string;
   /** Added: app user id of the procuring entity admin who published (per-user attribution). */
   publishedBy: string;
+  /** Added: when the bids were opened (H3). Revealed amounts are shown only after this. */
+  openedAt?: string;
+  /** Added: app user id of the admin who opened the bids. */
+  openedBy?: string;
 };
 
 export type Bid = {

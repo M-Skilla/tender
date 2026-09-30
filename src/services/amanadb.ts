@@ -22,6 +22,7 @@ import type {
   Evaluation,
   StoredRecord,
   Tender,
+  User,
 } from "@/lib/types";
 
 export const COLLECTIONS = {
@@ -103,15 +104,22 @@ function toStored<T>(record: StorageRecord<T>): StoredRecord<T> {
 
 const PAGE_SIZE = 100;
 
-/** Collections looked up by tender (AmanaDB field indexes, declared by `defineIndexes`). */
-const TENDER_INDEXED = [COLLECTIONS.bids, COLLECTIONS.bidReveals, COLLECTIONS.evaluations, COLLECTIONS.awards];
+/** Every lookup field the app queries by (AmanaDB field indexes, declared by `defineIndexes`). */
+const INDEXES: [string, string][] = [
+  [COLLECTIONS.bids, "tenderId"],
+  [COLLECTIONS.bidReveals, "tenderId"],
+  [COLLECTIONS.evaluations, "tenderId"],
+  [COLLECTIONS.awards, "tenderId"],
+  [COLLECTIONS.users, "email"],
+  [COLLECTIONS.tenders, "reference"],
+];
 
 /**
  * Declares the lookup fields the app queries by. A write, so it runs from setup and the seed
  * script, never on page loads. Idempotent.
  */
 export async function defineIndexes(): Promise<void> {
-  for (const collection of TENDER_INDEXED) await db().collection(collection).defineIndex("tenderId");
+  for (const [collection, field] of INDEXES) await db().collection(collection).defineIndex(field);
 }
 
 /** Every live record in a collection whose indexed `field` equals `value`. */
@@ -135,6 +143,26 @@ async function getOrNull<T>(collection: string, key: string): Promise<StoredReco
     if (err instanceof AmanaDBError && err.statusCode === 404) return null;
     throw err;
   }
+}
+
+/** A user by email (lower-cased), or null. Server-side only: the record holds the password hash. */
+export async function findUserByEmail(email: string): Promise<StoredRecord<User> | null> {
+  const [user] = await listByField<User>(COLLECTIONS.users, "email", email.trim().toLowerCase());
+  return user ?? null;
+}
+
+export function getUser(key: string): Promise<StoredRecord<User> | null> {
+  return getOrNull<User>(COLLECTIONS.users, key);
+}
+
+export async function insertUser(data: User): Promise<string> {
+  const { id } = await db().collection<User>(COLLECTIONS.users).insert({ ...data, email: data.email.trim().toLowerCase() });
+  return id;
+}
+
+export async function findTenderByReference(reference: string): Promise<StoredRecord<Tender> | null> {
+  const [tender] = await listByField<Tender>(COLLECTIONS.tenders, "reference", reference);
+  return tender ?? null;
 }
 
 export function getTender(key: string): Promise<StoredRecord<Tender> | null> {
@@ -208,6 +236,21 @@ export async function checkDocument(docHash: string, docName: string): Promise<D
 export async function insertTender(data: Tender): Promise<string> {
   const { id } = await db().collection<Tender>(COLLECTIONS.tenders).insert(data);
   return id;
+}
+
+export function getBid(key: string): Promise<StoredRecord<Bid> | null> {
+  return getOrNull<Bid>(COLLECTIONS.bids, key);
+}
+
+/** Stores a bidder's reveal with the result of recomputing its commitment. */
+export async function insertReveal(data: BidReveal): Promise<string> {
+  const { id } = await db().collection<BidReveal>(COLLECTIONS.bidReveals).insert(data);
+  return id;
+}
+
+/** Updates a tender at its current version; a version conflict surfaces as an AmanaDBError (409). */
+export async function updateTender(key: string, data: Tender, expectedVersion: number): Promise<void> {
+  await db().collection<Tender>(COLLECTIONS.tenders).update(key, data, expectedVersion);
 }
 
 /** Stores a sealed bid: only the commitment, never the amount or salt (spec section 5). */
