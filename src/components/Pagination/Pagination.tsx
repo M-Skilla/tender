@@ -9,6 +9,8 @@ export type PaginationProps = {
   pageCount: number;
   /** Builds the link for a page number. */
   hrefForPage: (page: number) => string;
+  /** False shows only Previous and Next (A1). */
+  showPages?: boolean;
 };
 
 /** Page numbers to show: all when there are seven or fewer, otherwise a window with gaps. */
@@ -35,7 +37,7 @@ function Unavailable({ label }: { label: string }) {
   );
 }
 
-export function Pagination({ summary, page, pageCount, hrefForPage }: PaginationProps) {
+export function Pagination({ summary, page, pageCount, hrefForPage, showPages = true }: PaginationProps) {
   return (
     <nav className={styles.pagination} aria-label="Pages">
       <p className={styles.summary}>{summary}</p>
@@ -50,7 +52,7 @@ export function Pagination({ summary, page, pageCount, hrefForPage }: Pagination
               <Unavailable label="Previous" />
             )}
           </li>
-          {pageList(page, pageCount).map((item, index) =>
+          {(showPages ? pageList(page, pageCount) : []).map((item, index) =>
             item === "gap" ? (
               <li key={`gap-${index}`} className={styles.gap} aria-hidden="true">
                 …

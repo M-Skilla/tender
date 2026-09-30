@@ -1,0 +1,38 @@
+/* A1: Rule outline with 4px radius; items 10/20, separated by rules. */
+.control {
+  display: inline-flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: var(--border-width) solid var(--color-rule);
+  border-radius: var(--radius-control);
+  overflow: hidden;
+}
+
+.control li + li {
+  box-shadow: inset var(--border-width) 0 0 var(--color-rule);
+}
+
+.item {
+  display: block;
+  padding: var(--space-10) var(--space-20);
+  background: var(--color-sheet);
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+  text-decoration: none;
+}
+
+.item:hover {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+.item[aria-current="page"] {
+  background: var(--color-pen-blue-tint);
+  font-weight: var(--weight-semibold);
+  color: var(--color-pen-blue);
+}

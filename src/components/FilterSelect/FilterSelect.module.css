@@ -1,0 +1,60 @@
+/* A1 filter pill: Sheet, Rule border, 4px radius, 8/12 padding, 13px, 12px gaps. */
+.pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: calc(var(--space-8) - var(--border-width)) var(--space-12);
+  border: var(--border-width) solid var(--color-control-border);
+  border-radius: var(--radius-control);
+  background: var(--color-sheet);
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.pill:focus-within {
+  outline: var(--focus-ring-width) solid var(--color-pen-blue);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.funnel {
+  flex-shrink: 0;
+  margin-right: var(--space-6);
+  color: var(--color-ink-70);
+}
+
+.label {
+  white-space: nowrap;
+}
+
+/* The select fills the pill so the whole pill opens it; the chevron is drawn over it. */
+.select {
+  /* Size to the chosen option, as A1's pills do, rather than to the longest option. */
+  field-sizing: content;
+  appearance: none;
+  margin: 0;
+  padding: 0 calc(var(--icon-14) + var(--space-12)) 0 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.select[data-plain] {
+  padding-right: 0;
+}
+
+.select:focus {
+  outline: none;
+}
+
+.chevron {
+  position: absolute;
+  right: var(--space-12);
+  color: var(--color-ink-40);
+  pointer-events: none;
+}
