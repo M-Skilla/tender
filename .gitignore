@@ -4,4 +4,9 @@ out/
 next-env.d.ts
 *.tsbuildinfo
 .env*.local
-storage/documents/
+storage/
+
+# Wallet decryption keys (the encrypted wallet itself is safe to commit)
+key.txt
+*.age
+.sops-age-key*
