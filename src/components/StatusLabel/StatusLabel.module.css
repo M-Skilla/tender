@@ -50,3 +50,8 @@
   background: var(--color-ink-6);
   color: var(--color-ink-70);
 }
+
+.opened {
+  background: var(--color-ink-6);
+  color: var(--color-ink);
+}
