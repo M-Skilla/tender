@@ -1,0 +1,185 @@
+/*
+ * Design tokens for Tender Tracker.
+ *
+ * Source: the Figma file fDxmmTV6IGXNi3Dnk4M0pM. The file defines no Figma variables, so
+ * every value here was read from the frames (H3, H2, C3, H5, P1, B2, B1, P2 and A2 banners)
+ * and named after the design brief's palette and type names. Where frames disagree, the
+ * value used by the demo-carrying frames (H3, C3, P2) is kept and the difference is logged
+ * in docs/figma-vs-brief.md.
+ *
+ * This is the only file allowed to contain colour values, font names or pixel sizes.
+ */
+
+:root {
+  /* Colour: palette (brief section 2, confirmed in every frame) */
+  --color-paper: #f6f7f9;
+  --color-sheet: #ffffff;
+  --color-ink: #22283a;
+  --color-pen-blue: #1f3a93;
+  --color-rule: #c7ccd6;
+  --color-highlighter: #f5d547;
+  --color-pine: #1e6b4b;
+  --color-wax-red: #b8321e;
+  --color-amber: #9a5b00;
+
+  /* Colour: Ink at fixed opacities, as used in the frames */
+  --color-ink-70: rgba(34, 40, 58, 0.7); /* secondary text, chevrons */
+  --color-ink-40: rgba(34, 40, 58, 0.4); /* copy icon on fingerprint chip; Closed label fill */
+  --color-ink-30: rgba(34, 40, 58, 0.3); /* disabled field text (H2) */
+  --color-ink-6: rgba(34, 40, 58, 0.06); /* Withdrawn label fill (B2) */
+
+  /* Colour: 10 percent status tints for labels and banners */
+  --color-pine-tint: rgba(30, 107, 75, 0.1);
+  --color-wax-red-tint: rgba(184, 50, 30, 0.1);
+  --color-amber-tint: rgba(154, 91, 0, 0.1);
+  --color-pen-blue-tint: rgba(31, 58, 147, 0.1);
+
+  /* Colour: not in the brief's palette, found in frames */
+  --color-field-disabled: #f0f1f4; /* read-only inputs in H2 */
+  --color-scrim: rgba(34, 40, 58, 0.45); /* modal backdrop in C3 and H5 */
+  --color-on-fill: #ffffff; /* text on pen blue and wax red buttons */
+
+  /* Type: families (next/font exposes the --font-* variables in the root layout) */
+  --font-serif: var(--font-source-serif-4), Georgia, serif;
+  --font-sans: var(--font-public-sans), system-ui, sans-serif;
+  --font-mono: var(--font-source-code-pro), ui-monospace, monospace;
+
+  /* Type: weights */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Type: sizes used in the frames */
+  --size-title: 30px; /* page title, Source Serif 4 semibold (H3, B2) */
+  --size-section: 22px; /* modal and section title, Source Serif 4 semibold (C3, H5) */
+  --size-brand: 18px; /* product name in the navigation bar, Source Serif 4 bold */
+  --size-body: 15px; /* page subtitles, banner text, large buttons (H3) */
+  --size-ui: 14px; /* field values and labels, buttons, table cells, nav links */
+  --size-small: 13px; /* table headers, verification marks, small buttons, fingerprints */
+  --size-tag: 12px; /* status labels */
+
+  /* Type: line heights. The frames use "normal" everywhere except multi-line banner and
+     preview text, which is 22px. */
+  --leading-normal: normal;
+  --leading-relaxed: 22px;
+  /* Figma sets Source Code Pro 13 "normal" at 16px; browsers round it to 17px, which
+     makes the fingerprint chip 25px tall instead of 24px. */
+  --leading-mono: 16px;
+
+  /* Spacing: every gap and padding value found in the frames */
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-14: 14px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-28: 28px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-80: 80px;
+
+  /* Radius by role (CLAUDE.md, confirmed in frames) */
+  --radius-record: 0; /* tables and record rows */
+  --radius-control: 4px; /* inputs, buttons, labels, chips, banners */
+  --radius-overlay: 8px; /* modals and drawers */
+
+  /* Borders and focus */
+  --border-width: 1px;
+  --focus-ring-width: 2px; /* brief section 10 */
+  --focus-ring-offset: 2px;
+
+  /* Elevation: one shadow, modals, drawers and toasts only (C3, H5) */
+  --shadow-overlay: 0 16px 16px rgba(34, 40, 58, 0.15);
+
+  /* Icon sizes found in the frames */
+  --icon-12: 12px;
+  --icon-14: 14px;
+  --icon-16: 16px;
+  --icon-18: 18px;
+  --icon-20: 20px;
+  --icon-24: 24px;
+
+  /* Component dimensions found in the frames */
+  --textarea-height: 100px; /* H2, H5 */
+
+  /* Layout (desktop frames are 1440 wide with 80px margins) */
+  --page-margin: 80px;
+  --content-width: 1280px;
+  --reading-width: 720px;
+}
+
+/*
+ * Text styles. Each class sets family, size, line height and weight together, so a
+ * component picks a style by role instead of assembling it.
+ */
+.text-title {
+  font-family: var(--font-serif);
+  font-size: var(--size-title);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-semibold);
+}
+.text-section {
+  font-family: var(--font-serif);
+  font-size: var(--size-section);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-semibold);
+}
+.text-brand {
+  font-family: var(--font-serif);
+  font-size: var(--size-brand);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-bold);
+}
+.text-body {
+  font-family: var(--font-sans);
+  font-size: var(--size-body);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-regular);
+}
+.text-body-medium {
+  font-family: var(--font-sans);
+  font-size: var(--size-body);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-medium);
+}
+.text-ui {
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-regular);
+}
+.text-ui-strong {
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-semibold);
+}
+.text-small {
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-regular);
+}
+.text-small-strong {
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-semibold);
+}
+.text-tag {
+  font-family: var(--font-sans);
+  font-size: var(--size-tag);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-semibold);
+}
+.text-mono {
+  font-family: var(--font-mono);
+  font-size: var(--size-small);
+  line-height: var(--leading-mono);
+  font-weight: var(--weight-regular);
+}
