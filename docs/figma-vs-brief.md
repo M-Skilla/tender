@@ -56,6 +56,18 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **H3 button size:** H3 draws "Open all bids" at 15px with 20/12 padding; the shared primary button is 14px with 16/10.
 - **H3 after opening:** the frame still shows "Open all bids" beside revealed amounts; after opening the button is removed, since opening happens once.
 
+### Found in task 4 (C2 and C3)
+
+- **C2 built early:** C3 is raised by C2's Save, so C2 was built with C3 (the kickoff lists C2 in task 5).
+- **C2 bid summary:** the frame shows a delivery timeline, technical approach, equipment list and document names that the data model does not hold. The summary shows real data only: revealed amount, sealed fingerprint with its reveal result, and the bid document's fingerprint.
+- **C3 fields vs C2 fields:** C3 compares "Price score", "Technical score" and "Comment"; C2 has five weighted criteria and no comment. The form keeps C2's criteria and adds one comment field (C3's third row).
+- **C2 copy:** "COMMITTEE" badge in capitals (left out), "Bid Summary", "Evaluation & Scoring", "Running Total" and "Evaluation Queue" in title case, "Score (1-20)", and a bullet between bidder and reference. Sentence case, "Score (1 to 20)", and separate items instead.
+- **C2 footer:** "Changes saved locally. Draft." is not true (nothing is saved locally). It reads "Unsaved changes" (amber dot) or "All changes saved" (pine dot).
+- **C2 Save button:** black text on pen blue in the frame (2.1:1); white, like every primary button.
+- **C2 bidder line:** set in Source Code Pro in the frame; mono is for fingerprints only, so Public Sans.
+- **C3 column titles:** capitals in the frame; sentence case.
+- **C3 label column:** C3's 120px labels would wrap C2's longer criterion names and misalign the two columns; the modal uses the 160px label column.
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).
@@ -130,3 +142,16 @@ Agreed after the task 1 review ("insert your own appropriate states"). Later tas
 | Countdown | Days and hours ("27 days, 1 hour left"), "Less than 1 hour left", or "Closed"; computed on each load. |
 | Reveal mismatch vs tampering | A reveal that does not recompute to its sealed bid is a bid problem: shown on H3 and the bid row, not counted as record tampering on P2. |
 | A2 highlighted row | As drawn (user's choice): the tampered bid row keeps the Highlighter. |
+
+### Task 4 decisions (C2 and C3)
+
+| Question | Decision |
+|---|---|
+| Who edits an evaluation | One shared evaluation per bid (`eval-<bid key>`), created empty (version 1) when a committee member first opens it; every save is an update at the version the person started from. |
+| Conflict detection | AmanaDB's version check (HTTP 409) raises C3. The "version you started from" is read from AmanaDB's record history, not from the browser. |
+| C3 rows | Only fields either side changed. Left: the reader's values, on Highlighter where they differ from the starting version. Right: the latest values, old value struck through where the other person changed it. |
+| C3 buttons | Cancel (back to the form, edits kept; Escape does the same), Copy my changes (plain text to the clipboard, button reads "Copied"), Load latest version (reloads the form with the latest version). No overwrite. |
+| Score validation | Whole numbers 1 to 20, or empty for not scored: "Enter a whole number from 1 to 20." on the row. |
+| Version banner | "Version N, last saved by Name (date, time)", or "Version 1, not scored yet". |
+| Before opening | "Bids can be scored after they are opened", with the closing time. |
+| Save confirmation | "Evaluation saved" toast, lifted above the sticky footer. |

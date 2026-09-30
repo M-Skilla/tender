@@ -114,6 +114,7 @@ async function main() {
 
   const peAdmin = await ensureUser("pe.admin@works.go.tz", "Joseph Mwangi", "pe_admin");
   await ensureUser("amina.mussa@works.go.tz", "Amina Mussa", "evaluator");
+  await ensureUser("baraka.said@works.go.tz", "Baraka Said", "evaluator");
   await ensureUser("audit@nao.go.tz", "Neema Kato", "auditor");
   const bidderIds = new Map<string, string>();
   for (const [name, email] of BIDDERS) bidderIds.set(name, await ensureUser(email, name, "bidder"));
