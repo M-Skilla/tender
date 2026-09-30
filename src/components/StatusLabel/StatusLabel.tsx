@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import {
+  IconAlertTriangle14,
   IconAward12,
   IconCheck14,
   IconCheckCircle14,
@@ -14,7 +15,7 @@ import {
 import styles from "./StatusLabel.module.css";
 
 /**
- * Tender statuses (draft to cancelled) and bid states (sealed to withdrawn). P1 and B2
+ * Tender statuses (draft to tampered) and bid states (sealed to withdrawn). P1, B2 and A2
  * show all but Draft and Opened, which follow the same pattern (task 1 review decision).
  */
 export type Status =
@@ -23,6 +24,7 @@ export type Status =
   | "closed"
   | "awarded"
   | "cancelled"
+  | "tampered"
   | "sealed"
   | "opened"
   | "opened-matches"
@@ -35,6 +37,8 @@ const STATUSES: Record<Status, { word: string; tone: string; Icon: ComponentType
   closed: { word: "Closed", tone: "closed", Icon: IconCircleDot12 },
   awarded: { word: "Awarded", tone: "penBlue", Icon: IconAward12 },
   cancelled: { word: "Cancelled", tone: "waxRed", Icon: IconXCircle12 },
+  // A2: a tender whose stored document no longer matches its recorded fingerprint.
+  tampered: { word: "Tampered", tone: "waxRed", Icon: IconAlertTriangle14 },
   sealed: { word: "Sealed", tone: "amber", Icon: IconLock14 },
   // Opened before its reveal has been checked; the result labels below replace it.
   opened: { word: "Opened", tone: "opened", Icon: IconLockOpen14 },
