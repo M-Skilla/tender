@@ -12,7 +12,7 @@
     "setup": "SOPS_AGE_KEY_FILE=\"${SOPS_AGE_KEY_FILE:-./key.txt}\" sops exec-env .amanadb-wallet.enc.json \"node --conditions=react-server --import tsx scripts/setup.ts\""
   },
   "dependencies": {
-    "@amanadb/sdk": "^1.1.0",
+    "@amanadb/sdk": "^1.1.1",
     "iron-session": "^9.0.1",
     "next": "^16.3.6",
     "react": "^19.3.0",

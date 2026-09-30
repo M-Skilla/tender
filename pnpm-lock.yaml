@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@amanadb/sdk':
-        specifier: ^1.1.0
-        version: 1.1.0
+        specifier: ^1.1.1
+        version: 1.1.1
       iron-session:
         specifier: ^9.0.1
         version: 9.0.1
@@ -45,8 +45,8 @@ importers:
 
 packages:
 
-  '@amanadb/sdk@1.1.0':
-    resolution: {integrity: sha1-b4M5QRNHMm5oV/OtaJJtltPNltU=, tarball: http://102.223.8.140:9000/api/v4/projects/2102/packages/npm/@amanadb/sdk/-/@amanadb/sdk-1.1.0.tgz}
+  '@amanadb/sdk@1.1.1':
+    resolution: {integrity: sha1-eUMAruV0mCWBERW+bLenfmtJR7M=, tarball: http://102.223.8.140:9000/api/v4/projects/2102/packages/npm/@amanadb/sdk/-/@amanadb/sdk-1.1.1.tgz}
 
   '@emnapi/runtime@1.11.3':
     resolution: {integrity: sha512-Xz4Tpyki7XyrpbUK1jR1AhdAdaXyhhY4lZ3neLodmhpuWfy2PAQN5B46sAiU4liOXGLkHypn/qU+jvfWSCYYLA==}
@@ -578,7 +578,7 @@ packages:
 
 snapshots:
 
-  '@amanadb/sdk@1.1.0': {}
+  '@amanadb/sdk@1.1.1': {}
 
   '@emnapi/runtime@1.11.3':
     dependencies:

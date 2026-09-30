@@ -306,3 +306,48 @@ export async function evaluationAtVersion(key: string, version: number): Promise
   const match = versions.find((v) => v.record.version === version);
   return match ? toStored(match.record) : null;
 }
+
+/** One entry of a collection's audit log, as the audit views use it. */
+export type AuditRow = {
+  collection: string;
+  key: string;
+  action: string;
+  version: number;
+  timestamp: string;
+  txId: string;
+  dataHash: string;
+};
+
+/**
+ * Every audit entry of one collection (readable by the app's credential from chaincode 1.2).
+ * AmanaDB returns them oldest first with no time filter, so callers sort and filter
+ * (GAPS.md: no reverse or time-range audit query). Never called for `users`.
+ */
+export async function collectionAudit(collection: string): Promise<AuditRow[]> {
+  if (collection === COLLECTIONS.users) throw new Error("The users collection is never read for audit views.");
+  const out: AuditRow[] = [];
+  let bookmark = "";
+  do {
+    const page = await db().collection(collection).audit({ pageSize: PAGE_SIZE, bookmark });
+    for (const e of page.entries) {
+      out.push({
+        collection,
+        key: e.key,
+        action: e.action,
+        version: e.resultingVersion,
+        timestamp: e.timestamp,
+        txId: e.txId,
+        dataHash: e.dataHash ?? "",
+      });
+    }
+    bookmark = page.fetchedRecordsCount > 0 ? page.bookmark : "";
+  } while (bookmark);
+  return out;
+}
+
+/** Every stored version of one record, by version number (AmanaDB history). Never for `users`. */
+export async function recordVersions<T>(collection: string, key: string): Promise<Map<number, StoredRecord<T>>> {
+  if (collection === COLLECTIONS.users) throw new Error("The users collection is never read for audit views.");
+  const versions = await db().collection<T>(collection).history(key);
+  return new Map(versions.map((v) => [v.record.version, toStored(v.record)]));
+}

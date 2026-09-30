@@ -44,3 +44,8 @@ export function formatDate(iso: string): string {
 export function formatTzs(amount: number): string {
   return `TZS ${Math.round(amount).toLocaleString("en-US")}`;
 }
+
+/** First 4 and last 3 characters of a fingerprint ("7be1…90d"), for plain-text places. */
+export function shortFingerprint(value: string): string {
+  return value.length > 8 ? `${value.slice(0, 4)}…${value.slice(-3)}` : value;
+}
