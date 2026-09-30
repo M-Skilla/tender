@@ -2,7 +2,8 @@
 // screen routes to exercise the real composer and view; never read by app routes.
 import { createHash } from "node:crypto";
 import type { TenderCaseInput } from "@/lib/tender-case";
-import type { AuditedVersion, Bid, StoredRecord, Tender } from "@/lib/types";
+import { bidCommitment } from "@/lib/commitment";
+import type { AuditedVersion, Bid, BidReveal, StoredRecord, Tender } from "@/lib/types";
 
 /** What AmanaDB stores as dataHash: SHA-256 of the data string as written. */
 const hashOf = (data: unknown) => createHash("sha256").update(JSON.stringify(data)).digest("hex");
@@ -85,5 +86,60 @@ export function sampleTenderInput(scenario: Scenario): TenderCaseInput {
     audited,
     documentCheck: scenario === "tampered-document" ? "does-not-match" : "matches",
     now: new Date(eat("2026-10-28T13:59:00")),
+  };
+}
+
+export type OpeningState = "sealed" | "closed" | "opened";
+
+/**
+ * H3 review data: the same tender and bidders with real commitments and reveals. Zuri Civil
+ * reveals a lower amount than it sealed. "sealed" is before the closing time; "closed" is after
+ * it with every reveal received; "opened" is after "Open all bids".
+ */
+export async function sampleOpeningInput(state: OpeningState): Promise<TenderCaseInput> {
+  const amounts = [2310000000, 2260500000, 1980000000, 2180000000, 2420000000, 2105000000];
+  const sealedBids: StoredRecord<Bid>[] = [];
+  const reveals: StoredRecord<BidReveal>[] = [];
+  for (const [i, bid] of bids.entries()) {
+    const docHash = hashOf(`${bid.data.bidderName} bid`);
+    const salt = hashOf(`salt-${i}`).slice(0, 32);
+    const commitment = await bidCommitment({ amount: amounts[i]!, docHash, salt });
+    const data: Bid = { ...bid.data, commitment };
+    sealedBids.push({ ...bid, data, dataHash: hashOf(data) });
+    const revealData: BidReveal = {
+      bidId: bid.key,
+      tenderId: tender.key,
+      amount: bid.data.bidderName === "Zuri Civil" ? 1950000000 : amounts[i]!,
+      docHash,
+      salt,
+      revealedAt: eat("2026-10-28T15:00:00"),
+      verified: bid.data.bidderName !== "Zuri Civil",
+    };
+    reveals.push({
+      collection: "bid_reveals",
+      key: `01K6REV000000000000000000${i + 1}`,
+      version: 1,
+      createdAt: revealData.revealedAt,
+      updatedAt: revealData.revealedAt,
+      data: revealData,
+      dataHash: hashOf(revealData),
+      integrity: "verified",
+    });
+  }
+  const openedTender: StoredRecord<Tender> =
+    state === "opened"
+      ? { ...tender, version: 2, data: { ...tender.data, status: "CLOSED", openedAt: eat("2026-10-28T15:30:00"), openedBy: "user-pe-admin-01" } }
+      : tender;
+  if (state === "opened") openedTender.dataHash = hashOf(openedTender.data);
+  const shownReveals = state === "sealed" ? [] : reveals;
+  return {
+    tender: openedTender,
+    bids: sealedBids,
+    reveals: shownReveals,
+    evaluations: [],
+    awards: [],
+    audited: audit([openedTender, ...sealedBids, ...shownReveals]),
+    documentCheck: "matches",
+    now: new Date(eat(state === "sealed" ? "2026-09-30T14:02:00" : "2026-10-28T16:00:00")),
   };
 }

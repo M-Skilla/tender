@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { NavigationBar } from "@/components/NavigationBar/NavigationBar";
 import { TenderDetailView } from "@/components/TenderDetail/TenderDetailView";
 import { buildTenderCase, type EventId } from "@/lib/tender-case";
 import { sampleTenderInput, type Scenario } from "../sample-tender";
@@ -14,5 +15,5 @@ export default async function P2Review(props: PageProps<"/dev/screens/p2">) {
   const chosen = SCENARIOS.includes(scenario as Scenario) ? (scenario as Scenario) : "default";
   const tenderCase = await buildTenderCase(sampleTenderInput(chosen));
   const selected: EventId = event === "published" ? "published" : "bids";
-  return <TenderDetailView tenderCase={tenderCase} selected={selected} />;
+  return <TenderDetailView tenderCase={tenderCase} selected={selected} header={<NavigationBar active="tenders" />} />;
 }

@@ -40,7 +40,11 @@ Every write is made with the app's one project credential, so every audit entry 
 
 To confirm: whether a credential can be kept out of `users` while reading other collections. Until then the rule is enforced in app code only: the `users` collection is never returned by a public route and never read for audit views (`auditedVersions` refuses it).
 
-### 5. Indexes must be declared before lookups
+### 5. No delayed visibility for reveals
+
+Bidders submit their reveal data after the closing time (B5), and the procuring entity opens the bids later (H3). Between the two, the reveals are stored in `bid_reveals`, which any credential of the project can read. AmanaDB cannot hold a record back until an event, so the app hides revealed amounts until the tender's `openedAt` is set; the rule lives in app code only (`BidOpeningView`, the case file). A time-lock or per-record read restriction in AmanaDB would make it enforceable.
+
+### 6. Indexes must be declared before lookups
 
 `findBy` rejects a field that was never declared with `defineIndex`. Declaring is a write, so it runs from `pnpm setup` (and `pnpm seed`), not on page loads. A fresh project needs `pnpm setup` once before the app can list bids.
 
@@ -54,3 +58,4 @@ Not AmanaDB gaps, but deviations from `docs/spec.md` section 3, recorded so they
 | tenders | `docName` | Needed to find the stored file and re-hash it. |
 | tenders | `publishedBy` | Per-user attribution (open item 3). |
 | bids | `bidderName` | Public pages show bidder names without reading the sensitive `users` collection. |
+| tenders | `openedAt`, `openedBy` | When the bids were opened (H3) and by whom; amounts are shown only after `openedAt`. |

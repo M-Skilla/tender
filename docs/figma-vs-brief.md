@@ -48,6 +48,14 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **Serif optical size:** Figma renders Source Serif 4 with optical sizing; the font is loaded with its `opsz` axis so titles match.
 - **Month format:** ICU's en-GB data writes "Sept"; dates use fixed three-letter months to match the brief ("30 Sep 2026").
 
+### Found in task 4 (sign-in and H3)
+
+- **B1 card radius:** 8px as drawn, although the brief reserves 8 for modals and drawers (following the "as drawn" choice made for A2).
+- **B1 fields:** B1 draws 13px labels and 14/10 padding; the shared Field (H2's values: 14px labels, 12px padding) is reused.
+- **Signed-in navigation:** B2 shows an empty grey circle before the user's name; it carries no information and is left out. A "Sign out" text button follows the name.
+- **H3 button size:** H3 draws "Open all bids" at 15px with 20/12 padding; the shared primary button is 14px with 16/10.
+- **H3 after opening:** the frame still shows "Open all bids" beside revealed amounts; after opening the button is removed, since opening happens once.
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).
@@ -105,3 +113,20 @@ Agreed after the task 1 review ("insert your own appropriate states"). Later tas
 | Loading | The neutral checking banner: "Checking the tender record." |
 | Not found | "Tender not found", one sentence, and "Go to tenders". |
 | Error (service down or not configured) | "The tender record could not be loaded", "The record service did not respond. Try again in a few minutes.", and "Try again". |
+
+### Task 4 decisions (sign-in and H3)
+
+| Question | Decision |
+|---|---|
+| Sign-in order | Built before H3 (H3's action needs a signed-in procuring entity admin). Users live in AmanaDB with scrypt hashes; the session is an encrypted cookie. |
+| Sign-in errors | On the field, in words: "Enter your email address.", "Enter your password.", and one message for a wrong email or password so accounts cannot be probed. A deactivated account says so. |
+| Forgot password | No reset flow in the spec: a page saying who resets passwords, and a link back. |
+| Wrong role | "This page is not available to your account", one sentence, "Go to tenders". |
+| Reveal and opening model | Bidders reveal after the closing time (B5); the server recomputes the commitment and stores the reveal. "Open all bids" publishes all reveals at once and records `openedAt`. |
+| H3 before the closing time | Title, "Closes …. Bids can be opened after the closing time.", an amber lock with the time left (Countdown), Sealed rows, no reveal column, no button. |
+| H3 closed, not opened | The frame's subtitle plus "6 of 6 bidders have submitted their reveal."; amounts read "Hidden until opening" or "Not revealed"; rows are Sealed. |
+| H3 opened | Amounts and marks as drawn; a bid with no reveal reads "Not revealed" and stays Sealed. The only transition: revealed cells fade in over 240ms when just opened (none with reduced motion). |
+| Toast | Fixed bottom right, overlay shadow and radius, pine check and the verb: "Bids opened". No slide-in. |
+| Countdown | Days and hours ("27 days, 1 hour left"), "Less than 1 hour left", or "Closed"; computed on each load. |
+| Reveal mismatch vs tampering | A reveal that does not recompute to its sealed bid is a bid problem: shown on H3 and the bid row, not counted as record tampering on P2. |
+| A2 highlighted row | As drawn (user's choice): the tampered bid row keeps the Highlighter. |
