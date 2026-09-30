@@ -1,0 +1,180 @@
+/* The rule runs from the first marker's centre to the last marker's centre: each node
+   draws the segment from its own marker down to the next one. */
+.spine {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.node {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-16);
+  padding-bottom: var(--space-48);
+}
+
+.node:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--spine-marker) / 2);
+  bottom: calc(var(--spine-marker) / -2);
+  left: calc((var(--spine-marker) - var(--spine-line-width)) / 2);
+  width: var(--spine-line-width);
+  background: var(--color-rule);
+}
+
+/* Pending events sit closer together (P2: 32px after upcoming nodes, 48px after records). */
+.node[data-state="upcoming"],
+.node[data-state="sealed"] {
+  padding-bottom: var(--space-32);
+}
+
+.node:last-child {
+  padding-bottom: 0;
+}
+
+.marker {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--spine-marker);
+  height: var(--spine-marker);
+  color: var(--color-ink);
+}
+
+/* Ring markers get a page-coloured disc so the rule does not show inside the ring. */
+.node[data-state="current"] .marker,
+.node[data-state="mismatch"] .marker {
+  border-radius: var(--radius-circle);
+  background: var(--color-paper);
+}
+
+.node[data-state="current"] .marker {
+  color: var(--color-pen-blue);
+}
+
+.node[data-state="mismatch"] .marker {
+  color: var(--color-wax-red);
+}
+
+.node[data-state="upcoming"] .marker {
+  color: var(--color-rule);
+}
+
+/* Figma draws the sealed lock at Ink 40 percent (2.2:1); raised to Ink 70 percent. */
+.node[data-state="sealed"] .marker {
+  background: var(--color-paper);
+  color: var(--color-ink-70);
+}
+
+/* Record body */
+.body {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+/* Selected: a record box with a 4px edge (P2 pen blue, A2 wax red). Inside-stroke, so
+   padding is reduced by the border widths. */
+.node[data-selected] .body {
+  gap: var(--space-8);
+  padding: calc(var(--space-16) - var(--border-width)) calc(var(--space-16) - var(--border-width))
+    calc(var(--space-16) - var(--border-width)) calc(var(--space-16) - var(--selected-edge-width));
+  border: var(--border-width) solid var(--color-pen-blue);
+  border-left-width: var(--selected-edge-width);
+  border-radius: var(--radius-record);
+  background: var(--color-sheet);
+}
+
+.node[data-state="mismatch"][data-selected] .body {
+  border-color: var(--color-wax-red);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--size-record);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+}
+
+/* In the selected box, the title and version take the box colour (P2, A2). */
+.node[data-selected] .title,
+.node[data-selected] .version > span {
+  color: var(--color-pen-blue);
+  font-weight: var(--weight-semibold);
+}
+
+.node[data-state="mismatch"] .title,
+.node[data-state="mismatch"][data-selected] .version > span {
+  color: var(--color-wax-red);
+}
+
+.link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* The title link covers the whole record so the node is one target; the chip and mark
+   sit above it and keep their own actions. */
+.link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.link:hover {
+  text-decoration: underline;
+  text-underline-offset: var(--space-4);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-12);
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+.proof {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+/* Upcoming and sealed events: title and note only. Figma sets them at Ink 40 percent
+   (2.3:1 on Paper); raised to Ink 70 percent. The hollow marker and the word carry the state. */
+.pendingBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.pendingBody .title,
+.pendingBody .meta {
+  color: var(--color-ink-70);
+}
