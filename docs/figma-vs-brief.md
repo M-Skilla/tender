@@ -68,6 +68,14 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **C3 column titles:** capitals in the frame; sentence case.
 - **C3 label column:** C3's 120px labels would wrap C2's longer criterion names and misalign the two columns; the modal uses the 160px label column.
 
+### Found in task 4 (A1)
+
+- **"CHANGED FIELDS"** in capitals: sentence case.
+- **Date format:** A1 writes "30 Sep 2026 14:02" (no comma); the app's format elsewhere is "30 Sep 2026, 14:02".
+- **Date-range pill:** A1 draws it with the funnel and no chevron; the Actor and Action pills have chevrons. Followed.
+- **Pagination:** A1 shows only Previous and Next; followed. The total ("of 1,842 operations") is real: the whole log is read (GAPS open item 1).
+- **"Verified" rows by "System":** A1 shows verification entries; the app does not write verification records (checks run on each page load), so there are none.
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).
@@ -155,3 +163,17 @@ Agreed after the task 1 review ("insert your own appropriate states"). Later tas
 | Version banner | "Version N, last saved by Name (date, time)", or "Version 1, not scored yet". |
 | Before opening | "Bids can be scored after they are opened", with the closing time. |
 | Save confirmation | "Evaluation saved" toast, lifted above the sticky footer. |
+
+### Task 4 decisions (A1)
+
+| Question | Decision |
+|---|---|
+| Collections | All records, Tenders, Bids (sealed bids and reveals), Evaluations, Awards. The users collection is never listed. |
+| Actor | The person from the record's data at that version, with their role: "Joseph Mwangi (Procuring entity)", "Zuri Civil (Bidder)", "Amina Mussa (Committee)"; an evaluation's automatic first version is "System". |
+| Action | Plain verbs from the collection and the change: Published, Opened bids, Amended tender, Cancelled tender, Submitted bid, Withdrew bid, Revealed bid, Started evaluation, Saved evaluation, Recorded award, Changed access. |
+| Actor filter | By role (Procuring entity, Committee, Bidders, System), since every ledger entry has the same credential. |
+| Action filter | Created, Changed, Deleted (the ledger actions). |
+| Row expansion | "Changed fields" against the previous version, or "Recorded fields" for a first version, from AmanaDB history; a soft delete says the earlier versions remain; the transaction id below. Internal ids and the reveal's salt are left out. |
+| Empty | "No operations match these filters. Clear the filters to see the whole log." with "Clear filters". |
+| Export | CSV of the filtered view: time (ISO), actor, action, collection, record, version, full fingerprint, transaction id. Auditors and procuring entity admins only. |
+| Access | Auditors and procuring entity admins; others see "This page is not available to your account"; export returns 403. |

@@ -4,14 +4,15 @@ Things AmanaDB could not do cleanly for Tender Tracker, and what the app does ab
 
 ## Resolved in AmanaDB 1.1 (chaincode 1.1, `@amanadb/sdk` 1.1.0)
 
-The first build of this app hit four gaps in chaincode 1.0 and SDK 1.0.3. They were fixed in AmanaDB itself (branch `feat/record-integrity` in the AmanaDB repository) and the app now uses the fixes:
+The first build of this app hit five gaps in chaincode 1.0 and SDK 1.0.3. They were fixed in AmanaDB itself (branch `feat/record-integrity` in the AmanaDB repository) and the app now uses the fixes:
 
 | Gap in 1.0 | Fix in 1.1 | Used by the app |
 |---|---|---|
 | No lookup by field: "bids for this tender" meant listing the whole collection | `defineIndex(field)` and `findBy(field, value)`, maintained by the chaincode | `listByField` in `src/services/amanadb.ts`; indexes on `tenderId` are declared by `pnpm setup` and `pnpm seed` |
 | No per-record audit log in the SDK, and the collection audit log is owner-only, so a project credential could not read audit data at all | `recordAudit(id)`, readable at the reader role | `auditedVersions` reads each record's own trail |
 | No stored fingerprint: records had no content hash | `dataHash` (SHA-256 of the stored data) on every record and audit entry; the SDK re-hashes on read and reports `integrity` | Record fingerprints on the spine are AmanaDB's `dataHash` |
-| No way to read earlier versions | `history(id)` from the ledger's history database | For P3 and A1 version diffs (later tasks) |
+| No way to read earlier versions | `history(id)` from the ledger's history database | A1's changed fields and actors; C3's "version you started from" |
+| The collection audit log was owner-only, so a project credential could not list a collection's history (chaincode 1.2, SDK 1.1.1) | `GetCollectionAuditLog` at the reader role | A1 reads each collection's log |
 
 ### What "matches" means on the tender page
 
@@ -24,9 +25,9 @@ A record matches when all of these hold:
 
 ## Open
 
-### 1. The collection-wide audit log is owner-only
+### 1. No reverse or time-range audit query
 
-`GetCollectionAuditLog` requires the owner role, which a project credential can never hold. The A1 audit log screen lists a collection's history, so it cannot be built from the app's credential as things stand. To decide in task 4: read per-record trails for the records in view, or give readers a collection audit read in AmanaDB.
+`audit()` returns a collection's entries oldest first and cannot filter by time. A1 shows newest first with date filters, so it reads each selected collection's whole log, then sorts, filters and pages in the app (`src/lib/audit-log.ts`). Fine for a demo; a large log needs a newest-first or time-range query in AmanaDB. (The collection log itself was owner-only until chaincode 1.2, which lets readers read it; see the table above.)
 
 ### 2. Soft-deleted records disappear from reads
 
@@ -34,7 +35,7 @@ A record matches when all of these hold:
 
 ### 3. One project credential, so no per-user identity in the ledger
 
-Every write is made with the app's one project credential, so every audit entry has the same actor. Per-user attribution is written into record data instead (`publishedBy`, `bidderId`, `evaluatorId`, `decidedBy`). This must be stated in the README.
+Every write is made with the app's one project credential, so every audit entry has the same actor. Per-user attribution is written into record data instead (`publishedBy`, `openedBy`, `bidderName`, `evaluatorName`, `decidedBy`), and A1 reads the person from the record's data at each version (through `history`). This must be stated in the README.
 
 ### 4. No read restriction per collection
 
