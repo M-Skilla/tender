@@ -58,11 +58,21 @@ export type BidReveal = {
   verified: boolean;
 };
 
+/**
+ * One shared evaluation per bid, amended by the committee (spec: versions increment, conflicts
+ * are shown). `evaluatorId` and `evaluatorName` are whoever saved this version.
+ */
 export type Evaluation = {
   tenderId: string;
   bidId: string;
   evaluatorId: string;
-  criteria: { name: string; score: number; comment: string }[];
+  /** Added: display name of whoever saved this version (C2 banner, C3 modal). */
+  evaluatorName: string;
+  /** `weight` added (percent); `score` is null until scored. */
+  criteria: { name: string; weight: number; score: number | null; comment: string }[];
+  /** Added: overall comment, compared in C3. */
+  comment: string;
+  /** Weighted total out of 20. */
   total: number;
 };
 

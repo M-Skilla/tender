@@ -28,6 +28,12 @@ export function formatDateTime(iso: string): string {
   return `${d.day} ${d.month} ${d.year}, ${d.hour}:${d.minute}`;
 }
 
+/** "14:15" */
+export function formatTime(iso: string): string {
+  const d = local(iso);
+  return `${d.hour}:${d.minute}`;
+}
+
 /** "28 Oct 2026" */
 export function formatDate(iso: string): string {
   const d = local(iso);

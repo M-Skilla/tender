@@ -34,6 +34,14 @@ export const COLLECTIONS = {
   awards: "awards",
 } as const;
 
+/** Someone saved a newer version first; the caller's expectedVersion is stale (AmanaDB 409). */
+export class VersionConflictError extends Error {
+  constructor() {
+    super("A newer version was saved first.");
+    this.name = "VersionConflictError";
+  }
+}
+
 /** Thrown when the app has no AmanaDB credential configured. */
 export class NotConfiguredError extends Error {
   constructor() {
@@ -257,4 +265,44 @@ export async function updateTender(key: string, data: Tender, expectedVersion: n
 export async function insertBid(data: Bid): Promise<string> {
   const { id } = await db().collection<Bid>(COLLECTIONS.bids).insert(data);
   return id;
+}
+
+/** One shared evaluation per bid, under a fixed key so every committee member edits the same record. */
+export function evaluationKey(bidKey: string): string {
+  return `eval-${bidKey}`;
+}
+
+export function getEvaluation(key: string): Promise<StoredRecord<Evaluation> | null> {
+  return getOrNull<Evaluation>(COLLECTIONS.evaluations, key);
+}
+
+/** The bid's evaluation, created empty (version 1) the first time anyone opens it. */
+export async function ensureEvaluation(bidKey: string, empty: Evaluation): Promise<StoredRecord<Evaluation>> {
+  const key = evaluationKey(bidKey);
+  const existing = await getEvaluation(key);
+  if (existing) return existing;
+  await db().collection<Evaluation>(COLLECTIONS.evaluations).upsert(key, empty);
+  const created = await getEvaluation(key);
+  if (!created) throw new Error(`Evaluation ${key} could not be created.`);
+  return created;
+}
+
+/**
+ * Saves an evaluation at the version the editor started from. AmanaDB rejects a stale version
+ * (409); that surfaces as VersionConflictError, never as a silent overwrite.
+ */
+export async function saveEvaluation(key: string, data: Evaluation, expectedVersion: number): Promise<void> {
+  try {
+    await db().collection<Evaluation>(COLLECTIONS.evaluations).update(key, data, expectedVersion);
+  } catch (err) {
+    if (err instanceof AmanaDBError && err.statusCode === 409) throw new VersionConflictError();
+    throw err;
+  }
+}
+
+/** An earlier version of an evaluation, from AmanaDB's record history. */
+export async function evaluationAtVersion(key: string, version: number): Promise<StoredRecord<Evaluation> | null> {
+  const versions = await db().collection<Evaluation>(COLLECTIONS.evaluations).history(key);
+  const match = versions.find((v) => v.record.version === version);
+  return match ? toStored(match.record) : null;
 }
