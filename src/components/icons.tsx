@@ -108,3 +108,66 @@ export function IconWarning14(props: IconProps) {
     </svg>
   );
 }
+
+/*
+ * Icons for states the Figma file does not show (task 1 review decisions). Drawn to the
+ * same weights as the exported set: 2px stroke at 12px, 1.5px stroke at 14px and up.
+ */
+
+/** Draft status. Dashed outline of the Closed circle: not yet a live record. */
+export function IconCircleDashed12(props: IconProps) {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="2" strokeDasharray="2.618 2.618" />
+    </svg>
+  );
+}
+
+/** Withdrawn status. Same circle as x-circle, with a single bar. */
+export function IconMinusCircle12(props: IconProps) {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="2" />
+      <path d="M4.5 6H7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** Opened status. Figma's lock with the shackle tilted open about its left foot. */
+export function IconLockOpen14(props: IconProps) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <path
+        d="M1.55566 6.34961H12.4443C12.9655 6.34961 13.25 6.71339 13.25 7V12.5996C13.25 12.8862 12.9655 13.25 12.4443 13.25H1.55566C1.03448 13.25 0.75 12.8862 0.75 12.5996V7C0.75 6.71339 1.03448 6.34961 1.55566 6.34961ZM7 8.34961C6.28052 8.34961 5.56687 8.85686 5.48047 9.63965L5.47266 9.7998L5.48047 9.95996C5.56667 10.743 6.2804 11.25 7 11.25C7.76748 11.25 8.52734 10.673 8.52734 9.7998C8.52723 8.92673 7.76743 8.34961 7 8.34961Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M7 0.75C7.8565 0.75 8.66398 1.05735 9.24805 1.58301C9.8294 2.1063 10.1387 2.79774 10.1387 3.5V4.84961H3.86133V3.5C3.86133 2.79774 4.1706 2.1063 4.75195 1.58301C5.33602 1.05735 6.1435 0.75 7 0.75Z"
+        transform="rotate(-20 3.86133 4.84961)"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/** Checking, inline size. Dashed version of the 16px check-circle outline. */
+export function IconCircleDashed16(props: IconProps) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <circle cx="8" cy="8" r="6.667" stroke="currentColor" strokeWidth="1.5" strokeDasharray="2.618 2.618" />
+    </svg>
+  );
+}
+
+/** Checking, banner size. Dashed version of the 18px check-circle outline. */
+export function IconCircleDashed18(props: IconProps) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <circle cx="9" cy="9" r="7.5" stroke="currentColor" strokeWidth="1.5" strokeDasharray="2.945 2.945" />
+    </svg>
+  );
+}
