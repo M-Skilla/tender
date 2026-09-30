@@ -7,7 +7,7 @@
 import type { Status } from "@/components/StatusLabel/StatusLabel";
 import type { SpineNodeState } from "@/components/SpineNode/SpineNode";
 import type { VerificationResult } from "@/components/VerificationMark/VerificationMark";
-import { sha256Hex } from "./commitment";
+import { bidCommitment, sha256Hex } from "./commitment";
 import { formatDate, formatDateTime } from "./format";
 import type { AuditedVersion, Award, Bid, BidReveal, DocumentCheck, Evaluation, StoredRecord, Tender } from "./types";
 
@@ -34,7 +34,12 @@ export type BidRow = {
   bidderName: string;
   received: string;
   fingerprint: string;
+  /** The bid record's own check (integrity and audit). */
   result: VerificationResult;
+  /** Whether the bidder has submitted reveal data (known before opening; the amount is not). */
+  revealReceived: boolean;
+  /** After opening: the revealed amount and whether it recomputes to the sealed fingerprint. */
+  revealed?: { amount: number; result: VerificationResult };
 };
 
 export type TenderCase = {
@@ -47,6 +52,8 @@ export type TenderCase = {
   budgetCeiling: number;
   opens: string;
   closes: string;
+  /** ISO closing time, for countdowns. */
+  closeDate: string;
   status: Status;
   document?: { name: string; fingerprint: string; result: VerificationResult };
   tenderFingerprint: string;
@@ -57,6 +64,7 @@ export type TenderCase = {
   bids: BidRow[];
   closed: boolean;
   opened: boolean;
+  openedAt?: string;
   check: { total: number; mismatched: number; documentMismatch: boolean; checkedAt: string };
 };
 
@@ -118,11 +126,32 @@ export async function buildTenderCase(input: TenderCaseInput): Promise<TenderCas
       received: formatDateTime(bid.data.submittedAt),
       fingerprint: bid.data.commitment,
       result: auditResult(bid, audited),
+      revealReceived: reveals.some((r) => r.data.bidId === bid.key),
     }));
 
-  const revealResults = reveals.map((r) => worst([auditResult(r, audited), r.data.verified ? "matches" : "does-not-match"]));
+  // Reveal records are checked like any record. Whether a reveal recomputes to its bid's sealed
+  // commitment is a separate question about the bid, not the record: see revealMatches below.
+  const revealResults = reveals.map((r) => auditResult(r, audited));
+  const commitments = new Map(bids.map((b) => [b.key, b.data.commitment]));
+  const revealMatches = new Map<string, VerificationResult>(
+    await Promise.all(
+      reveals.map(async (r): Promise<[string, VerificationResult]> => {
+        const recomputed = await bidCommitment({ amount: r.data.amount, docHash: r.data.docHash, salt: r.data.salt });
+        return [r.data.bidId, recomputed === commitments.get(r.data.bidId) ? "matches" : "does-not-match"];
+      }),
+    ),
+  );
   const evaluationResults = evaluations.map((e) => auditResult(e, audited));
   const awardResults = awards.map((a) => auditResult(a, audited));
+
+  if (t.openedAt) {
+    const revealByBid = new Map(reveals.map((r) => [r.data.bidId, r.data.amount]));
+    for (const row of bidRows) {
+      const amount = revealByBid.get(row.key);
+      const result = revealMatches.get(row.key);
+      if (amount !== undefined && result) row.revealed = { amount, result };
+    }
+  }
 
   const allResults = [tenderResult, ...bidRows.map((b) => b.result), ...revealResults, ...evaluationResults, ...awardResults];
   const mismatched = allResults.filter((r) => r === "does-not-match").length;
@@ -167,18 +196,18 @@ export async function buildTenderCase(input: TenderCaseInput): Promise<TenderCas
       : { id: "bids", title: "Bids received", state: "upcoming", note: closed ? "No bids" : "No bids yet", selectable: true },
   );
 
-  const firstRevealAt = reveals.length ? reveals.map((r) => r.data.revealedAt).sort()[0] : undefined;
+  const openedAt = t.openedAt;
   events.push(
-    reveals.length
+    openedAt
       ? {
           id: "opened",
           title: "Opened",
           state: worst(revealResults) === "matches" ? "completed" : "mismatch",
-          time: firstRevealAt ? formatDateTime(firstRevealAt) : undefined,
-          dateTime: firstRevealAt,
+          time: formatDateTime(openedAt),
+          dateTime: openedAt,
           actor: "Procuring entity",
           fingerprint: await groupFingerprint(reveals),
-          result: worst(revealResults),
+          result: reveals.length ? worst(revealResults) : undefined,
           selectable: false,
         }
       : closed
@@ -240,6 +269,7 @@ export async function buildTenderCase(input: TenderCaseInput): Promise<TenderCas
     budgetCeiling: t.budgetCeiling,
     opens: formatDateTime(t.openDate),
     closes: formatDateTime(t.closeDate),
+    closeDate: t.closeDate,
     status: mismatched > 0 ? "tampered" : STATUS[t.status],
     document:
       t.docHash && t.docName && documentResult
@@ -251,7 +281,8 @@ export async function buildTenderCase(input: TenderCaseInput): Promise<TenderCas
     events,
     bids: bidRows,
     closed,
-    opened: reveals.length > 0,
+    opened: Boolean(openedAt),
+    openedAt: openedAt ? formatDateTime(openedAt) : undefined,
     check: {
       total: allResults.length,
       mismatched,

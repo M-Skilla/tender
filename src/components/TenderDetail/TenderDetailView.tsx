@@ -1,7 +1,7 @@
+import type { ReactNode } from "react";
 import type { EventId, TenderCase } from "@/lib/tender-case";
 import { formatTzs } from "@/lib/format";
 import { FingerprintChip } from "../FingerprintChip/FingerprintChip";
-import { NavigationBar } from "../NavigationBar/NavigationBar";
 import { RecordFields } from "../RecordFields/RecordFields";
 import { RuledTable, type RuledTableColumn } from "../RuledTable/RuledTable";
 import { Spine, SpineNode } from "../SpineNode/SpineNode";
@@ -121,11 +121,20 @@ function PublishedDetail({ tenderCase }: { tenderCase: TenderCase }) {
   );
 }
 
-export function TenderDetailView({ tenderCase, selected }: { tenderCase: TenderCase; selected: EventId }) {
+export function TenderDetailView({
+  tenderCase,
+  selected,
+  header,
+}: {
+  tenderCase: TenderCase;
+  selected: EventId;
+  /** The navigation bar: SiteHeader on real pages (reads the session), NavigationBar in review. */
+  header: ReactNode;
+}) {
   const failed = tenderCase.check.mismatched > 0;
   return (
     <>
-      <NavigationBar active="tenders" />
+      {header}
       <main className={styles.page}>
         <TenderHeader
           title={tenderCase.title}

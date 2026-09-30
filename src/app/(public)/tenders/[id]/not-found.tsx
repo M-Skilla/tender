@@ -1,12 +1,12 @@
 import { ButtonLink } from "@/components/Button/Button";
-import { NavigationBar } from "@/components/NavigationBar/NavigationBar";
+import { SiteHeader } from "@/components/NavigationBar/SiteHeader";
 import styles from "./states.module.css";
 
 // Not found (decided): one sentence and one action.
 export default function TenderNotFound() {
   return (
     <>
-      <NavigationBar active="tenders" />
+      <SiteHeader active="tenders" />
       <main className={styles.page}>
         <div className={styles.sheet}>
           <h1 className="text-section">Tender not found</h1>
