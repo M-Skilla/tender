@@ -1,10 +1,10 @@
 import { useId, type InputHTMLAttributes, type SelectHTMLAttributes, type TextareaHTMLAttributes } from "react";
-import { IconChevronDown16 } from "../icons";
+import { IconAlertTriangle16, IconChevronDown16 } from "../icons";
 import styles from "./Field.module.css";
 
 type Common = {
   label: string;
-  /** Specific message saying what is wrong and what to do. The design has no error treatment yet. */
+  /** Specific message saying what happened and what to do, without apologising. */
   error?: string;
 };
 
@@ -47,7 +47,8 @@ export function Field(props: FieldProps) {
       {control}
       {error ? (
         <p id={errorId} className={styles.error}>
-          {error}
+          <IconAlertTriangle16 className={styles.errorIcon} />
+          <span>{error}</span>
         </p>
       ) : null}
     </div>

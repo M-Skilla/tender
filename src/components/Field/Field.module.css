@@ -15,13 +15,14 @@
 }
 
 /* Figma strokes sit inside the box: 1px border plus (12px - 1px) padding keeps the
-   40px control height from H2. */
+   40px control height from H2. The border uses the control colour rather than Rule so
+   the field edge reaches 3:1. */
 .control {
   display: block;
   width: 100%;
   margin: 0;
   padding: calc(var(--space-12) - var(--border-width));
-  border: var(--border-width) solid var(--color-rule);
+  border: var(--border-width) solid var(--color-control-border);
   border-radius: var(--radius-control);
   background: var(--color-sheet);
   font-family: var(--font-sans);
@@ -38,8 +39,9 @@
 
 .control:disabled {
   background: var(--color-field-disabled);
-  color: var(--color-ink-30);
-  cursor: default;
+  border-color: var(--color-rule);
+  color: var(--color-ink-70);
+  cursor: not-allowed;
 }
 
 .textarea {
@@ -67,11 +69,22 @@
   pointer-events: none;
 }
 
-/* The design shows no error state. The message is shown in the body text style until
-   one is designed. */
+/* Error: wax red edge plus an icon and a sentence, so it is never colour alone. */
+.control[aria-invalid="true"] {
+  border-color: var(--color-wax-red);
+}
+
 .error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-6);
   font-family: var(--font-sans);
   font-size: var(--size-small);
+  font-weight: var(--weight-regular);
   line-height: var(--leading-normal);
-  color: var(--color-ink);
+  color: var(--color-wax-red);
+}
+
+.errorIcon {
+  flex-shrink: 0;
 }
