@@ -17,7 +17,10 @@ const ANNOUNCEMENTS: Record<CopyState, string> = {
   failed: "Fingerprint not copied. Select the full value in the tooltip and copy it.",
 };
 
-export function FingerprintChip({ value }: { value: string }) {
+/** "mismatch" is A2's chip on a record whose recomputed fingerprint differs. */
+export type FingerprintTone = "default" | "mismatch";
+
+export function FingerprintChip({ value, tone = "default" }: { value: string; tone?: FingerprintTone }) {
   const tooltipId = useId();
   const [copyState, setCopyState] = useState<CopyState>("idle");
   // Escape hides the tooltip until the pointer or focus leaves (WCAG 1.4.13).
@@ -58,6 +61,7 @@ export function FingerprintChip({ value }: { value: string }) {
         aria-label="Copy fingerprint"
         aria-describedby={tooltipId}
         data-state={copyState}
+        data-tone={tone}
       >
         <span className={styles.value}>{shown}</span>
         <Icon className={styles.icon} />

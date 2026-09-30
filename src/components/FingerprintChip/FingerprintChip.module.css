@@ -37,6 +37,17 @@
   color: var(--color-ink-70);
 }
 
+/* Mismatch tone (A2): wax red tint, edge and text. */
+.chip[data-tone="mismatch"] {
+  background: var(--color-wax-red-tint);
+  border-color: var(--color-wax-red);
+}
+
+.chip[data-tone="mismatch"] .value,
+.chip[data-tone="mismatch"] .icon {
+  color: var(--color-wax-red);
+}
+
 .chip[data-state="copied"] .value,
 .chip[data-state="copied"] .icon {
   color: var(--color-pine);
