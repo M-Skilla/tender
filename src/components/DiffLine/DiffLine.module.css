@@ -1,0 +1,98 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  /* Inside strokes (Figma): the outline and separators take no space, so each line keeps
+     its 40px (C3) or 36px (A1) height. The outline paints over Highlighter rows. */
+  outline: var(--border-width) solid var(--color-rule);
+  outline-offset: calc(-1 * var(--border-width));
+  background: var(--color-paper);
+}
+
+.list[data-surface="sheet"] {
+  background: var(--color-sheet);
+}
+
+.list > .line + .line {
+  box-shadow: inset 0 var(--border-width) 0 var(--color-rule);
+}
+
+/* Row layout (C3): 12px padding, 120px label column, 12px gap. */
+.line[data-layout="row"] {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-12);
+  padding: var(--space-12);
+}
+
+/* Wide label (A1): 160px label, 10px padding. */
+.line[data-layout="row"][data-wide] {
+  padding: var(--space-10);
+}
+
+.line[data-layout="row"] .label {
+  flex: 0 0 var(--diff-label-width);
+}
+
+.line[data-layout="row"][data-wide] .label {
+  flex-basis: var(--diff-label-width-wide);
+}
+
+/* Stacked layout (P3): label above the values, 12px padding, 8px gap. */
+.line[data-layout="stacked"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-12);
+}
+
+.line[data-marked] {
+  background: var(--color-highlighter);
+}
+
+.label {
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+/* P3 sets the field name as a 12px semibold heading in Ink. */
+.line[data-layout="stacked"] .label {
+  font-size: var(--size-tag);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+
+.values {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+  min-width: 0;
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  line-height: var(--leading-normal);
+}
+
+.line[data-layout="stacked"] .values {
+  font-size: var(--size-small);
+}
+
+.previous {
+  font-weight: var(--weight-regular);
+  color: var(--color-ink-70);
+  text-decoration: line-through;
+}
+
+.value {
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.arrow {
+  flex-shrink: 0;
+  color: var(--color-ink);
+}
