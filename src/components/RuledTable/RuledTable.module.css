@@ -60,6 +60,12 @@
   background: var(--color-paper);
 }
 
+/* Highlighted row (A2, as drawn): Highlighter, kept on hover. */
+.row[data-highlight] > .cell,
+.row[data-highlight]:hover > .cell {
+  background: var(--color-highlighter);
+}
+
 /* Selected: 4px pen blue left edge, drawn inside the first cell. */
 .row[data-selected] > .cell:first-child {
   box-shadow: inset var(--selected-edge-width) 0 0 var(--color-pen-blue), var(--rule-below);

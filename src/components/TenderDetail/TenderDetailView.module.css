@@ -79,3 +79,30 @@
   outline-offset: calc(-1 * var(--border-width));
   background: var(--color-sheet);
 }
+
+/* A2 alert above the bids: wax red tint and edge, 4px radius, 16px padding, 8px gap. */
+.alert {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: calc(var(--space-16) - var(--border-width));
+  border: var(--border-width) solid var(--color-wax-red);
+  border-radius: var(--radius-control);
+  background: var(--color-wax-red-tint);
+  color: var(--color-wax-red);
+}
+
+.alertTitle {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--size-record);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+}
+
+.alertText {
+  max-width: var(--reading-width);
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  line-height: var(--leading-relaxed);
+}

@@ -40,18 +40,30 @@ function BidsDetail({ tenderCase }: { tenderCase: TenderCase }) {
       : "Amounts are hidden until the closing time.";
   return (
     <>
-      <div className={styles.detailHeader}>
-        <h2 className={styles.detailTitle}>Bids received</h2>
-        <p className={styles.detailText}>
-          {count > 0 ? `${count} sealed ${count === 1 ? "bid" : "bids"}. ${hidden}` : null}
-        </p>
-      </div>
+      {/* A2: when a bid's stored document was altered, the alert takes the heading's place. */}
+      {tenderCase.tamperedBid ? (
+        <div className={styles.alert} role="alert">
+          <h2 className={styles.alertTitle}>Stored document does not match</h2>
+          <p className={styles.alertText}>
+            The document submitted with {tenderCase.tamperedBid.bidderName}&rsquo;s bid on {tenderCase.tamperedBid.received} no
+            longer matches the fingerprint recorded when the bid was revealed. The recorded bid is unchanged.
+          </p>
+        </div>
+      ) : (
+        <div className={styles.detailHeader}>
+          <h2 className={styles.detailTitle}>Bids received</h2>
+          <p className={styles.detailText}>
+            {count > 0 ? `${count} sealed ${count === 1 ? "bid" : "bids"}. ${hidden}` : null}
+          </p>
+        </div>
+      )}
       <RuledTable
         caption={`Sealed bids for ${tenderCase.reference}`}
         density="compact"
         columns={BID_COLUMNS}
         rows={tenderCase.bids.map((bid) => ({
           id: bid.key,
+          highlight: bid.tampered,
           cells: {
             bidder: bid.bidderName,
             received: <span className={styles.secondary}>{bid.received}</span>,

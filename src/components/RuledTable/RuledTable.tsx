@@ -19,6 +19,8 @@ export type RuledTableRow = {
   cells: Record<string, ReactNode>;
   /** Selected row: pen blue left edge, not a fill (brief section 7). */
   selected?: boolean;
+  /** Marked row on Highlighter (A2: the bid whose stored document was altered). */
+  highlight?: boolean;
   /** Content shown under the row when expanded (A1: changed fields). */
   expansion?: ReactNode;
   /** Accessible name for the expand button, for example "Show changes to TND-2026-0142 v1". */
@@ -95,6 +97,7 @@ export function RuledTable({
           <tr
             className={styles.row}
             data-selected={row.selected || undefined}
+            data-highlight={row.highlight || undefined}
             data-expanded={isOpen || undefined}
             aria-current={row.selected ? "true" : undefined}
           >
