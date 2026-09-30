@@ -1,0 +1,13 @@
+.version {
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+  white-space: nowrap;
+}
+
+.latest {
+  font-weight: var(--weight-semibold);
+  color: var(--color-pen-blue);
+}
