@@ -38,6 +38,10 @@ export type BidRow = {
   result: VerificationResult;
   /** Whether the bidder has submitted reveal data (known before opening; the amount is not). */
   revealReceived: boolean;
+  /** After opening: whether the bid's stored document still re-hashes to the revealed fingerprint. */
+  documentResult?: VerificationResult;
+  /** The bid's stored document was altered (A2): its row is marked and the node fails. */
+  tampered: boolean;
   /** After opening: the revealed amount and whether it recomputes to the sealed fingerprint. */
   revealed?: { amount: number; result: VerificationResult };
 };
@@ -66,6 +70,8 @@ export type TenderCase = {
   opened: boolean;
   openedAt?: string;
   check: { total: number; mismatched: number; documentMismatch: boolean; checkedAt: string };
+  /** A2: the first bid whose stored document no longer matches, if any. */
+  tamperedBid?: { bidderName: string; received: string };
 };
 
 export type TenderCaseInput = {
@@ -77,6 +83,8 @@ export type TenderCaseInput = {
   /** Last audited version per "collection/key". */
   audited: Map<string, AuditedVersion>;
   documentCheck: DocumentCheck | null;
+  /** After opening: each revealed bid document's check, by its fingerprint. */
+  bidDocumentChecks?: Map<string, DocumentCheck>;
   now: Date;
 };
 
@@ -107,7 +115,7 @@ function latestIso(values: string[]): string | undefined {
 }
 
 export async function buildTenderCase(input: TenderCaseInput): Promise<TenderCase> {
-  const { tender, bids, reveals, evaluations, awards, audited, documentCheck, now } = input;
+  const { tender, bids, reveals, evaluations, awards, audited, documentCheck, bidDocumentChecks, now } = input;
   const t = tender.data;
   const closed = now.getTime() >= new Date(t.closeDate).getTime();
 
@@ -127,6 +135,7 @@ export async function buildTenderCase(input: TenderCaseInput): Promise<TenderCas
       fingerprint: bid.data.commitment,
       result: auditResult(bid, audited),
       revealReceived: reveals.some((r) => r.data.bidId === bid.key),
+      tampered: false,
     }));
 
   // Reveal records are checked like any record. Whether a reveal recomputes to its bid's sealed
@@ -145,13 +154,23 @@ export async function buildTenderCase(input: TenderCaseInput): Promise<TenderCas
   const awardResults = awards.map((a) => auditResult(a, audited));
 
   if (t.openedAt) {
-    const revealByBid = new Map(reveals.map((r) => [r.data.bidId, r.data.amount]));
+    const revealByBid = new Map(reveals.map((r) => [r.data.bidId, r.data]));
     for (const row of bidRows) {
-      const amount = revealByBid.get(row.key);
+      const reveal = revealByBid.get(row.key);
       const result = revealMatches.get(row.key);
-      if (amount !== undefined && result) row.revealed = { amount, result };
+      if (reveal && result) row.revealed = { amount: reveal.amount, result };
+      // A2: the bid's stored document must still re-hash to the fingerprint it was revealed with.
+      const check = reveal ? bidDocumentChecks?.get(reveal.docHash) : undefined;
+      if (check) {
+        row.documentResult = check === "matches" ? "matches" : "does-not-match";
+        if (row.documentResult === "does-not-match") {
+          row.tampered = true;
+          row.result = "does-not-match";
+        }
+      }
     }
   }
+  const tamperedBid = bidRows.find((row) => row.tampered);
 
   const allResults = [tenderResult, ...bidRows.map((b) => b.result), ...revealResults, ...evaluationResults, ...awardResults];
   const mismatched = allResults.filter((r) => r === "does-not-match").length;
@@ -283,10 +302,11 @@ export async function buildTenderCase(input: TenderCaseInput): Promise<TenderCas
     closed,
     opened: Boolean(openedAt),
     openedAt: openedAt ? formatDateTime(openedAt) : undefined,
+    tamperedBid: tamperedBid ? { bidderName: tamperedBid.bidderName, received: tamperedBid.received } : undefined,
     check: {
       total: allResults.length,
       mismatched,
-      documentMismatch: documentResult === "does-not-match",
+      documentMismatch: documentResult === "does-not-match" || Boolean(tamperedBid),
       checkedAt: formatDateTime(now.toISOString()),
     },
   };

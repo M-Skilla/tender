@@ -7,6 +7,7 @@ import type { AuditedVersion } from "@/lib/types";
 import {
   auditedVersions,
   checkDocument,
+  checkStoredDocument,
   COLLECTIONS,
   getTender,
   listAwardsForTender,
@@ -44,6 +45,14 @@ export async function loadCase(key: string, now = new Date()): Promise<TenderCas
   add(COLLECTIONS.evaluations, evaluationAudit);
   add(COLLECTIONS.awards, awardAudit);
 
-  return buildTenderCase({ tender, bids, reveals, evaluations, awards, audited, documentCheck, now });
+  // After opening, each revealed bid document is re-hashed from disk (A2's tamper check).
+  const bidDocumentChecks = new Map<string, import("@/lib/types").DocumentCheck>();
+  if (tender.data.openedAt) {
+    await Promise.all(
+      reveals.map(async (r) => bidDocumentChecks.set(r.data.docHash, await checkStoredDocument(r.data.docHash))),
+    );
+  }
+
+  return buildTenderCase({ tender, bids, reveals, evaluations, awards, audited, documentCheck, bidDocumentChecks, now });
 }
 

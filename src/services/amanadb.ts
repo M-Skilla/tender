@@ -3,7 +3,7 @@ import "server-only";
 // The only module that imports @amanadb/sdk (CLAUDE.md rule 7). Server-only: the project
 // credential and the SDK never reach a client bundle. Pattern follows ~/Desktop/crud.
 import { createHash, createPrivateKey, createSign } from "node:crypto";
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import {
   AmanaDBClient,
@@ -235,6 +235,20 @@ export async function checkDocument(docHash: string, docName: string): Promise<D
     const bytes = await readFile(file);
     const actual = createHash("sha256").update(bytes).digest("hex");
     return actual === docHash ? "matches" : "does-not-match";
+  } catch {
+    return "missing";
+  }
+}
+
+/**
+ * Re-hashes the one stored file under storage/documents/<docHash>/ (used for bid documents,
+ * whose file name is not recorded) and compares it with the recorded SHA-256.
+ */
+export async function checkStoredDocument(docHash: string): Promise<DocumentCheck> {
+  try {
+    const files = await readdir(path.join(DOCUMENTS_DIR, docHash));
+    if (files.length !== 1) return "missing";
+    return checkDocument(docHash, files[0]!);
   } catch {
     return "missing";
   }
