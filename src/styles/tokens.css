@@ -62,6 +62,9 @@
   --size-title: 30px; /* page title, Source Serif 4 semibold (H3, B2) */
   --size-section: 22px; /* modal and section title, Source Serif 4 semibold (C3, H5) */
   --size-record: 18px; /* record heading and spine event name, Source Serif 4 semibold (P2) */
+  --size-subsection: 20px; /* sheet titles in C2 ("Bid summary", "Evaluation and scoring") */
+  --size-total: 16px; /* C2 weighted total, Source Code Pro bold */
+  --size-amount: 18px; /* C2 bid amount, Public Sans bold */
   --size-brand: 18px; /* product name in the navigation bar, Source Serif 4 bold */
   --size-body: 15px; /* page subtitles, banner text, large buttons (H3) */
   --size-ui: 14px; /* field values and labels, buttons, table cells, nav links */
@@ -147,6 +150,15 @@
   /* Tender detail split (P2): 520px spine column with 24px inner right padding, 40px gap. */
   --spine-column-width: 520px;
   --detail-column-width: 680px;
+
+  /* Modals (C3, H5): 960px wide. */
+  --modal-width: 960px;
+
+  /* Evaluation form (C2): 64px score box, 72px sticky footer, 8px status dot. */
+  --score-input-width: 64px;
+  --criterion-width: 240px;
+  --footer-height: 72px;
+  --status-dot: 8px;
 
   /* Motion: the bid-opening reveal is the only transition on these screens (brief section 9). */
   --motion-reveal: 240ms;

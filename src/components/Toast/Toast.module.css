@@ -23,3 +23,7 @@
   flex-shrink: 0;
   color: var(--color-pine);
 }
+
+.toast[data-above-footer] {
+  bottom: calc(var(--footer-height) + var(--space-16));
+}

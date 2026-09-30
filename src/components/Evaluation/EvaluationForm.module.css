@@ -1,0 +1,164 @@
+.form {
+  display: contents;
+}
+
+/* C2 scoring sheet: 4px radius as drawn, 1px Rule inside stroke. */
+.sheet {
+  display: flex;
+  flex-direction: column;
+  outline: var(--border-width) solid var(--color-rule);
+  outline-offset: calc(-1 * var(--border-width));
+  border-radius: var(--radius-control);
+  background: var(--color-sheet);
+}
+
+.sheetTitle {
+  margin: 0;
+  padding: var(--space-20);
+  font-family: var(--font-serif);
+  font-size: var(--size-subsection);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  line-height: var(--leading-normal);
+}
+
+.table th,
+.table td {
+  padding: var(--space-12);
+  text-align: left;
+  font-weight: var(--weight-regular);
+  vertical-align: middle;
+}
+
+.table thead th {
+  background: var(--color-paper);
+  box-shadow: inset 0 var(--border-width) 0 var(--color-rule), inset 0 calc(-1 * var(--border-width)) 0 var(--color-rule);
+  font-size: var(--size-small);
+  font-weight: var(--weight-semibold);
+}
+
+/* Column widths from C2: 240 / 80 / 120 / rest, with 12px gaps. */
+.table thead th:nth-child(1) {
+  width: calc(var(--space-12) + var(--criterion-width));
+}
+
+.table tbody tr {
+  box-shadow: inset 0 calc(-1 * var(--border-width)) 0 var(--color-rule);
+}
+
+.criterion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.table .number {
+  text-align: right;
+}
+
+.muted {
+  color: var(--color-ink-70);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-weight: var(--weight-semibold);
+}
+
+.score {
+  width: var(--score-input-width);
+  padding: calc(var(--space-6) - var(--border-width)) calc(var(--space-12) - var(--border-width));
+  border: var(--border-width) solid var(--color-control-border);
+  border-radius: var(--radius-control);
+  background: var(--color-sheet);
+  font-family: var(--font-mono);
+  font-size: var(--size-ui);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+  text-align: center;
+}
+
+.score[aria-invalid="true"] {
+  border-color: var(--color-wax-red);
+}
+
+.error {
+  font-size: var(--size-small);
+  color: var(--color-wax-red);
+}
+
+/* C2 total row: Paper, 20px padding, bold 15px; the weighted total in pen blue mono. */
+.table tfoot th,
+.table tfoot td {
+  padding: var(--space-20) var(--space-12);
+  background: var(--color-paper);
+  font-size: var(--size-body);
+  font-weight: var(--weight-bold);
+}
+
+.table tfoot th {
+  padding-left: var(--space-20);
+}
+
+.total {
+  font-family: var(--font-mono);
+  font-size: var(--size-total);
+  color: var(--color-pen-blue);
+}
+
+.comment {
+  padding: var(--space-20);
+  box-shadow: inset 0 var(--border-width) 0 var(--color-rule);
+}
+
+/* Sticky footer (C2): 72px, Sheet, Rule above, 80px margins. */
+.footer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--footer-height);
+  padding: 0 var(--page-margin);
+  background: var(--color-sheet);
+  box-shadow: inset 0 var(--border-width) 0 var(--color-rule);
+}
+
+/* Decided: an amber dot for unsaved changes, pine when everything is saved, and the words. */
+.status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+.dot {
+  width: var(--status-dot);
+  height: var(--status-dot);
+  border-radius: var(--radius-circle);
+  background: var(--color-pine);
+}
+
+.status[data-dirty] .dot {
+  background: var(--color-amber);
+}
+
+.buttons {
+  display: flex;
+  gap: var(--space-12);
+}

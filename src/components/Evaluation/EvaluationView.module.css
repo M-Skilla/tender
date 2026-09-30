@@ -1,0 +1,136 @@
+/* C2: 40px top, 120px bottom (room for the sticky footer), 80px sides, 24px gaps. */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  max-width: calc(var(--content-width) + 2 * var(--page-margin));
+  margin: 0 auto;
+  padding: var(--space-40) var(--page-margin) calc(var(--footer-height) + var(--space-48));
+}
+
+/* Version banner (C2): pine tint and edge, 12/24 padding, 14px medium. */
+.versionBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  padding: calc(var(--space-12) - var(--border-width)) calc(var(--space-24) - var(--border-width));
+  border: var(--border-width) solid var(--color-pine);
+  border-radius: var(--radius-control);
+  background: var(--color-pine-tint);
+  color: var(--color-pine);
+  font-family: var(--font-sans);
+  line-height: var(--leading-normal);
+}
+
+.versionText {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  font-size: var(--size-ui);
+  font-weight: var(--weight-medium);
+}
+
+.versionIcon {
+  flex-shrink: 0;
+}
+
+.versionState {
+  font-size: var(--size-small);
+  font-weight: var(--weight-semibold);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* C2 joins these with a bullet; they are separate items here (no middle dots). */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-16);
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+.split {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-40);
+}
+
+/* Bid summary sheet (C2): 520px, 24px padding, 20px gaps, 4px radius as drawn. */
+.summary {
+  display: flex;
+  flex: 0 0 var(--spine-column-width);
+  flex-direction: column;
+  gap: var(--space-20);
+  padding: var(--space-24);
+  outline: var(--border-width) solid var(--color-rule);
+  outline-offset: calc(-1 * var(--border-width));
+  border-radius: var(--radius-control);
+  background: var(--color-sheet);
+}
+
+.sheetTitle {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--size-subsection);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+}
+
+.rule {
+  width: 100%;
+  height: var(--border-width);
+  margin: 0;
+  border: 0;
+  background: var(--color-rule);
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  margin: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  font-family: var(--font-sans);
+  line-height: var(--leading-normal);
+}
+
+.field dt {
+  font-size: var(--size-small);
+  color: var(--color-ink-70);
+}
+
+.field dd {
+  margin: 0;
+  font-size: var(--size-ui);
+  color: var(--color-ink);
+}
+
+.field .amount {
+  font-size: var(--size-amount);
+  font-weight: var(--weight-bold);
+}
+
+.proof {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.scoring {
+  flex: 0 1 var(--detail-column-width);
+  min-width: 0;
+}
