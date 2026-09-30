@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { IconClipboardCopy14 } from "../icons";
+import { useEffect, useId, useState } from "react";
+import { IconCheckCircle14, IconClipboardCopy14, IconWarning14 } from "../icons";
 import styles from "./FingerprintChip.module.css";
 
 /** First 4 and last 3 characters with an ellipsis, as in every frame ("7be1…90d"). */
@@ -9,38 +9,65 @@ export function truncateFingerprint(value: string): string {
   return value.length > 8 ? `${value.slice(0, 4)}…${value.slice(-3)}` : value;
 }
 
+type CopyState = "idle" | "copied" | "failed";
+
+const ANNOUNCEMENTS: Record<CopyState, string> = {
+  idle: "",
+  copied: "Fingerprint copied",
+  failed: "Fingerprint not copied. Select the full value in the tooltip and copy it.",
+};
+
 export function FingerprintChip({ value }: { value: string }) {
-  const [copied, setCopied] = useState(false);
+  const tooltipId = useId();
+  const [copyState, setCopyState] = useState<CopyState>("idle");
+  // Escape hides the tooltip until the pointer or focus leaves (WCAG 1.4.13).
+  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    if (!copied) return;
-    const timer = setTimeout(() => setCopied(false), 2000);
+    if (copyState === "idle") return;
+    const timer = setTimeout(() => setCopyState("idle"), 2000);
     return () => clearTimeout(timer);
-  }, [copied]);
+  }, [copyState]);
 
   async function copy() {
     try {
       await navigator.clipboard.writeText(value);
-      setCopied(true);
+      setCopyState("copied");
     } catch {
-      setCopied(false);
+      setCopyState("failed");
     }
   }
 
+  const shown = copyState === "copied" ? "Copied" : copyState === "failed" ? "Failed" : truncateFingerprint(value);
+  const Icon = copyState === "copied" ? IconCheckCircle14 : copyState === "failed" ? IconWarning14 : IconClipboardCopy14;
+
   return (
-    <button
-      type="button"
-      className={styles.chip}
-      onClick={copy}
-      title={value}
-      aria-label={`Copy fingerprint ${value}`}
-      data-copied={copied || undefined}
+    <span
+      className={styles.wrap}
+      data-dismissed={dismissed || undefined}
+      onMouseLeave={() => setDismissed(false)}
+      onBlur={() => setDismissed(false)}
+      onKeyDown={(event) => {
+        if (event.key === "Escape") setDismissed(true);
+      }}
     >
-      <span className={styles.value}>{truncateFingerprint(value)}</span>
-      <IconClipboardCopy14 className={styles.icon} />
-      <span className="visually-hidden" aria-live="polite">
-        {copied ? "Fingerprint copied" : ""}
+      <button
+        type="button"
+        className={styles.chip}
+        onClick={copy}
+        aria-label="Copy fingerprint"
+        aria-describedby={tooltipId}
+        data-state={copyState}
+      >
+        <span className={styles.value}>{shown}</span>
+        <Icon className={styles.icon} />
+      </button>
+      <span className={styles.tooltip} role="tooltip" id={tooltipId}>
+        <span className={styles.tooltipText}>{value}</span>
       </span>
-    </button>
+      <span className="visually-hidden" aria-live="polite">
+        {ANNOUNCEMENTS[copyState]}
+      </span>
+    </span>
   );
 }

@@ -1,3 +1,8 @@
+.wrap {
+  position: relative;
+  display: inline-flex;
+}
+
 /* Inside-stroke from Figma: 1px border plus padding reduced by 1px keeps the 4/8 inset. */
 .chip {
   display: inline-flex;
@@ -11,16 +16,65 @@
   cursor: pointer;
 }
 
+.chip:hover {
+  background: var(--color-paper);
+}
+
+/* Holds the truncated value's 8 characters so "Copied" and "Failed" do not resize it. */
 .value {
+  min-width: 8ch;
   font-family: var(--font-mono);
   font-size: var(--size-small);
   font-weight: var(--weight-regular);
   line-height: var(--leading-mono);
   color: var(--color-ink-70);
   white-space: nowrap;
+  text-align: left;
 }
 
 .icon {
   flex-shrink: 0;
-  color: var(--color-ink-40);
+  color: var(--color-ink-70);
+}
+
+.chip[data-state="copied"] .value,
+.chip[data-state="copied"] .icon {
+  color: var(--color-pine);
+}
+
+.chip[data-state="failed"] .value,
+.chip[data-state="failed"] .icon {
+  color: var(--color-wax-red);
+}
+
+/* Tooltip: full value above the chip. The bottom padding bridges the gap so the pointer
+   can move onto the tooltip to select the text. Flat: elevation is for overlays only. */
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  z-index: 10;
+  display: none;
+  padding-bottom: var(--space-6);
+}
+
+/* Shown on hover or keyboard focus, unless Escape dismissed it. */
+.wrap:not([data-dismissed]):hover .tooltip,
+.wrap:not([data-dismissed]):has(.chip:focus-visible) .tooltip {
+  display: block;
+}
+
+.tooltipText {
+  display: block;
+  width: max-content;
+  max-width: min(var(--tooltip-max-width), calc(100vw - 2 * var(--space-16)));
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-control);
+  background: var(--color-tooltip);
+  color: var(--color-on-fill);
+  font-family: var(--font-mono);
+  font-size: var(--size-small);
+  line-height: var(--leading-mono);
+  word-break: break-all;
+  user-select: all;
 }
