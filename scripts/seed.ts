@@ -8,7 +8,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { bidCommitment } from "@/lib/commitment";
-import { insertBid, insertTender } from "@/services/amanadb";
+import { defineIndexes, insertBid, insertTender } from "@/services/amanadb";
 
 const eat = (local: string) => new Date(`${local}+03:00`).toISOString();
 
@@ -22,6 +22,9 @@ async function storeDocument(name: string, contents: string): Promise<string> {
 }
 
 async function main() {
+  await defineIndexes();
+  console.log("Lookup indexes on tenderId are defined");
+
   const noticeName = "TND-2026-0142-notice.txt";
   const docHash = await storeDocument(
     noticeName,

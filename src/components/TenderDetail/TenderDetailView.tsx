@@ -25,7 +25,7 @@ function bannerSentence(tenderCase: TenderCase): string {
     const one = mismatched === 1;
     return `${mismatched} of ${total} ${total === 1 ? "record" : "records"} ${one ? "does" : "do"} not match ${
       one ? "its" : "their"
-    } recorded version. Checked ${checkedAt}.`;
+    } recorded fingerprint. Checked ${checkedAt}.`;
   }
   return `All ${total} ${total === 1 ? "record matches" : "records match"}. Checked ${checkedAt}.`;
 }

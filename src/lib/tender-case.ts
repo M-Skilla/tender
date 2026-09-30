@@ -1,12 +1,13 @@
 // Builds the tender case file (P2) from AmanaDB records. Pure apart from hashing, so the page
-// and the dev review route share it. Verification rules (GAPS.md "What matches means"):
-//   1. A record matches when its current version equals the version of its last audited
-//      write in the collection audit log.
-//   2. A record that carries a document hash also needs the stored file to re-hash to it.
+// and the dev review route share it. A record matches when (GAPS.md "What matches means"):
+//   1. its data re-hashes to the dataHash AmanaDB stored with it (SDK integrity "verified"), and
+//   2. its last audited write has the same version and the same dataHash, and
+//   3. a document it points to still re-hashes to the recorded docHash, and a bid reveal still
+//      recomputes to its sealed commitment.
 import type { Status } from "@/components/StatusLabel/StatusLabel";
 import type { SpineNodeState } from "@/components/SpineNode/SpineNode";
 import type { VerificationResult } from "@/components/VerificationMark/VerificationMark";
-import { canonicalJson, sha256Hex } from "./commitment";
+import { sha256Hex } from "./commitment";
 import { formatDate, formatDateTime } from "./format";
 import type { AuditedVersion, Award, Bid, BidReveal, DocumentCheck, Evaluation, StoredRecord, Tender } from "./types";
 
@@ -70,16 +71,14 @@ export type TenderCaseInput = {
   now: Date;
 };
 
-/** SHA-256 of the record's identity, version and data: what the spine shows as its fingerprint. */
-export function recordFingerprint(record: StoredRecord<unknown>): Promise<string> {
-  return sha256Hex(
-    canonicalJson({ collection: record.collection, key: record.key, version: record.version, data: record.data }),
-  );
-}
-
 function auditResult(record: StoredRecord<unknown>, audited: Map<string, AuditedVersion>): VerificationResult {
   const entry = audited.get(`${record.collection}/${record.key}`);
-  return entry && entry.version === record.version ? "matches" : "does-not-match";
+  const ok =
+    record.integrity === "verified" &&
+    entry !== undefined &&
+    entry.version === record.version &&
+    entry.dataHash === record.dataHash;
+  return ok ? "matches" : "does-not-match";
 }
 
 const STATUS: Record<Tender["status"], Status> = {
@@ -130,9 +129,9 @@ export async function buildTenderCase(input: TenderCaseInput): Promise<TenderCas
   const tenderAudited = audited.get(`${tender.collection}/${tender.key}`);
   const publishedAt = tenderAudited?.firstWriteAt ?? tender.createdAt;
 
-  // Fingerprint of a group of records: SHA-256 over their fingerprints in submission order.
+  // Fingerprint of a group of records: SHA-256 over their stored fingerprints in order.
   const groupFingerprint = async (records: StoredRecord<unknown>[]) =>
-    records.length ? sha256Hex((await Promise.all(records.map(recordFingerprint))).join("")) : undefined;
+    records.length ? sha256Hex(records.map((r) => r.dataHash).join("")) : undefined;
 
   const sortedBids = [...bids].sort((a, b) => a.data.submittedAt.localeCompare(b.data.submittedAt));
   const events: CaseEvent[] = [
@@ -144,7 +143,7 @@ export async function buildTenderCase(input: TenderCaseInput): Promise<TenderCas
       time: formatDateTime(publishedAt),
       dateTime: publishedAt,
       actor: "Procuring entity",
-      fingerprint: await recordFingerprint(tender),
+      fingerprint: tender.dataHash,
       result: tenderResult,
       selectable: true,
     },
@@ -215,7 +214,7 @@ export async function buildTenderCase(input: TenderCaseInput): Promise<TenderCas
           time: formatDateTime(award.data.decidedAt),
           dateTime: award.data.decidedAt,
           actor: "Procuring entity",
-          fingerprint: await recordFingerprint(award),
+          fingerprint: award.dataHash,
           result: awardResults[0],
           selectable: false,
         }

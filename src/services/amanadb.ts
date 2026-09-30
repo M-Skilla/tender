@@ -96,21 +96,31 @@ function toStored<T>(record: StorageRecord<T>): StoredRecord<T> {
     createdAt: record.createdAt,
     updatedAt: record.updatedAt,
     data: record.data,
+    dataHash: record.dataHash ?? "",
+    integrity: record.integrity,
   };
 }
 
 const PAGE_SIZE = 100;
 
+/** Collections looked up by tender (AmanaDB field indexes, declared by `defineIndexes`). */
+const TENDER_INDEXED = [COLLECTIONS.bids, COLLECTIONS.bidReveals, COLLECTIONS.evaluations, COLLECTIONS.awards];
+
 /**
- * Every live record in a collection that passes `keep`. The SDK has no query by field, so
- * this pages through the whole collection and filters here (GAPS.md: lookup by field).
+ * Declares the lookup fields the app queries by. A write, so it runs from setup and the seed
+ * script, never on page loads. Idempotent.
  */
-async function listWhere<T>(collection: string, keep: (data: T) => boolean): Promise<StoredRecord<T>[]> {
+export async function defineIndexes(): Promise<void> {
+  for (const collection of TENDER_INDEXED) await db().collection(collection).defineIndex("tenderId");
+}
+
+/** Every live record in a collection whose indexed `field` equals `value`. */
+async function listByField<T>(collection: string, field: string, value: string): Promise<StoredRecord<T>[]> {
   const out: StoredRecord<T>[] = [];
   let bookmark = "";
   do {
-    const page = await db().collection<T>(collection).list({ pageSize: PAGE_SIZE, bookmark });
-    for (const record of page.records) if (!record.deleted && keep(record.data)) out.push(toStored(record));
+    const page = await db().collection<T>(collection).findBy(field, value, { pageSize: PAGE_SIZE, bookmark });
+    for (const record of page.records) out.push(toStored(record));
     bookmark = page.fetchedRecordsCount > 0 ? page.bookmark : "";
   } while (bookmark);
   return out;
@@ -132,55 +142,48 @@ export function getTender(key: string): Promise<StoredRecord<Tender> | null> {
 }
 
 export function listBidsForTender(tenderId: string): Promise<StoredRecord<Bid>[]> {
-  return listWhere<Bid>(COLLECTIONS.bids, (bid) => bid.tenderId === tenderId);
+  return listByField<Bid>(COLLECTIONS.bids, "tenderId", tenderId);
 }
 
 export function listRevealsForTender(tenderId: string): Promise<StoredRecord<BidReveal>[]> {
-  return listWhere<BidReveal>(COLLECTIONS.bidReveals, (reveal) => reveal.tenderId === tenderId);
+  return listByField<BidReveal>(COLLECTIONS.bidReveals, "tenderId", tenderId);
 }
 
 export function listEvaluationsForTender(tenderId: string): Promise<StoredRecord<Evaluation>[]> {
-  return listWhere<Evaluation>(COLLECTIONS.evaluations, (evaluation) => evaluation.tenderId === tenderId);
+  return listByField<Evaluation>(COLLECTIONS.evaluations, "tenderId", tenderId);
 }
 
 export function listAwardsForTender(tenderId: string): Promise<StoredRecord<Award>[]> {
-  return listWhere<Award>(COLLECTIONS.awards, (award) => award.tenderId === tenderId);
+  return listByField<Award>(COLLECTIONS.awards, "tenderId", tenderId);
 }
 
 /**
- * The last audited write for each of `keys` in a collection. The SDK exposes only the
- * whole-collection audit log (the chaincode's per-record GetAuditLog is not in SDK 1.0.3), so
- * this scans the collection's log (GAPS.md: per-record audit). Never called for `users`.
+ * The last audited write for each of `keys`, from each record's own audit trail (readable with
+ * the app's reader or writer credential). Never called for `users`.
  */
 export async function auditedVersions(collection: string, keys: string[]): Promise<Map<string, AuditedVersion>> {
   if (collection === COLLECTIONS.users) throw new Error("The users collection is never read for audit views.");
-  const wanted = new Set(keys);
   const out = new Map<string, AuditedVersion>();
-  if (wanted.size === 0) return out;
-  let bookmark = "";
-  do {
-    const page = await db().collection(collection).audit({ pageSize: PAGE_SIZE, bookmark });
-    for (const entry of page.entries) {
-      if (!wanted.has(entry.key)) continue;
-      const seen = out.get(entry.key);
-      if (!seen) {
-        out.set(entry.key, {
-          version: entry.resultingVersion,
-          firstWriteAt: entry.timestamp,
-          lastWriteAt: entry.timestamp,
-          lastTxId: entry.txId,
-        });
-        continue;
+  await Promise.all(
+    keys.map(async (key) => {
+      let bookmark = "";
+      let first: string | undefined;
+      let last: { version: number; dataHash: string; at: string; txId: string } | undefined;
+      do {
+        const page = await db().collection(collection).recordAudit(key, { pageSize: PAGE_SIZE, bookmark });
+        for (const entry of page.entries) {
+          if (!first || entry.timestamp < first) first = entry.timestamp;
+          if (!last || entry.resultingVersion >= last.version) {
+            last = { version: entry.resultingVersion, dataHash: entry.dataHash ?? "", at: entry.timestamp, txId: entry.txId };
+          }
+        }
+        bookmark = page.fetchedRecordsCount > 0 ? page.bookmark : "";
+      } while (bookmark);
+      if (first && last) {
+        out.set(key, { version: last.version, dataHash: last.dataHash, firstWriteAt: first, lastWriteAt: last.at, lastTxId: last.txId });
       }
-      if (entry.timestamp < seen.firstWriteAt) seen.firstWriteAt = entry.timestamp;
-      if (entry.resultingVersion >= seen.version) {
-        seen.version = entry.resultingVersion;
-        seen.lastWriteAt = entry.timestamp;
-        seen.lastTxId = entry.txId;
-      }
-    }
-    bookmark = page.fetchedRecordsCount > 0 ? page.bookmark : "";
-  } while (bookmark);
+    }),
+  );
   return out;
 }
 

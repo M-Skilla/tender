@@ -8,10 +8,11 @@
     "build": "next build",
     "start": "sops exec-env .amanadb-wallet.enc.json \"next start\"",
     "typecheck": "tsc --noEmit",
-    "seed": "sops exec-env .amanadb-wallet.enc.json \"node --conditions=react-server --import tsx scripts/seed.ts\""
+    "seed": "sops exec-env .amanadb-wallet.enc.json \"node --conditions=react-server --import tsx scripts/seed.ts\"",
+    "setup": "sops exec-env .amanadb-wallet.enc.json \"node --conditions=react-server --import tsx scripts/setup.ts\""
   },
   "dependencies": {
-    "@amanadb/sdk": "file:vendor/amanadb-sdk-1.0.3.tgz",
+    "@amanadb/sdk": "^1.1.0",
     "next": "^16.3.6",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",

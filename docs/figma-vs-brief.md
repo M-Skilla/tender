@@ -100,7 +100,7 @@ Agreed after the task 1 review ("insert your own appropriate states"). Later tas
 | "Check again" | A GET form that reloads the same view; the page is dynamic, so every load re-runs every check. |
 | Published record panel (not in the frames) | Title, one sentence, and the notice's fields as B3's ruled label/value list on a sheet, ending with the tender document and the record's fingerprint, each with a verification mark. |
 | Bids panel when a bid fails | Every row shows its mark; the failed row's chip turns wax red. No Highlighter row (the brief reserves Highlighter for version changes; A2 is to be settled in task 4). |
-| Banner wording when a record fails | "1 of 7 records does not match its recorded version. Checked …". A failed document uses A2's sentence. No "Check again" on a failed banner (as A2). |
+| Banner wording when a record fails | "1 of 7 records does not match its recorded fingerprint. Checked …". A failed document uses A2's sentence. No "Check again" on a failed banner (as A2). |
 | Current event | The latest event that has happened gets the pen blue ring, unless it failed, in which case no earlier event is marked current. |
 | Loading | The neutral checking banner: "Checking the tender record." |
 | Not found | "Tender not found", one sentence, and "Go to tenders". |

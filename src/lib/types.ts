@@ -58,6 +58,12 @@ export type Award = {
   decidedAt: string;
 };
 
+/**
+ * SDK result of re-hashing a record's data against the dataHash AmanaDB stored with it:
+ * verified, mismatch, unhashed (written before chaincode 1.1) or unchecked (no Web Crypto).
+ */
+export type RecordIntegrity = "verified" | "mismatch" | "unhashed" | "unchecked";
+
 /** A record as the app sees it: AmanaDB's envelope without ACL internals. */
 export type StoredRecord<T> = {
   collection: string;
@@ -66,11 +72,15 @@ export type StoredRecord<T> = {
   createdAt: string;
   updatedAt: string;
   data: T;
+  /** SHA-256 of the stored data, recorded by AmanaDB on every write: the record's fingerprint. */
+  dataHash: string;
+  integrity: RecordIntegrity;
 };
 
-/** The last audited write for one record key. */
+/** The last audited write for one record key (from its per-record audit trail). */
 export type AuditedVersion = {
   version: number;
+  dataHash: string;
   firstWriteAt: string;
   lastWriteAt: string;
   lastTxId: string;

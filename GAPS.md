@@ -1,58 +1,56 @@
 # GAPS
 
-Things AmanaDB (gateway, chaincode and `@amanadb/sdk` 1.0.3) could not do cleanly for Tender Tracker. Each entry says what the app does instead. None is worked around with a second data store.
+Things AmanaDB could not do cleanly for Tender Tracker, and what the app does about each. None is worked around with a second data store.
 
-## 1. No lookup by field
+## Resolved in AmanaDB 1.1 (chaincode 1.1, `@amanadb/sdk` 1.1.0)
 
-`collection.list()` pages through a whole collection; there is no query by a data field. "Bids for this tender" (and reveals, evaluations and awards) therefore lists the collection and filters on the server (`listWhere` in `src/services/amanadb.ts`). Acceptable for a demo; for real volumes it needs a field index or a query endpoint. Sign-in by email will hit the same gap; `upsert(customKey, …)` allows a caller-chosen key, which may cover users (to confirm in the sign-in task).
+The first build of this app hit four gaps in chaincode 1.0 and SDK 1.0.3. They were fixed in AmanaDB itself (branch `feat/record-integrity` in the AmanaDB repository) and the app now uses the fixes:
 
-## 2. No per-record audit log in the SDK
-
-The chaincode has `GetAuditLog(collection, key)` (owner-only), but SDK 1.0.3 exposes only the whole-collection `audit()`. To find a record's last audited write, the app scans the collection's audit log (`auditedVersions`). Cost grows with the collection's whole history.
-
-## 3. No stored fingerprint and no old versions
-
-A `StorageRecord` has `version`, `createdAt` and `updatedAt`, but no content hash, and there is no call to read an earlier version's data. Consequences:
-
-- **Record fingerprint** is computed by the app: SHA-256 of canonical JSON of `{ collection, key, version, data }` (`recordFingerprint` in `src/lib/tender-case.ts`). It identifies the current content; it is not something AmanaDB stored and can be compared against.
-- **Version diffs** (P3 history drawer, A1 changed fields) cannot be rebuilt from AmanaDB. To be decided when those screens are built: either AmanaDB gains a history read, or the app records the changed fields inside each new version's data.
+| Gap in 1.0 | Fix in 1.1 | Used by the app |
+|---|---|---|
+| No lookup by field: "bids for this tender" meant listing the whole collection | `defineIndex(field)` and `findBy(field, value)`, maintained by the chaincode | `listByField` in `src/services/amanadb.ts`; indexes on `tenderId` are declared by `pnpm setup` and `pnpm seed` |
+| No per-record audit log in the SDK, and the collection audit log is owner-only, so a project credential could not read audit data at all | `recordAudit(id)`, readable at the reader role | `auditedVersions` reads each record's own trail |
+| No stored fingerprint: records had no content hash | `dataHash` (SHA-256 of the stored data) on every record and audit entry; the SDK re-hashes on read and reports `integrity` | Record fingerprints on the spine are AmanaDB's `dataHash` |
+| No way to read earlier versions | `history(id)` from the ledger's history database | For P3 and A1 version diffs (later tasks) |
 
 ### What "matches" means on the tender page
 
-Because nothing stores a record hash, the spine's "Matches" is defined from what AmanaDB can answer:
+A record matches when all of these hold:
 
-1. A record matches when its current `version` equals the `resultingVersion` of its last audited write in the collection audit log.
-2. A record that carries a document hash (`docHash`) also needs the file in `storage/documents/<docHash>/<docName>` to re-hash to it (the tamper demo).
-3. Bid reveals (task 4) also need `verified` to be true: the reveal recomputes the sealed commitment.
+1. Its data re-hashes to the `dataHash` AmanaDB stored with it (SDK `integrity` is `verified`).
+2. Its last audited write has the same version and the same `dataHash`.
+3. A document it points to (`docHash`) still re-hashes from `storage/documents/<docHash>/<docName>` (the tamper demo).
+4. A bid reveal (task 4) recomputes to its sealed commitment (`verified` is true).
 
-Rule 1 can only fail if a record changes without an audited write, which the chaincode prevents; it is kept because it is the check AmanaDB makes possible. Rules 2 and 3 are the real tamper checks.
+## Open
 
-## 4. Soft-deleted records disappear from reads
+### 1. The collection-wide audit log is owner-only
 
-`get` and `list` both hide soft-deleted records (`get` returns "does not exist", deliberately indistinguishable from never existed). Only the audit log keeps them. So:
+`GetCollectionAuditLog` requires the owner role, which a project credential can never hold. The A1 audit log screen lists a collection's history, so it cannot be built from the app's credential as things stand. To decide in task 4: read per-record trails for the records in view, or give readers a collection audit read in AmanaDB.
 
-- Cancelling a tender sets `status: CANCELLED` with an update (the record stays readable), rather than a delete.
-- Withdrawn bids and deactivated users stay visible only as audit entries, with no data. The spec's "remain visible in audit history" holds; "remain visible" with their content does not.
+### 2. Soft-deleted records disappear from reads
 
-## 5. One project credential, so no per-user identity in the ledger
+`get`, `list` and `findBy` hide soft-deleted records. Their audit trail (`recordAudit`) and their versions (`history`) remain readable, so "remains visible in audit history" holds. Cancelling a tender is still an update to `status: CANCELLED`, so the tender stays readable.
 
-Every write is made with the app's one project credential, so every audit entry has the same `actorId`. Per-user attribution is written into record data instead (`publishedBy`, `bidderId`, `evaluatorId`, `decidedBy`). This must be stated in the README.
+### 3. One project credential, so no per-user identity in the ledger
 
-## 6. No read restriction per collection
+Every write is made with the app's one project credential, so every audit entry has the same actor. Per-user attribution is written into record data instead (`publishedBy`, `bidderId`, `evaluatorId`, `decidedBy`). This must be stated in the README.
 
-To confirm: whether a reader credential can be kept out of `users` while reading other collections. Until then the rule is enforced in app code only: the `users` collection is never returned by a public route and never read for audit views (`auditedVersions` refuses it).
+### 4. No read restriction per collection
 
-## 7. Fields added to the spec's record shapes
+To confirm: whether a credential can be kept out of `users` while reading other collections. Until then the rule is enforced in app code only: the `users` collection is never returned by a public route and never read for audit views (`auditedVersions` refuses it).
 
-Not AmanaDB gaps, but deviations from `docs/spec.md` section 3, recorded here so they are not mistaken for accidents:
+### 5. Indexes must be declared before lookups
+
+`findBy` rejects a field that was never declared with `defineIndex`. Declaring is a write, so it runs from `pnpm setup` (and `pnpm seed`), not on page loads. A fresh project needs `pnpm setup` once before the app can list bids.
+
+## Fields added to the spec's record shapes
+
+Not AmanaDB gaps, but deviations from `docs/spec.md` section 3, recorded so they are not mistaken for accidents:
 
 | Collection | Field | Why |
 |---|---|---|
 | tenders | `reference` | The design shows references such as "TND-2026-0142"; record keys are auto-generated. |
 | tenders | `docName` | Needed to find the stored file and re-hash it. |
-| tenders | `publishedBy` | Per-user attribution (gap 5). |
+| tenders | `publishedBy` | Per-user attribution (open item 3). |
 | bids | `bidderName` | Public pages show bidder names without reading the sensitive `users` collection. |
-
-## Tooling note
-
-The package registry (`102.223.8.140:9000`) was unreachable while this was set up (`EHOSTUNREACH`). `@amanadb/sdk` 1.0.3 is installed from `vendor/amanadb-sdk-1.0.3.tgz`, packed from `packages/sdk` in the AmanaDB repository and byte-identical to the registry build. When the registry is back: `pnpm add @amanadb/sdk@^1.0.3` and delete `vendor/`.
