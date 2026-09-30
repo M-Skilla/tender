@@ -1,0 +1,101 @@
+/* C3: 960px modal, 8px radius, the one overlay shadow, 32px padding, 24px between blocks. */
+.modal {
+  width: min(var(--modal-width), calc(100vw - 2 * var(--space-16)));
+  max-width: none;
+  margin: auto;
+  padding: var(--space-32);
+  border: 0;
+  border-radius: var(--radius-overlay);
+  background: var(--color-sheet);
+  box-shadow: var(--shadow-overlay);
+  color: var(--color-ink);
+}
+
+.modal[open] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+.modal::backdrop {
+  background: var(--color-scrim);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--size-section);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--color-amber);
+}
+
+.summary {
+  font-family: var(--font-sans);
+  font-size: var(--size-body);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+.rule {
+  width: 100%;
+  height: var(--border-width);
+  margin: 0;
+  border: 0;
+  background: var(--color-rule);
+}
+
+/* The brief asks for the two columns to open already aligned: criterion names are longer than
+   C3's samples, so both columns use the wide (160px) label column and no label wraps. */
+.columns {
+  --diff-label-width: var(--diff-label-width-wide);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-24);
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+/* C3 draws these in capitals; sentence case per the brief. */
+.columnTitle {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-12);
+}
+
+@media (max-width: 599px) {
+  .columns {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}
