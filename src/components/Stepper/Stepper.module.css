@@ -1,0 +1,74 @@
+/* Sheet banner (B3): Rule border, 4px radius, inside-stroke 20px padding. */
+.stepper {
+  width: 100%;
+  padding: calc(var(--space-20) - var(--border-width));
+  border: var(--border-width) solid var(--color-rule);
+  border-radius: var(--radius-control);
+  background: var(--color-sheet);
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-24);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.connector {
+  width: var(--step-connector-length);
+  height: var(--step-connector-width);
+  background: var(--color-rule);
+}
+
+.number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--step-marker);
+  height: var(--step-marker);
+  border-radius: var(--radius-circle);
+  background: var(--color-ink-6);
+  font-family: var(--font-sans);
+  font-size: var(--size-tag);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+.name {
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+  white-space: nowrap;
+}
+
+.step[data-state="current"] .number {
+  background: var(--color-pen-blue);
+  color: var(--color-on-fill);
+}
+
+.step[data-state="current"] .name {
+  font-weight: var(--weight-semibold);
+  color: var(--color-pen-blue);
+}
+
+.step[data-state="completed"] .number {
+  background: var(--color-pen-blue-tint);
+  color: var(--color-pen-blue);
+}
+
+.step[data-state="completed"] .name {
+  color: var(--color-ink);
+}
