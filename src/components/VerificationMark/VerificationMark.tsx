@@ -1,17 +1,42 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { IconAlertTriangle16, IconAlertTriangle24, IconCheckCircle16, IconCheckCircle18 } from "../icons";
+import type { ComponentType } from "react";
+import {
+  IconAlertTriangle16,
+  IconAlertTriangle24,
+  IconCheckCircle16,
+  IconCheckCircle18,
+  IconCircleDashed16,
+  IconCircleDashed18,
+} from "../icons";
 import styles from "./VerificationMark.module.css";
 
-/** The two results the design shows. "Checking" has no design yet. */
-export type VerificationResult = "matches" | "does-not-match";
+/**
+ * "matches" and "does-not-match" are drawn in H3, P2 and A2. "checking" (recomputing the
+ * fingerprint) is a task 1 review decision: neutral colour, dashed circle, no motion.
+ */
+export type VerificationResult = "matches" | "does-not-match" | "checking";
+
+type Icon = ComponentType<{ className?: string }>;
+
+const INLINE: Record<VerificationResult, { word: string; tone: string; Icon: Icon }> = {
+  matches: { word: "Matches", tone: "pine", Icon: IconCheckCircle16 },
+  "does-not-match": { word: "Does not match", tone: "waxRed", Icon: IconAlertTriangle16 },
+  checking: { word: "Checking", tone: "neutral", Icon: IconCircleDashed16 },
+};
+
+const BANNER: Record<VerificationResult, { tone: string; Icon: Icon }> = {
+  matches: { tone: "bannerPine", Icon: IconCheckCircle18 },
+  "does-not-match": { tone: "bannerWaxRed", Icon: IconAlertTriangle24 },
+  checking: { tone: "bannerNeutral", Icon: IconCircleDashed18 },
+};
 
 /** Inline mark, as on H3 bid rows: icon plus the word. */
 export function VerificationMark({ result }: { result: VerificationResult }) {
-  const matches = result === "matches";
+  const { word, tone, Icon } = INLINE[result];
   return (
-    <span className={`${styles.inline} ${matches ? styles.pine : styles.waxRed}`}>
-      {matches ? <IconCheckCircle16 /> : <IconAlertTriangle16 />}
-      {matches ? "Matches" : "Does not match"}
+    <span className={`${styles.inline} ${styles[tone]}`}>
+      <Icon />
+      {word}
     </span>
   );
 }
@@ -29,14 +54,11 @@ export function VerificationBanner({
   children: ReactNode;
   action?: ReactNode;
 }) {
-  const matches = result === "matches";
+  const { tone, Icon } = BANNER[result];
   return (
-    <div
-      role="status"
-      className={`${styles.banner} ${matches ? styles.bannerPine : styles.bannerWaxRed}`}
-    >
+    <div role="status" className={`${styles.banner} ${styles[tone]}`}>
       <div className={styles.bannerMessage}>
-        {matches ? <IconCheckCircle18 className={styles.bannerIcon} /> : <IconAlertTriangle24 className={styles.bannerIcon} />}
+        <Icon className={styles.bannerIcon} />
         <p className={styles.bannerText}>{children}</p>
       </div>
       {action}

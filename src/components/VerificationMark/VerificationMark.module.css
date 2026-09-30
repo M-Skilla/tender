@@ -21,6 +21,10 @@
   color: var(--color-wax-red);
 }
 
+.neutral {
+  color: var(--color-ink-70);
+}
+
 /* Banner: inside-stroke, so padding is reduced by the border width. */
 .banner {
   display: flex;
@@ -43,6 +47,16 @@
   color: var(--color-wax-red);
 }
 
+.bannerNeutral {
+  background: var(--color-ink-6);
+  border-color: var(--color-rule);
+  color: var(--color-ink);
+}
+
+.bannerNeutral .bannerIcon {
+  color: var(--color-ink-70);
+}
+
 .bannerMessage {
   display: flex;
   align-items: center;
@@ -51,7 +65,8 @@
 }
 
 /* P2 uses a 12px gap after an 18px icon; A2 a 16px gap after a 24px icon. */
-.bannerPine .bannerMessage {
+.bannerPine .bannerMessage,
+.bannerNeutral .bannerMessage {
   gap: var(--space-12);
 }
 
