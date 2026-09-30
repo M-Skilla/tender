@@ -24,8 +24,8 @@ const BID_SUBMISSIONS = [
 ];
 
 const BIDDER_COLUMNS: RuledTableColumn[] = [
-  { key: "bidder", header: "Bidder", width: "35.3%" },
-  { key: "received", header: "Received", width: "23.5%" },
+  { key: "bidder", header: "Bidder", width: "37.65%" },
+  { key: "received", header: "Received", width: "25.88%" },
   { key: "fingerprint", header: "Fingerprint" },
 ];
 
@@ -39,11 +39,11 @@ const bidderRows: RuledTableRow[] = BID_SUBMISSIONS.map(([bidder, received, valu
 }));
 
 const AUDIT_COLUMNS: RuledTableColumn[] = [
-  { key: "time", header: "Time", width: "12.5%" },
-  { key: "actor", header: "Actor", width: "17.2%" },
-  { key: "action", header: "Action", width: "10.9%" },
-  { key: "record", header: "Record", width: "12.5%" },
-  { key: "version", header: "Version", width: "6.3%" },
+  { key: "time", header: "Time", width: "13.75%" },
+  { key: "actor", header: "Actor", width: "18.44%" },
+  { key: "action", header: "Action", width: "12.19%" },
+  { key: "record", header: "Record", width: "13.75%" },
+  { key: "version", header: "Version", width: "7.5%" },
   { key: "fingerprint", header: "Fingerprint" },
 ];
 
@@ -75,10 +75,10 @@ const auditRows: RuledTableRow[] = [
 }));
 
 const TENDER_COLUMNS: RuledTableColumn[] = [
-  { key: "title", header: "Tender title", width: "34.4%" },
-  { key: "entity", header: "Procuring entity", width: "21.9%" },
-  { key: "budget", header: "Budget ceiling", width: "14.1%" },
-  { key: "closes", header: "Closing date", width: "15.6%" },
+  { key: "title", header: "Tender title", width: "35.63%" },
+  { key: "entity", header: "Procuring entity", width: "23.13%" },
+  { key: "budget", header: "Budget ceiling", width: "15.31%" },
+  { key: "closes", header: "Closing date", width: "16.88%" },
   { key: "status", header: "Status" },
 ];
 

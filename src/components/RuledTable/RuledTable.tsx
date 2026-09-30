@@ -7,7 +7,10 @@ import styles from "./RuledTable.module.css";
 export type RuledTableColumn = {
   key: string;
   header: string;
-  /** Share of the table width as a percentage, for example "34%". Omit to share the rest. */
+  /**
+   * Share of the table width as a percentage. From a Figma frame, use the column's text
+   * width plus the 16px gap between cells, over the table width. Omit to share the rest.
+   */
   width?: string;
 };
 
