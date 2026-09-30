@@ -52,6 +52,13 @@
   color: var(--color-ink-70);
 }
 
+.inlineItems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-16);
+  grid-column: 1 / -1;
+}
+
 .banners {
   display: flex;
   flex-direction: column;
@@ -66,4 +73,14 @@
 .forceFocus :is(button, input, select, textarea) {
   outline: var(--focus-ring-width) solid var(--color-pen-blue);
   outline-offset: var(--focus-ring-offset);
+}
+
+/* Pins the chip's tooltip open for static review. */
+.forceTooltip [role="tooltip"] {
+  display: block;
+}
+
+.forceTooltip {
+  display: block;
+  padding-top: var(--space-40);
 }

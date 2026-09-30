@@ -12,23 +12,15 @@ import styles from "./page.module.css";
 
 export const metadata = { title: "Components" };
 
-const BUTTONS: { variant: ButtonVariant; label: string; name: string }[] = [
-  { variant: "primary", label: "Load latest version", name: "Primary" },
-  { variant: "secondary", label: "Copy my changes", name: "Secondary" },
-  { variant: "text", label: "Cancel", name: "Text" },
-  { variant: "destructive", label: "Cancel tender", name: "Destructive" },
+const BUTTONS: { variant: ButtonVariant; label: string; loadingLabel: string; name: string }[] = [
+  { variant: "primary", label: "Open all bids", loadingLabel: "Opening bids", name: "Primary" },
+  { variant: "secondary", label: "Copy my changes", loadingLabel: "Copying my changes", name: "Secondary" },
+  { variant: "text", label: "Load latest version", loadingLabel: "Loading latest version", name: "Text" },
+  { variant: "destructive", label: "Cancel tender", loadingLabel: "Cancelling tender", name: "Destructive" },
 ];
 
-const STATUSES: Status[] = [
-  "published",
-  "closed",
-  "awarded",
-  "cancelled",
-  "sealed",
-  "opened-matches",
-  "opened-does-not-match",
-  "withdrawn",
-];
+const TENDER_STATUSES: Status[] = ["draft", "published", "closed", "awarded", "cancelled"];
+const BID_STATUSES: Status[] = ["sealed", "opened", "opened-matches", "opened-does-not-match", "withdrawn"];
 
 const FINGERPRINTS = [
   "7be1c0a4f25d93e1b8a7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e90d",
@@ -63,9 +55,9 @@ export default function ComponentsPage() {
 
       <section className={styles.section}>
         <h2 className="text-section">Button</h2>
-        {BUTTONS.map(({ variant, label, name }) => (
+        {BUTTONS.map(({ variant, label, loadingLabel, name }) => (
           <Row key={variant} name={name}>
-            <Sample state="Default">
+            <Sample state="Default (point at it for hover)">
               <Button variant={variant}>{label}</Button>
             </Sample>
             <Sample state="Focus">
@@ -73,13 +65,13 @@ export default function ComponentsPage() {
                 <Button variant={variant}>{label}</Button>
               </span>
             </Sample>
-            <Sample state="Disabled (not designed)">
+            <Sample state="Disabled">
               <Button variant={variant} disabled>
                 {label}
               </Button>
             </Sample>
-            <Sample state="Loading (not designed)">
-              <Button variant={variant} loading>
+            <Sample state="Loading">
+              <Button variant={variant} loading loadingLabel={loadingLabel}>
                 {label}
               </Button>
             </Sample>
@@ -115,7 +107,7 @@ export default function ComponentsPage() {
           <Sample state="Disabled">
             <Field label="Procuring entity" defaultValue="Ministry of Works" disabled />
           </Sample>
-          <Sample state="Error (not designed)">
+          <Sample state="Error">
             <Field
               label="Email address"
               defaultValue="bidder@amanibuilders"
@@ -142,7 +134,7 @@ export default function ComponentsPage() {
               <option value="works">Works and infrastructure</option>
             </Field>
           </Sample>
-          <Sample state="Error (not designed)">
+          <Sample state="Error">
             <Field kind="select" label="Category" defaultValue="" error="Choose a category.">
               <option value="">Choose a category</option>
             </Field>
@@ -164,7 +156,7 @@ export default function ComponentsPage() {
           <Sample state="Disabled">
             <Field kind="textarea" label="Reason for cancellation" defaultValue="Budget withdrawn by the ministry." disabled />
           </Sample>
-          <Sample state="Error (not designed)">
+          <Sample state="Error">
             <Field kind="textarea" label="Reason for cancellation" error="Give a reason. It is shown on the public record." />
           </Sample>
         </Row>
@@ -172,10 +164,19 @@ export default function ComponentsPage() {
 
       <section className={styles.section}>
         <h2 className="text-section">Status label</h2>
-        <Row name="All statuses">
-          {STATUSES.map((status) => (
-            <StatusLabel key={status} status={status} />
-          ))}
+        <Row name="Tender">
+          <div className={styles.inlineItems}>
+            {TENDER_STATUSES.map((status) => (
+              <StatusLabel key={status} status={status} />
+            ))}
+          </div>
+        </Row>
+        <Row name="Bid">
+          <div className={styles.inlineItems}>
+            {BID_STATUSES.map((status) => (
+              <StatusLabel key={status} status={status} />
+            ))}
+          </div>
         </Row>
       </section>
 
@@ -183,13 +184,17 @@ export default function ComponentsPage() {
         <h2 className="text-section">Fingerprint chip</h2>
         <Row name="Default">
           {FINGERPRINTS.map((value) => (
-            <FingerprintChip key={value} value={value} />
+            <Sample key={value} state="Point for hover, click to copy">
+              <FingerprintChip value={value} />
+            </Sample>
           ))}
         </Row>
         <Row name="Focus">
-          <span className={styles.forceFocus}>
-            <FingerprintChip value={FINGERPRINTS[0]} />
-          </span>
+          <Sample state="Focus shows the full value">
+            <span className={`${styles.forceFocus} ${styles.forceTooltip}`}>
+              <FingerprintChip value={FINGERPRINTS[0]} />
+            </span>
+          </Sample>
         </Row>
       </section>
 
@@ -198,6 +203,7 @@ export default function ComponentsPage() {
         <Row name="Inline">
           <VerificationMark result="matches" />
           <VerificationMark result="does-not-match" />
+          <VerificationMark result="checking" />
         </Row>
         <div className={styles.banners}>
           <VerificationBanner
@@ -206,6 +212,7 @@ export default function ComponentsPage() {
           >
             All 14 records match. Checked 30 Sep 2026, 14:02.
           </VerificationBanner>
+          <VerificationBanner result="checking">Checking 14 records.</VerificationBanner>
           <VerificationBanner result="does-not-match">
             The stored copy of this document no longer matches its recorded fingerprint. The recorded version is
             unchanged.
