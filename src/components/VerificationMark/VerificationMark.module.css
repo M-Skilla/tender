@@ -1,0 +1,92 @@
+.inline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  white-space: nowrap;
+}
+
+.inline svg {
+  flex-shrink: 0;
+}
+
+.pine {
+  color: var(--color-pine);
+}
+
+.waxRed {
+  color: var(--color-wax-red);
+}
+
+/* Banner: inside-stroke, so padding is reduced by the border width. */
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  width: 100%;
+  padding: calc(var(--space-16) - var(--border-width)) calc(var(--space-24) - var(--border-width));
+  border: var(--border-width) solid currentColor;
+  border-radius: var(--radius-control);
+}
+
+.bannerPine {
+  background: var(--color-pine-tint);
+  color: var(--color-pine);
+}
+
+.bannerWaxRed {
+  background: var(--color-wax-red-tint);
+  color: var(--color-wax-red);
+}
+
+.bannerMessage {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* P2 uses a 12px gap after an 18px icon; A2 a 16px gap after a 24px icon. */
+.bannerPine .bannerMessage {
+  gap: var(--space-12);
+}
+
+.bannerWaxRed .bannerMessage {
+  gap: var(--space-16);
+}
+
+.bannerIcon {
+  flex-shrink: 0;
+}
+
+.bannerText {
+  font-family: var(--font-sans);
+  font-size: var(--size-body);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-normal);
+}
+
+/* A2's sentence wraps and sets a 22px line height. */
+.bannerWaxRed .bannerText {
+  line-height: var(--leading-relaxed);
+}
+
+.bannerAction {
+  flex-shrink: 0;
+  margin: 0;
+  padding: calc(var(--space-8) - var(--border-width)) calc(var(--space-16) - var(--border-width));
+  border: var(--border-width) solid var(--color-pine);
+  border-radius: var(--radius-control);
+  background: var(--color-sheet);
+  color: var(--color-pine);
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  white-space: nowrap;
+  cursor: pointer;
+}
