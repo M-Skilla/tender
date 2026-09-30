@@ -1,0 +1,77 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-8);
+  width: 100%;
+}
+
+.label {
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+}
+
+/* Figma strokes sit inside the box: 1px border plus (12px - 1px) padding keeps the
+   40px control height from H2. */
+.control {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: calc(var(--space-12) - var(--border-width));
+  border: var(--border-width) solid var(--color-rule);
+  border-radius: var(--radius-control);
+  background: var(--color-sheet);
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+}
+
+.control::placeholder {
+  color: var(--color-ink-70);
+  opacity: 1;
+}
+
+.control:disabled {
+  background: var(--color-field-disabled);
+  color: var(--color-ink-30);
+  cursor: default;
+}
+
+.textarea {
+  height: var(--textarea-height);
+  resize: vertical;
+}
+
+.selectWrap {
+  position: relative;
+  display: block;
+}
+
+.select {
+  appearance: none;
+  padding-right: calc(var(--space-12) + var(--icon-16) + var(--space-12));
+  cursor: pointer;
+}
+
+.chevron {
+  position: absolute;
+  top: 50%;
+  right: var(--space-12);
+  transform: translateY(-50%);
+  color: var(--color-ink-70);
+  pointer-events: none;
+}
+
+/* The design shows no error state. The message is shown in the body text style until
+   one is designed. */
+.error {
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+}
