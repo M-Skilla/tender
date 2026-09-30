@@ -61,6 +61,7 @@
   /* Type: sizes used in the frames */
   --size-title: 30px; /* page title, Source Serif 4 semibold (H3, B2) */
   --size-section: 22px; /* modal and section title, Source Serif 4 semibold (C3, H5) */
+  --size-record: 18px; /* record heading and spine event name, Source Serif 4 semibold (P2) */
   --size-brand: 18px; /* product name in the navigation bar, Source Serif 4 bold */
   --size-body: 15px; /* page subtitles, banner text, large buttons (H3) */
   --size-ui: 14px; /* field values and labels, buttons, table cells, nav links */
@@ -91,12 +92,14 @@
   --space-28: 28px;
   --space-32: 32px;
   --space-40: 40px;
+  --space-48: 48px;
   --space-80: 80px;
 
   /* Radius by role (CLAUDE.md, confirmed in frames) */
   --radius-record: 0; /* tables and record rows */
   --radius-control: 4px; /* inputs, buttons, labels, chips, banners */
   --radius-overlay: 8px; /* modals and drawers */
+  --radius-circle: 50%; /* stepper markers */
 
   /* Borders and focus */
   --border-width: 1px;
@@ -116,6 +119,23 @@
 
   /* Component dimensions found in the frames */
   --textarea-height: 100px; /* H2, H5 */
+  /* Spine (P2, A2): 32px marker slot, 2px Rule line, 4px edge on the selected record. */
+  --spine-marker: 32px;
+  --spine-line-width: 2px;
+  --selected-edge-width: 4px;
+
+  /* Stepper (B3): 24px step circle, 40px connector with a 1.5px stroke. */
+  --step-marker: 24px;
+  --step-connector-length: 40px;
+  --step-connector-width: 1.5px;
+
+  /* Diff line label column: 120px in C3's modal, 160px in A1's audit rows. */
+  --diff-label-width: 120px;
+  --diff-label-width-wide: 160px;
+
+  /* Minimum tap target on mobile (brief section 10). */
+  --tap-target: 44px;
+
   /* Fingerprint tooltip: wide enough for a 64-character SHA-256 on one line. */
   --tooltip-max-width: 560px;
 
@@ -138,6 +158,12 @@
 .text-section {
   font-family: var(--font-serif);
   font-size: var(--size-section);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-semibold);
+}
+.text-record {
+  font-family: var(--font-serif);
+  font-size: var(--size-record);
   line-height: var(--leading-normal);
   font-weight: var(--weight-semibold);
 }

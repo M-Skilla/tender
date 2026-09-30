@@ -171,3 +171,71 @@ export function IconCircleDashed18(props: IconProps) {
     </svg>
   );
 }
+
+/* Exported from Figma for task 2 (P2 sealed node, P3 stacked diff, A1 row chevron). */
+
+export function IconLockKeyhole16(props: IconProps) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <path d="M4.66667 6.66656V4.6664C4.66667 3.78227 5.01786 2.93436 5.64298 2.30919C6.2681 1.68402 7.11595 1.3328 8 1.3328C8.88406 1.3328 9.7319 1.68402 10.357 2.30919C10.9821 2.93436 11.3333 3.78227 11.3333 4.6664V6.66656M8.66667 10.6669C8.66667 11.0351 8.36819 11.3336 8 11.3336C7.63181 11.3336 7.33333 11.0351 7.33333 10.6669C7.33333 10.2987 7.63181 10.0002 8 10.0002C8.36819 10.0002 8.66667 10.2987 8.66667 10.6669ZM3.33333 6.66656H12.6667C13.403 6.66656 14 7.26356 14 8V13.3338C14 14.0702 13.403 14.6672 12.6667 14.6672H3.33333C2.59695 14.6672 2 14.0702 2 13.3338V8C2 7.26356 2.59695 6.66656 3.33333 6.66656Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconArrowRight12(props: IconProps) {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <path d="M2.4996 6H9.5004M6 9.5004L9.5004 6L6 2.4996" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconChevronDown14(props: IconProps) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <path d="M3.5 5.25L7 8.75L10.5 5.25" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/*
+ * Spine markers (P2, A2). Same geometry as the Figma frames: a 7px dot, an 11px ring with a
+ * 2px stroke, and a 5px hollow circle. Colour is currentColor, set by the parent.
+ */
+
+/** Filled dot: completed events. */
+export function SpineMarkerDot(props: IconProps) {
+  return (
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <circle cx="16" cy="16" r="7" fill="currentColor" />
+    </svg>
+  );
+}
+
+/** Dot with a ring: the current event, and mismatched events. */
+export function SpineMarkerRing(props: IconProps) {
+  return (
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <circle cx="16" cy="16" r="7" fill="currentColor" />
+      <circle cx="16" cy="16" r="11" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
+
+/** Hollow circle: upcoming events. Filled with the page colour so the spine stops at it. */
+export function SpineMarkerHollow(props: IconProps) {
+  return (
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <circle cx="16" cy="16" r="5" fill="var(--color-paper)" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
+
+/** A2 "Tampered" status label icon (exported from Figma). */
+export function IconAlertTriangle14(props: IconProps) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <path d="M6.99999 5.24958V7.58291M6.99999 9.91624H7.00582M12.6761 10.4997L8.0094 2.33304C7.90764 2.15349 7.76008 2.00415 7.58177 1.90025C7.40346 1.79634 7.20077 1.7416 6.9944 1.7416C6.78802 1.7416 6.58534 1.79634 6.40703 1.90025C6.22871 2.00415 6.08115 2.15349 5.9794 2.33304L1.31273 10.4997C1.20988 10.6778 1.15595 10.88 1.1564 11.0857C1.15686 11.2914 1.21168 11.4933 1.31532 11.6709C1.41896 11.8486 1.56773 11.9957 1.74655 12.0974C1.92537 12.199 2.12789 12.2516 2.33356 12.2497H11.6669C11.8716 12.2495 12.0726 12.1954 12.2498 12.093C12.427 11.9905 12.5741 11.8432 12.6764 11.6659C12.7786 11.4885 12.8324 11.2874 12.8324 11.0827C12.8323 10.878 12.7784 10.677 12.6761 10.4997Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
