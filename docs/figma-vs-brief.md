@@ -37,6 +37,17 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **Status word:** A2 adds a "Tampered" status label (Wax red, alert triangle), now in StatusLabel.
 - **Pagination:** P1 shows Previous, numbers, Next; A1 shows Previous and Next only, with a transparent Previous that reads as disabled.
 
+### Found in task 3 (P2 tender detail)
+
+- **"Bids received" version:** P2 shows `v6` on the grouped bids event. AmanaDB versions belong to single records, so the grouped event shows a group fingerprint (SHA-256 over the bids' fingerprints) and no version.
+- **Event actor:** P2 labels bids "System"; the brief's wireframe says "Bidders". The node shows the bidder count ("6 bidders").
+- **Detail text width:** P2's description wraps at a very narrow width (a min-content sizing error in the frame). It uses the detail column's width, capped at the 720px reading width.
+- **Opened and Awarded markers:** P2 puts the lock on Awarded. The page follows the brief: Opened is sealed (lock, "Sealed", closing date) until the closing time; later events are upcoming.
+- **Table row alignment:** P2 top-aligns row text; P1, H3 and A1 centre it. Rows are centred everywhere (text sits 3px lower than in P2).
+- **Brand gap:** the logo sits 4px from the name in P2, H3 and A1, 8px in P1 and the bidder frames. The navigation bar uses 4px.
+- **Serif optical size:** Figma renders Source Serif 4 with optical sizing; the font is loaded with its `opsz` axis so titles match.
+- **Month format:** ICU's en-GB data writes "Sept"; dates use fixed three-letter months to match the brief ("30 Sep 2026").
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).
@@ -80,3 +91,17 @@ Agreed after the task 1 review ("insert your own appropriate states"). Later tas
 | Table on mobile | Below 600px each row becomes a stacked record: field name (13px Ink 70 percent) beside the value. |
 | Pagination | P1's layout. Unavailable Previous or Next uses the shared disabled look. More than seven pages shows first, last and the current page's neighbours with an ellipsis. |
 | Inside strokes | Table rules, diff list borders and separators are inset outlines or shadows, so rows keep Figma's heights (48, 39, 40, 36px). |
+
+### Task 3 decisions
+
+| Question | Decision |
+|---|---|
+| Selecting a spine node | A link to `?event=<id>`; works without JavaScript and each view has its own address. Default: the current event (Bids received when bids exist), otherwise Published. |
+| "Check again" | A GET form that reloads the same view; the page is dynamic, so every load re-runs every check. |
+| Published record panel (not in the frames) | Title, one sentence, and the notice's fields as B3's ruled label/value list on a sheet, ending with the tender document and the record's fingerprint, each with a verification mark. |
+| Bids panel when a bid fails | Every row shows its mark; the failed row's chip turns wax red. No Highlighter row (the brief reserves Highlighter for version changes; A2 is to be settled in task 4). |
+| Banner wording when a record fails | "1 of 7 records does not match its recorded version. Checked …". A failed document uses A2's sentence. No "Check again" on a failed banner (as A2). |
+| Current event | The latest event that has happened gets the pen blue ring, unless it failed, in which case no earlier event is marked current. |
+| Loading | The neutral checking banner: "Checking the tender record." |
+| Not found | "Tender not found", one sentence, and "Go to tenders". |
+| Error (service down or not configured) | "The tender record could not be loaded", "The record service did not respond. Try again in a few minutes.", and "Try again". |
