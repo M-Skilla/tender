@@ -1,0 +1,52 @@
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-control);
+  font-family: var(--font-sans);
+  font-size: var(--size-tag);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  white-space: nowrap;
+}
+
+/* 14px slot; 12px icons sit centred inside it (P1). */
+.iconWrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--icon-14);
+  height: var(--icon-14);
+  flex-shrink: 0;
+}
+
+.pine {
+  background: var(--color-pine-tint);
+  color: var(--color-pine);
+}
+
+.waxRed {
+  background: var(--color-wax-red-tint);
+  color: var(--color-wax-red);
+}
+
+.amber {
+  background: var(--color-amber-tint);
+  color: var(--color-amber);
+}
+
+.penBlue {
+  background: var(--color-pen-blue-tint);
+  color: var(--color-pen-blue);
+}
+
+.closed {
+  background: var(--color-ink-40);
+  color: var(--color-ink);
+}
+
+.neutral {
+  background: var(--color-ink-6);
+  color: var(--color-ink-70);
+}
