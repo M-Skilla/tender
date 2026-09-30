@@ -29,3 +29,23 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - Banned or off-brief words: "Publish to Ledger", "Publish a new public procurement notice on the verified registry ledger.", "Notice will generate cryptographic hash upon block publication." (H2). Layer names elsewhere include "Matches Cryptographic Fingerprint", "Verify Transaction", "Integrity Verified" (to check when those screens are built).
 - Title case instead of sentence case: "Tender Title", "Reference Number (Auto)", "Procuring Entity", "Budget Ceiling (TZS)", "Closing Date & Time", "Brief Description", "Supporting Documents" (H2); "Tender Title", "Closing Date", "Category: All Procurement" (P1).
 - Status shown without an icon: Withdrawn label (B2).
+
+## Decisions for states the design does not show
+
+Agreed after the task 1 review ("insert your own appropriate states"). Later tasks follow these unless the Figma file adds its own.
+
+| Question | Decision |
+|---|---|
+| Button hover | Colour only, no lift or shadow. Primary and destructive darken 20 percent (`--color-pen-blue-hover`, `--color-wax-red-hover`); secondary fills Paper; text fills Ink 6 percent and turns Ink. |
+| Button disabled | One look for every variant: `--color-field-disabled` fill, Rule border, Ink 70 percent text (5.2:1), not-allowed cursor. |
+| Button loading | Keeps the variant colours and replaces the label with the present-tense verb (`loadingLabel`, for example "Opening bids"). No spinner: the brief allows motion only for bid opening and the conflict modal. Disabled underneath, so repeat submits are blocked without JavaScript. |
+| Field error | Wax red border plus a 13px message with the 16px warning icon, linked by `aria-describedby`. |
+| Fingerprint full value | Ink tooltip above the chip on hover and keyboard focus, in Source Code Pro, selectable, Escape dismisses it. No shadow (elevation is for overlays). |
+| Fingerprint copied | For 2 seconds the value becomes "Copied" with a Pine check-circle, or "Failed" with a Wax red warning; the chip keeps its width and a live region announces the result. |
+| Disabled field contrast | Text raised from Ink 30 percent (1.8:1) to Ink 70 percent (5.2:1). |
+| Control border contrast | Inputs, selects and textareas use `--color-control-border` (Ink 55 percent, 3.5:1 on Sheet) instead of Rule (1.6:1). Table rules, chips and secondary buttons keep Rule because their text identifies them. |
+| Copy icon contrast | Ink 40 percent (2.4:1) raised to Ink 70 percent (5.5:1). |
+| Draft and Opened labels | Draft: neutral (Ink 6 percent fill, Ink 70 percent text) with a dashed circle. Opened: Ink 6 percent fill, Ink text, open lock. Withdrawn gains a minus-circle icon. New icons follow the exported set's weights. |
+| Checking | Inline: Ink 70 percent, dashed 16px circle, "Checking". Banner: Ink 6 percent fill, Rule border, Ink text, dashed 18px circle, no action. Static, no animation. |
+| Fonts | Source Serif 4, Public Sans and Source Code Pro everywhere. The Inter in B1 and B2 is treated as a drawing error. |
+| Line heights | Interface text keeps the frames' "normal" line heights so components match Figma's sizes. Multi-line prose (descriptions, help text) uses the brief's 15/24 via `.text-prose`. |

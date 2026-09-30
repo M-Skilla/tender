@@ -25,7 +25,6 @@
   /* Colour: Ink at fixed opacities, as used in the frames */
   --color-ink-70: rgba(34, 40, 58, 0.7); /* secondary text, chevrons */
   --color-ink-40: rgba(34, 40, 58, 0.4); /* copy icon on fingerprint chip; Closed label fill */
-  --color-ink-30: rgba(34, 40, 58, 0.3); /* disabled field text (H2) */
   --color-ink-6: rgba(34, 40, 58, 0.06); /* Withdrawn label fill (B2) */
 
   /* Colour: 10 percent status tints for labels and banners */
@@ -38,6 +37,15 @@
   --color-field-disabled: #f0f1f4; /* read-only inputs in H2 */
   --color-scrim: rgba(34, 40, 58, 0.45); /* modal backdrop in C3 and H5 */
   --color-on-fill: #ffffff; /* text on pen blue and wax red buttons */
+
+  /* Colour: states the frames do not show (decided in task 1 review, see
+     docs/figma-vs-brief.md "Decisions"). Hover darkens a fill by 20 percent. */
+  --color-pen-blue-hover: #192e76;
+  --color-wax-red-hover: #932818;
+  /* Input, select and textarea borders. Rule is 1.6:1 on Sheet, below the 3:1 needed to
+     find a field's edge; Ink at 55 percent is 3.5:1 on Sheet and 3.3:1 on Paper. */
+  --color-control-border: #858993;
+  --color-tooltip: #22283a; /* Ink; white text on it is 14.7:1 */
 
   /* Type: families (next/font exposes the --font-* variables in the root layout) */
   --font-serif: var(--font-source-serif-4), Georgia, serif;
@@ -66,6 +74,8 @@
   /* Figma sets Source Code Pro 13 "normal" at 16px; browsers round it to 17px, which
      makes the fingerprint chip 25px tall instead of 24px. */
   --leading-mono: 16px;
+  /* Multi-line prose (descriptions, help text) uses the brief's body line height. */
+  --leading-prose: 24px;
 
   /* Spacing: every gap and padding value found in the frames */
   --space-2: 2px;
@@ -106,6 +116,8 @@
 
   /* Component dimensions found in the frames */
   --textarea-height: 100px; /* H2, H5 */
+  /* Fingerprint tooltip: wide enough for a 64-character SHA-256 on one line. */
+  --tooltip-max-width: 560px;
 
   /* Layout (desktop frames are 1440 wide with 80px margins) */
   --page-margin: 80px;
@@ -146,6 +158,12 @@
   font-size: var(--size-body);
   line-height: var(--leading-normal);
   font-weight: var(--weight-medium);
+}
+.text-prose {
+  font-family: var(--font-sans);
+  font-size: var(--size-body);
+  line-height: var(--leading-prose);
+  font-weight: var(--weight-regular);
 }
 .text-ui {
   font-family: var(--font-sans);
