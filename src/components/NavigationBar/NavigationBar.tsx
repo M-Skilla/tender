@@ -1,17 +1,25 @@
+import type { ReactNode } from "react";
 import { ButtonLink } from "../Button/Button";
 import { IconFileSearch20 } from "../icons";
 import styles from "./NavigationBar.module.css";
 
-export type NavSection = "tenders" | "awards" | "check";
+export type NavSection = "worklist" | "tenders" | "awards" | "check";
 
-const LINKS: { id: NavSection; label: string; href: string }[] = [
+const PUBLIC_LINKS: { id: NavSection; label: string; href: string }[] = [
   { id: "tenders", label: "Tenders", href: "/" },
   { id: "awards", label: "Awards", href: "/awards" },
   { id: "check", label: "Check a record", href: "/check" },
 ];
 
-/** Top bar on every desktop frame: brand, section links, sign in (P1, P2, H3, A1). */
-export function NavigationBar({ active }: { active?: NavSection }) {
+export type NavUser = { name: string; role: string };
+
+/**
+ * Top bar on every desktop frame: brand, section links, then "Sign in" (P1, P2, H3, A1) or the
+ * signed-in user (B2, H2). A procuring entity admin also gets "Worklist" first (H2).
+ * `signOut` is the sign-out control, passed in so this component stays server-agnostic.
+ */
+export function NavigationBar({ active, user, signOut }: { active?: NavSection; user?: NavUser; signOut?: ReactNode }) {
+  const links = user?.role === "pe_admin" ? [{ id: "worklist" as const, label: "Worklist", href: "/entity" }, ...PUBLIC_LINKS] : PUBLIC_LINKS;
   return (
     <header className={styles.bar}>
       <a href="/" className={styles.brand}>
@@ -20,7 +28,7 @@ export function NavigationBar({ active }: { active?: NavSection }) {
       </a>
       <nav aria-label="Main" className={styles.nav}>
         <ul className={styles.links}>
-          {LINKS.map((link) => (
+          {links.map((link) => (
             <li key={link.id}>
               <a
                 href={link.href}
@@ -33,9 +41,16 @@ export function NavigationBar({ active }: { active?: NavSection }) {
             </li>
           ))}
         </ul>
-        <ButtonLink href="/sign-in" variant="secondary" size="small">
-          Sign in
-        </ButtonLink>
+        {user ? (
+          <div className={styles.user}>
+            <span className={styles.userName}>{user.name}</span>
+            {signOut}
+          </div>
+        ) : (
+          <ButtonLink href="/sign-in" variant="secondary" size="small">
+            Sign in
+          </ButtonLink>
+        )}
       </nav>
     </header>
   );

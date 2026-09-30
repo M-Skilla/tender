@@ -71,3 +71,18 @@
 .link[data-active]::after {
   background: var(--color-pen-blue);
 }
+
+/* Signed-in user (B2): name in 13px semibold Ink, then the sign-out control. */
+.user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.userName {
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+}

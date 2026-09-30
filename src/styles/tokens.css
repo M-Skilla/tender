@@ -137,12 +137,19 @@
   /* Navigation bar (every desktop frame). */
   --nav-height: 64px;
 
+  /* Sign-in page (B1): 420px card, 120px below the navigation bar. */
+  --sign-in-width: 420px;
+  --sign-in-top: 120px;
+
   /* Record field list label column (B3 review list). */
   --record-label-width: 200px;
 
   /* Tender detail split (P2): 520px spine column with 24px inner right padding, 40px gap. */
   --spine-column-width: 520px;
   --detail-column-width: 680px;
+
+  /* Motion: the bid-opening reveal is the only transition on these screens (brief section 9). */
+  --motion-reveal: 240ms;
 
   /* Minimum tap target on mobile (brief section 10). */
   --tap-target: 44px;
