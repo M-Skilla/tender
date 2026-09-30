@@ -1,0 +1,19 @@
+/* Decided: an amber lock and the time left, the same pairing as the Sealed status label. */
+.countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  color: var(--color-amber);
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.countdown[data-closed] {
+  color: var(--color-ink-70);
+}

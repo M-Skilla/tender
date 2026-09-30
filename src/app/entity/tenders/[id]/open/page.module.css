@@ -1,0 +1,16 @@
+.form {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+/* Same look as a field error: wax red, warning icon, a sentence. */
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-6);
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  line-height: var(--leading-normal);
+  color: var(--color-wax-red);
+}
