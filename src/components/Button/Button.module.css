@@ -15,10 +15,6 @@
   cursor: pointer;
 }
 
-.button:disabled {
-  cursor: default;
-}
-
 /* Sizes */
 .default {
   font-size: var(--size-ui);
@@ -30,10 +26,13 @@
   padding: calc(var(--space-8) - var(--border-width)) calc(var(--space-14) - var(--border-width));
 }
 
-/* Variants */
+/* Variants: default and hover. Hover changes colour only, never position or shadow. */
 .primary {
   background: var(--color-pen-blue);
   color: var(--color-on-fill);
+}
+.primary:hover {
+  background: var(--color-pen-blue-hover);
 }
 
 .secondary {
@@ -41,13 +40,56 @@
   border-color: var(--color-rule);
   color: var(--color-ink);
 }
+.secondary:hover {
+  background: var(--color-paper);
+}
 
 .text {
   background: transparent;
   color: var(--color-ink-70);
 }
+.text:hover {
+  background: var(--color-ink-6);
+  color: var(--color-ink);
+}
 
 .destructive {
   background: var(--color-wax-red);
   color: var(--color-on-fill);
+}
+.destructive:hover {
+  background: var(--color-wax-red-hover);
+}
+
+/* Disabled: one look for every variant, matching the disabled field fill (H2). */
+.button:disabled {
+  background: var(--color-field-disabled);
+  border-color: var(--color-rule);
+  color: var(--color-ink-70);
+  cursor: not-allowed;
+}
+
+/* Loading is disabled underneath but keeps the variant's colours. */
+.primary[data-loading]:disabled {
+  background: var(--color-pen-blue);
+  border-color: transparent;
+  color: var(--color-on-fill);
+}
+.secondary[data-loading]:disabled {
+  background: var(--color-sheet);
+  border-color: var(--color-rule);
+  color: var(--color-ink);
+}
+.text[data-loading]:disabled {
+  background: transparent;
+  border-color: transparent;
+  color: var(--color-ink-70);
+}
+.destructive[data-loading]:disabled {
+  background: var(--color-wax-red);
+  border-color: transparent;
+  color: var(--color-on-fill);
+}
+.button[data-loading]:disabled {
+  cursor: progress;
 }
