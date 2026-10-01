@@ -38,6 +38,8 @@ export function NavigationBar({ active, user, signOut }: { active?: NavSection; 
         <IconFileSearch20 className={styles.brandIcon} />
         <span>Tender Tracker</span>
       </a>
+      {/* Desktop: links then the user, on one row. Mobile (p1-mobile): the user beside the
+          brand, the links below as a full-width tab bar. */}
       <nav aria-label="Main" className={styles.nav}>
         <ul className={styles.links}>
           {links.map((link) => (
@@ -53,17 +55,17 @@ export function NavigationBar({ active, user, signOut }: { active?: NavSection; 
             </li>
           ))}
         </ul>
-        {user ? (
-          <div className={styles.user}>
-            <span className={styles.userName}>{user.name}</span>
-            {signOut}
-          </div>
-        ) : (
-          <ButtonLink href="/sign-in" variant="secondary" size="small">
-            Sign in
-          </ButtonLink>
-        )}
       </nav>
+      {user ? (
+        <div className={styles.user}>
+          <span className={styles.userName}>{user.name}</span>
+          {signOut}
+        </div>
+      ) : (
+        <ButtonLink href="/sign-in" variant="secondary" size="small" className={styles.signIn}>
+          Sign in
+        </ButtonLink>
+      )}
     </header>
   );
 }

@@ -2,11 +2,12 @@ import type { ReactNode } from "react";
 import { STATUS_FILTERS, type TenderListFilters, type TenderListRow } from "@/lib/tender-list";
 import { Button, ButtonLink } from "../Button/Button";
 import { FilterSelect } from "../FilterSelect/FilterSelect";
-import { IconSearch16 } from "../icons";
+import { IconChevronRight12, IconSearch16 } from "../icons";
 import { Pagination } from "../Pagination/Pagination";
 import { RuledTable, type RuledTableColumn } from "../RuledTable/RuledTable";
 import { StatusLabel } from "../StatusLabel/StatusLabel";
 import { Switch } from "../Switch/Switch";
+import { FiltersToggle } from "./FiltersToggle";
 import styles from "./TenderListView.module.css";
 
 // P1 widths: 440, 280, 180 and 200px text columns plus Figma's 16px gaps, over 1280.
@@ -78,10 +79,14 @@ export function TenderListView({
             <Button type="submit" className={styles.searchButton}>
               Search
             </Button>
+            <FiltersToggle
+              targetId="tender-filters"
+              initiallyOpen={filters.status !== "all" || filters.category !== "all" || filters.entity !== "all"}
+            />
           </div>
           <hr className={styles.rule} />
           <div className={styles.filterRow}>
-            <div className={styles.filters}>
+            <div className={styles.filters} id="tender-filters">
               <FilterSelect name="status" label="Status" value={filters.status} options={STATUS_FILTERS} />
               <FilterSelect
                 name="category"
@@ -96,10 +101,51 @@ export function TenderListView({
                 options={[{ id: "all", label: "All" }, ...entities.map((e) => ({ id: e, label: e }))]}
               />
             </div>
+            <p className={styles.mobileCount}>
+              Showing {total.toLocaleString("en-US")} {total === 1 ? "tender" : "tenders"}
+            </p>
             <Switch name="soon" label="Closing soon" checked={filters.closingSoon} />
           </div>
         </form>
 
+        {/* p1-mobile: the same rows as cards (the table is hidden there when it has rows). */}
+        {!loading && rows.length > 0 ? (
+          <ul className={styles.cards} aria-label="Published tenders">
+            {rows.map((row) => (
+              <li key={row.key} className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <span className={styles.cardReference}>{row.reference}</span>
+                  <a href={`/tenders/${row.key}`} className={styles.cardTitle}>
+                    {row.title}
+                  </a>
+                </div>
+                <dl className={styles.cardDetails}>
+                  <div>
+                    <dt>Procuring entity</dt>
+                    <dd className={styles.cardEntity}>{row.entity}</dd>
+                  </div>
+                  <div>
+                    <dt>Budget ceiling</dt>
+                    <dd className={styles.cardBudget}>{row.budget}</dd>
+                  </div>
+                  <div>
+                    <dt>{row.status === "published" ? "Closes" : "Closed"}</dt>
+                    <dd>{row.closes}</dd>
+                  </div>
+                </dl>
+                <div className={styles.cardFooter}>
+                  <StatusLabel status={row.status} />
+                  <a href={`/tenders/${row.key}?event=published&history=1`} className={styles.cardLink}>
+                    View history
+                    <IconChevronRight12 />
+                  </a>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+
+        <div className={rows.length > 0 && !loading ? styles.tableWrap : undefined}>
         <RuledTable
           caption="Published tenders"
           columns={COLUMNS}
@@ -132,8 +178,10 @@ export function TenderListView({
               : { message: "No tenders have been published yet. Published tenders appear here." }
           }
         />
+        </div>
 
         {!loading && total > 0 ? (
+          <div className={pageCount === 1 ? styles.singlePage : undefined}>
           <Pagination
             summary={`Showing ${first}–${last} of ${total.toLocaleString("en-US")} ${total === 1 ? "tender" : "tenders"}${
               filtered ? ` (${published.toLocaleString("en-US")} published)` : ""
@@ -142,6 +190,7 @@ export function TenderListView({
             pageCount={pageCount}
             hrefForPage={(n) => listQuery(filters, n)}
           />
+          </div>
         ) : null}
       </main>
     </>

@@ -1,7 +1,7 @@
 .bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--space-32);
   height: var(--nav-height);
   padding: 0 var(--page-margin);
   background: var(--color-sheet);
@@ -10,6 +10,7 @@
 
 .brand {
   display: flex;
+  margin-right: auto;
   align-items: center;
   gap: var(--space-4);
   font-family: var(--font-serif);
@@ -85,4 +86,75 @@
   font-weight: var(--weight-semibold);
   line-height: var(--leading-normal);
   color: var(--color-ink);
+}
+
+/* Mobile (p1-mobile): a 16px-margin brand row with the user or "Sign in" on the right, then
+   the links as equal tabs, 48px tall, with a 3px by 40px bar under the active one.
+   Breakpoint matches the 390px mobile frames; media queries cannot read tokens. */
+@media (max-width: 599px) {
+  .bar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "brand user"
+      "tabs tabs";
+    gap: 0;
+    height: auto;
+    padding: 0;
+  }
+
+  .brand {
+    grid-area: brand;
+    gap: var(--space-8);
+    margin: 0;
+    padding: var(--space-12) var(--space-16);
+    font-size: var(--size-total);
+  }
+
+  .user,
+  .signIn {
+    grid-area: user;
+    margin-right: var(--space-16);
+  }
+
+  .userName {
+    max-width: var(--mobile-name-width);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .nav {
+    grid-area: tabs;
+    box-shadow: inset 0 var(--border-width) 0 var(--color-rule);
+  }
+
+  .links {
+    width: 100%;
+    gap: 0;
+  }
+
+  .link {
+    white-space: nowrap;
+  }
+
+  .links li {
+    flex: 1 1 0;
+  }
+
+  .link {
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-4);
+    width: 100%;
+    height: var(--tap-target-tab);
+    font-size: var(--size-small);
+    text-align: center;
+  }
+
+  .link::after {
+    width: var(--tab-indicator-width);
+    height: var(--tab-indicator-height);
+    border-radius: var(--tab-indicator-height) var(--tab-indicator-height) 0 0;
+  }
 }

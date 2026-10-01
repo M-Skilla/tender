@@ -330,3 +330,21 @@ export function IconXCircle14(props: IconProps) {
     </svg>
   );
 }
+
+/* Exported from Figma for the mobile frames (p1-mobile filter button and card link). */
+
+export function IconSlidersHorizontal16(props: IconProps) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <path d="M6.66667 3.33333H2M8 12.6667H2M9.33333 2V4.66667M10.6667 11.3333V14M14 8H8M14 12.6667H10.6667M14 3.33333H9.33333M5.33333 6.66667V9.33333M5.33333 8H2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconChevronRight12(props: IconProps) {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <path d="M4.5 9L7.5 6L4.5 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}

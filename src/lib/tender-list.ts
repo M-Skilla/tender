@@ -28,6 +28,7 @@ export type TenderListFilters = {
 
 export type TenderListRow = {
   key: string;
+  reference: string;
   title: string;
   entity: string;
   budget: string;
@@ -88,6 +89,7 @@ export async function tenderListPage(filters: TenderListFilters, page: number, n
   const current = Math.min(Math.max(1, page), pageCount);
   const rows: TenderListRow[] = matches.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE).map((t) => ({
     key: t.key,
+    reference: t.data.reference,
     title: t.data.title,
     entity: t.data.entity,
     budget: formatTzs(t.data.budgetCeiling),

@@ -72,6 +72,7 @@
   --size-ui: 14px; /* field values and labels, buttons, table cells, nav links */
   --size-small: 13px; /* table headers, verification marks, small buttons, fingerprints */
   --size-tag: 12px; /* status labels */
+  --size-caption: 11px; /* mobile card reference (p1-mobile) */
 
   /* Type: line heights. The frames use "normal" everywhere except multi-line banner and
      preview text, which is 22px. */
@@ -83,6 +84,8 @@
   --leading-mono: 16px;
   /* Multi-line prose (descriptions, help text) uses the brief's body line height. */
   --leading-prose: 24px;
+  /* Mobile card titles (p1-mobile): 14/20. */
+  --leading-card-title: 20px;
 
   /* Spacing: every gap and padding value found in the frames */
   --space-2: 2px;
@@ -106,6 +109,7 @@
   --radius-record: 0; /* tables and record rows */
   --radius-control: 4px; /* inputs, buttons, labels, chips, banners */
   --radius-overlay: 8px; /* modals and drawers */
+  --radius-card: 6px; /* mobile record cards (p1-mobile, b2-mobile) */
   --radius-circle: 50%; /* stepper markers */
 
   /* Borders and focus */
@@ -180,6 +184,12 @@
 
   /* Minimum tap target on mobile (brief section 10). */
   --tap-target: 44px;
+
+  /* Mobile tab bar (p1-mobile): 48px tabs, a 40 by 3px bar under the active one. */
+  --tap-target-tab: 48px;
+  --tab-indicator-width: 40px;
+  --tab-indicator-height: 3px;
+  --mobile-name-width: 160px;
 
   /* Fingerprint tooltip: wide enough for a 64-character SHA-256 on one line. */
   --tooltip-max-width: 560px;

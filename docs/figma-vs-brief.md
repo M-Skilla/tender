@@ -194,6 +194,16 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **Actors:** the frame's "System", "System Initiative" and "Ministry Admin" are not used; the actor is the person written in the record at that version, as in A1.
 - **Fingerprint:** each version's own dataHash from its audit entry.
 
+### Found in task 5 (mobile: navigation and p1-mobile)
+
+- **Breakpoint:** the mobile layouts apply below 600px, as the table and modals already did. The iOS status bar and home indicator in the frames are the device's, not the page's.
+- **Navigation:** p1-mobile's brand row plus the tab bar is used on every page below 600px, including the bidder frames that draw no tab bar, so every screen keeps its navigation. Role links ("My bids", "Worklist") join the tabs. The signed-in name (shortened if long) and "Sign out" take the place of "Sign in"; the frames' avatar circle is not used (no avatars on desktop either). The brand icon stays the desktop outline icon.
+- **Tab copy:** "Check Record" becomes "Check a record", as on desktop.
+- **Search:** the Search button is hidden; the keyboard's search key submits. The filter button (44px) shows the three selects above the count row; it starts open when a filter is applied.
+- **Count:** "Showing 8 tenders in Tanzania" becomes "Showing 6 tenders" (no country in the data). Pagination shows only when there is more than one page.
+- **Cards:** the frames' 6px radius is a new token. Every title is a pen blue link (the frame draws closed tenders' titles in Ink); the date row reads "Closes" or "Closed" and is shown on every card. "View history" opens P3.
+- **Labels:** title case ("Procuring Entity", "Budget Ceiling", "Closing Date") becomes sentence case.
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).
