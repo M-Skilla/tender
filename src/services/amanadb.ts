@@ -338,6 +338,16 @@ export async function insertBid(data: Bid): Promise<string> {
   return id;
 }
 
+/** One award per tender, under a fixed key: a second award shows as a new version, never a second record. */
+export function awardKey(tenderKey: string): string {
+  return `award-${tenderKey}`;
+}
+
+/** Writes a tender's award (spec section 4, step 6). The caller then marks the tender AWARDED. */
+export async function recordAward(data: Award): Promise<void> {
+  await db().collection<Award>(COLLECTIONS.awards).upsert(awardKey(data.tenderId), data);
+}
+
 /** One shared evaluation per bid, under a fixed key so every committee member edits the same record. */
 export function evaluationKey(bidKey: string): string {
   return `eval-${bidKey}`;

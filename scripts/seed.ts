@@ -7,23 +7,29 @@
 //   3. TND-2026-0142, open until 28 Oct 2026, with six sealed bids (P2).
 //   4. TND-2026-0138, closed on 29 Sep 2026, with six sealed bids that the bidders have
 //      revealed; Zuri Civil's reveal does not match its sealed bid (H3).
+//   5. TND-2026-0139, closed, three sealed bids not yet revealed; receipts in storage/receipts/ (B5).
+//   6. TND-2026-0127 and TND-2026-0121, closed, revealed, opened and fully scored by the
+//      committee: both ready to award (H1, H4). Awarding one through H4 gives P4 its record.
 //
 // Bid reveal data (amount, document hash, salt) is what a bidder keeps from their receipt. It
 // is written to storage/seed-receipts.json (git-ignored), never to AmanaDB before the reveal.
 import { createHash, randomBytes } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { submitReveal } from "@/lib/bid-opening";
+import { openBids, submitReveal } from "@/lib/bid-opening";
+import { CRITERIA, totals } from "@/lib/evaluation";
 import { bidCommitment } from "@/lib/commitment";
 import { hashPassword } from "@/lib/password";
 import type { Tender, UserRole } from "@/lib/types";
 import {
   defineIndexes,
+  ensureEvaluation,
   findTenderByReference,
   findUserByEmail,
   insertBid,
   insertTender,
   insertUser,
+  saveEvaluation,
 } from "@/services/amanadb";
 
 const PASSWORD = process.env.SEED_PASSWORD || "Tender-demo-2026";
@@ -108,13 +114,64 @@ async function sealBids(
   return receipts;
 }
 
+/**
+ * A closed tender whose bids were sealed, revealed (all matching), opened and scored by the
+ * committee: the state H4 starts from. Scores are one row per bid, in CRITERIA order.
+ */
+async function seedScoredTender(
+  tender: Omit<Tender, "docHash" | "docName" | "publishedBy" | "status">,
+  people: { peAdmin: string; evaluators: { userId: string; name: string }[]; bidderIds: Map<string, string> },
+  bids: { bidderName: string; amount: number; submittedAt: string; scores: number[] }[],
+): Promise<Receipt[]> {
+  const created = await seedTender({ ...tender, status: "PUBLISHED" }, people.peAdmin, [
+    `Tender notice ${tender.reference}`,
+    tender.entity,
+    tender.title,
+  ]);
+  if (!created.created) return [];
+  const receipts = await sealBids(
+    created.key,
+    tender.reference,
+    bids.map((b) => ({ bidderName: b.bidderName, bidderId: people.bidderIds.get(b.bidderName)!, amount: b.amount, submittedAt: b.submittedAt })),
+  );
+  for (const r of receipts) await submitReveal({ bidKey: r.bidKey, amount: r.amount, docHash: r.docHash, salt: r.salt });
+  await openBids(created.key, { userId: people.peAdmin, name: "Joseph Mwangi", email: "pe.admin@works.go.tz", role: "pe_admin" });
+  for (const [i, r] of receipts.entries()) {
+    const scores = bids[i]!.scores;
+    const evaluator = people.evaluators[i % people.evaluators.length]!;
+    const empty = await ensureEvaluation(r.bidKey, {
+      tenderId: created.key,
+      bidId: r.bidKey,
+      evaluatorId: "",
+      evaluatorName: "",
+      criteria: CRITERIA.map((c) => ({ name: c.name, weight: c.weight, score: null, comment: "" })),
+      comment: "",
+      total: 0,
+    });
+    await saveEvaluation(
+      empty.key,
+      {
+        ...empty.data,
+        evaluatorId: evaluator.userId,
+        evaluatorName: evaluator.name,
+        criteria: CRITERIA.map((c, k) => ({ name: c.name, weight: c.weight, score: scores[k] ?? null, comment: "" })),
+        comment: "Scored against the published criteria.",
+        total: Math.round(totals(scores).weightedTotal * 10) / 10,
+      },
+      empty.version,
+    );
+  }
+  console.log(`Opened and scored ${tender.reference} (${created.key})`);
+  return receipts;
+}
+
 async function main() {
   await defineIndexes();
   console.log("Lookup indexes are defined");
 
   const peAdmin = await ensureUser("pe.admin@works.go.tz", "Joseph Mwangi", "pe_admin");
-  await ensureUser("amina.mussa@works.go.tz", "Amina Mussa", "evaluator");
-  await ensureUser("baraka.said@works.go.tz", "Baraka Said", "evaluator");
+  const amina = await ensureUser("amina.mussa@works.go.tz", "Amina Mussa", "evaluator");
+  const baraka = await ensureUser("baraka.said@works.go.tz", "Baraka Said", "evaluator");
   await ensureUser("audit@nao.go.tz", "Neema Kato", "auditor");
   const bidderIds = new Map<string, string>();
   for (const [name, email] of BIDDERS) bidderIds.set(name, await ensureUser(email, name, "bidder"));
@@ -275,6 +332,54 @@ async function main() {
       console.log(`Sealed bid ${bidReference} from ${name} (receipt in storage/receipts/)`);
     }
   }
+
+  // TND-2026-0127 and TND-2026-0121: opened and fully scored, ready to award (H1, H4, P4).
+  const people = {
+    peAdmin,
+    evaluators: [
+      { userId: amina, name: "Amina Mussa" },
+      { userId: baraka, name: "Baraka Said" },
+    ],
+    bidderIds,
+  };
+  receipts.push(
+    ...(await seedScoredTender(
+      {
+        reference: "TND-2026-0127",
+        title: "Supply of school desks, Mwanza Region",
+        description: "Supply and delivery of 4,800 two-seater hardwood desks to 32 primary schools in Mwanza Region.",
+        entity: "Ministry of Works",
+        category: "Goods",
+        budgetCeiling: 520000000,
+        openDate: eat("2026-08-25T09:00:00"),
+        closeDate: eat("2026-09-22T10:00:00"),
+      },
+      people,
+      [
+        { bidderName: "Mtera Builders", amount: 468000000, submittedAt: eat("2026-09-15T09:30:00"), scores: [17, 16, 15, 14, 16] },
+        { bidderName: "Kilimo Works Ltd", amount: 455000000, submittedAt: eat("2026-09-18T14:10:00"), scores: [15, 15, 16, 17, 14] },
+        { bidderName: "Pemba Construction", amount: 497500000, submittedAt: eat("2026-09-21T16:45:00"), scores: [14, 13, 14, 12, 15] },
+      ],
+    )),
+    ...(await seedScoredTender(
+      {
+        reference: "TND-2026-0121",
+        title: "Bridge repair, Wami River crossing",
+        description: "Repair of the deck, bearings and approach slabs of the Wami River bridge on the Chalinze to Segera road.",
+        entity: "Ministry of Works",
+        category: "Works and infrastructure",
+        budgetCeiling: 1850000000,
+        openDate: eat("2026-08-10T09:00:00"),
+        closeDate: eat("2026-09-08T14:00:00"),
+      },
+      people,
+      [
+        { bidderName: "Dodoma Earthworks", amount: 1720000000, submittedAt: eat("2026-09-01T11:00:00"), scores: [16, 17, 16, 15, 17] },
+        { bidderName: "Tanga Roads Co", amount: 1645000000, submittedAt: eat("2026-09-04T10:20:00"), scores: [15, 16, 15, 17, 15] },
+        { bidderName: "Zuri Civil", amount: 1790000000, submittedAt: eat("2026-09-07T15:35:00"), scores: [13, 14, 15, 13, 14] },
+      ],
+    )),
+  );
 
   await mkdir(path.dirname(RECEIPTS), { recursive: true });
   await writeFile(RECEIPTS, JSON.stringify({ receipts }, null, 2));

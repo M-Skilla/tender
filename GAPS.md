@@ -51,6 +51,10 @@ Bidders submit their reveal data after the closing time (B5), and the procuring 
 
 `findBy` rejects a field that was never declared with `defineIndex`. Declaring is a write, so it runs from `pnpm setup` (and `pnpm seed`), not on page loads. A fresh project needs `pnpm setup` once before the app can list bids.
 
+### 7. No transaction across records
+
+Recording an award is two writes: the tender's status becomes AWARDED (at the version the page loaded, so a second admin or a cancellation cannot be overwritten), then the award record is written under the fixed key `award-<tender key>`. If the second write fails, the tender is AWARDED with no award; H4 then lets the admin record it again, completing the pair. Opening bids and withdrawing bids are single writes. A batch write in AmanaDB (several records in one Fabric transaction) would make the pair atomic.
+
 ## Fields added to the spec's record shapes
 
 Not AmanaDB gaps, but deviations from `docs/spec.md` section 3, recorded so they are not mistaken for accidents:

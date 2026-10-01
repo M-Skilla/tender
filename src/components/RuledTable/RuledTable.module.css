@@ -67,6 +67,11 @@
 }
 
 /* Highlighted row (A2, as drawn): Highlighter, kept on hover. */
+.row[data-recommended] > .cell,
+.row[data-recommended]:hover > .cell {
+  background: var(--color-pine-tint);
+}
+
 .row[data-highlight] > .cell,
 .row[data-highlight]:hover > .cell {
   background: var(--color-highlighter);

@@ -147,6 +147,16 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **Ready to award:** "All evaluations completed and validated" becomes "All N bids scored". Nothing in the data validates an evaluation beyond its scores.
 - **Empty sections (not drawn):** every section stays, with one Ink 70 line: "No closed tenders are waiting to be opened.", "No opened tenders are waiting for the committee.", "No tenders have all their bids scored yet.", "No tenders close in the next seven days."
 
+### Found in task 5 (H4)
+
+- **Title and navigation:** 32px bold and "Officer Portal", as in H1 and H2; same replacements.
+- **Copy:** "Evaluate and record final award for…" becomes "Record the award for…". "Select Winner" and "Justification for Selection" become "Winning bid" and "Justification". "Decisions must comply with public procurement guidelines and will be logged permanently." becomes "The award is recorded permanently and published with the tender."
+- **Scores:** C2 scores five criteria out of 20. H4's columns are points out of 100: price is "Price competitiveness" (15), technical is the other four (85), each a score times its weight over 20. Every value is a multiple of 0.25, so two decimals are shown and the columns add up exactly.
+- **Rank:** by total, a tie going to the lower price. Only bids whose reveal matches are ranked.
+- **Confirmation (brief, not drawn):** "Record this award?" with the winner, amount and its rank if not first; "The award and the tender's Awarded status are permanent. Every bidder and the public can see the award and its justification." Recording lands on P4 with "Award recorded".
+- **Validation:** "Give the reason for this award in at least 20 characters." A tender that changed since the page loaded is refused: "This tender changed since you opened the page. Reload it and check before you record the award."
+- **Not ready (not drawn):** a sheet in place of the form. "Bids are not opened yet", "Scoring is not finished" (with the count), "No bid can be awarded" or "This tender is cancelled", with "Back to worklist". An awarded tender goes to P4.
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).
