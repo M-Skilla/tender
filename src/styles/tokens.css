@@ -110,6 +110,7 @@
   --radius-control: 4px; /* inputs, buttons, labels, chips, banners */
   --radius-overlay: 8px; /* modals and drawers */
   --radius-card: 6px; /* mobile record cards (p1-mobile, b2-mobile) */
+  --radius-sheet: 12px; /* p2-mobile bottom sheet, top corners */
   --radius-circle: 50%; /* stepper markers */
 
   /* Borders and focus */
@@ -120,6 +121,7 @@
   /* Elevation: one shadow, modals, drawers and toasts only (C3, H5) */
   --shadow-overlay: 0 16px 16px rgba(34, 40, 58, 0.15);
   --shadow-drawer: -8px 0 12px rgba(34, 40, 58, 0.15); /* P3 record history drawer */
+  --shadow-sheet: 0 -4px 8px rgba(34, 40, 58, 0.15); /* p2-mobile bottom sheet */
 
   /* Icon sizes found in the frames */
   --icon-12: 12px;
@@ -162,6 +164,11 @@
 
   /* P3 record history drawer. */
   --drawer-width: 580px;
+
+  /* p2-mobile bottom sheet: 40 by 4px handle, at most 85 percent of the screen. */
+  --sheet-handle-width: 40px;
+  --sheet-handle-height: 4px;
+  --sheet-max-height: 85dvh;
 
   /* H2 notice preview column. */
   --preview-width: 580px;

@@ -348,3 +348,13 @@ export function IconChevronRight12(props: IconProps) {
     </svg>
   );
 }
+
+/* Exported from Figma for p2-mobile ("Back to tenders"). */
+
+export function IconArrowLeft16(props: IconProps) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <path d="M8 3.3328L3.3328 8L8 12.6672M3.3328 8H12.6672" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}

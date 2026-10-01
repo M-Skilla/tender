@@ -84,3 +84,34 @@
   align-items: center;
   gap: var(--space-16);
 }
+
+/* p2-mobile: the header is a white band (under "Back to tenders"): 18px title, the status and
+   any controls below it. */
+@media (max-width: 599px) {
+  .sheet {
+    width: auto;
+    margin: 0 calc(-1 * var(--page-margin));
+    padding: var(--space-12) var(--page-margin) var(--space-16);
+    outline: none;
+    box-shadow: inset 0 calc(-1 * var(--border-width)) 0 var(--color-rule);
+  }
+
+  .titleRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-12);
+  }
+
+  .title {
+    font-size: var(--size-record);
+    line-height: var(--leading-normal);
+  }
+
+  .reference {
+    font-size: var(--size-tag);
+  }
+
+  .fields {
+    gap: var(--space-12) var(--space-24);
+  }
+}

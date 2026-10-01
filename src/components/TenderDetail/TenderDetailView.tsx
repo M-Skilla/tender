@@ -8,6 +8,7 @@ import { Spine, SpineNode } from "../SpineNode/SpineNode";
 import { TenderHeader } from "../TenderHeader/TenderHeader";
 import { Toast } from "../Toast/Toast";
 import { VerificationBanner, VerificationBannerAction, VerificationMark } from "../VerificationMark/VerificationMark";
+import { IconArrowLeft16 } from "../icons";
 import styles from "./TenderDetailView.module.css";
 
 // P2 widths: 240px and 160px text columns plus the 16px gap Figma places between cells.
@@ -144,6 +145,7 @@ export function TenderDetailView({
   toast,
   headerActions,
   overlay,
+  sheetOpen = false,
 }: {
   tenderCase: TenderCase;
   selected: EventId;
@@ -155,12 +157,18 @@ export function TenderDetailView({
   headerActions?: ReactNode;
   /** P3's record history drawer, when open. */
   overlay?: ReactNode;
+  /** p2-mobile: an event was chosen, so its record opens as a bottom sheet (desktop ignores it). */
+  sheetOpen?: boolean;
 }) {
   const failed = tenderCase.check.mismatched > 0;
   return (
     <>
       {header}
       <main className={styles.page}>
+        <a href="/" className={styles.back}>
+          <IconArrowLeft16 />
+          Back to tenders
+        </a>
         <TenderHeader
           title={tenderCase.title}
           reference={tenderCase.reference}
@@ -218,8 +226,13 @@ export function TenderDetailView({
               ))}
             </Spine>
           </div>
-          <section className={styles.detail} aria-live="polite">
+          {sheetOpen ? <a href="?" className={styles.scrim} aria-hidden="true" tabIndex={-1} /> : null}
+          <section className={styles.detail} aria-live="polite" data-sheet-open={sheetOpen || undefined}>
+            <span className={styles.handle} aria-hidden="true" />
             {selected === "published" ? <PublishedDetail tenderCase={tenderCase} /> : <BidsDetail tenderCase={tenderCase} />}
+            <a href="?" className={styles.closeSheet}>
+              Close details
+            </a>
           </section>
         </div>
       </main>

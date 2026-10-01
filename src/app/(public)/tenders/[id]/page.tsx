@@ -59,6 +59,7 @@ export default async function TenderPage(props: PageProps<"/tenders/[id]">) {
       toast={toast}
       headerActions={cancel}
       overlay={overlay}
+      sheetOpen={requested !== null && history !== "1"}
     />
   );
 }

@@ -134,3 +134,103 @@
   font-weight: var(--weight-semibold);
   color: var(--color-pen-blue);
 }
+
+/* Desktop: the mobile back link, sheet handle, close link and scrim are not shown. */
+.back,
+.handle,
+.closeSheet,
+.scrim {
+  display: none;
+}
+
+/* p2-mobile: one column. "Back to tenders" and the header form a white band; the spine
+   follows; a chosen event's record opens as a bottom sheet over a scrim. */
+@media (max-width: 599px) {
+  .page {
+    gap: var(--space-16);
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    min-height: var(--tap-target);
+    margin: calc(-1 * var(--page-top)) calc(-1 * var(--page-margin)) calc(-1 * var(--space-16));
+    padding: var(--space-4) var(--page-margin) 0;
+    background: var(--color-sheet);
+    font-family: var(--font-sans);
+    font-size: var(--size-ui);
+    font-weight: var(--weight-semibold);
+    color: var(--color-pen-blue);
+    text-decoration: none;
+  }
+
+  .split {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .spineColumn {
+    flex: 1 1 auto;
+    width: 100%;
+    padding-right: 0;
+  }
+
+  .detail {
+    display: none;
+  }
+
+  .detail[data-sheet-open] {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    gap: var(--space-16);
+    max-height: var(--sheet-max-height);
+    padding: var(--space-12) var(--space-20) var(--space-20);
+    overflow-y: auto;
+    border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+    background: var(--color-sheet);
+    box-shadow: inset 0 var(--border-width) 0 var(--color-rule), var(--shadow-sheet);
+  }
+
+  .scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    background: var(--color-scrim-light);
+  }
+
+  .handle {
+    display: block;
+    flex-shrink: 0;
+    align-self: center;
+    width: var(--sheet-handle-width);
+    height: var(--sheet-handle-height);
+    border-radius: var(--sheet-handle-height);
+    background: var(--color-rule);
+  }
+
+  .closeSheet {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--tap-target);
+    border-radius: var(--radius-control);
+    outline: var(--border-width) solid var(--color-control-border);
+    outline-offset: calc(-1 * var(--border-width));
+    font-family: var(--font-sans);
+    font-size: var(--size-ui);
+    font-weight: var(--weight-semibold);
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .recordSheet {
+    padding: var(--space-12);
+  }
+}

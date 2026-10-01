@@ -213,6 +213,13 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **b4:** "Official proof of cryptographic submission" stays "Your sealed bid has been recorded."; the fingerprint is the shared chip, not the frame's full value with "Copied". A dev preview (`/dev/screens/b4`) shows the receipt without sealing a real bid.
 - **b5:** "Decryption Verification" stays "Verification result" (as desktop B5). The stepper's "Load receipt" is "Receipt" on mobile.
 
+### Found in task 5 (p2-mobile)
+
+- **Header:** "Back to tenders" (the frame's "Back to Tenders") and the tender header form one white band. The title is 18px; the reference stays below it in mono as on desktop (the frame puts it above in pen blue). The status label and the entity, budget and closing fields stay (the frame omits them).
+- **Spine:** single column with the desktop spine nodes, titles and fingerprint chips. The frame's "TENDER AUDIT TRAIL" heading in capitals, "SHA256:" prefix and event names such as "Bid Sealed & Submitted" are not used; the events are the case file's own (Published, Bids received, Opened, Scored, Awarded).
+- **Bottom sheet:** choosing an event opens its record (the desktop detail panel) as a bottom sheet with a handle, 12px top corners and a 25 percent scrim, at most 85 percent of the screen and scrolling inside. "Close details" (the frame's "Close Details") or a tap on the scrim closes it. The URL keeps the event (`?event=bids`), so the sheet survives a reload and Back closes it. The sheet is a page section, not a modal dialog, so Escape does not close it.
+- **Sheet content:** the frame's "Verification Details" with "Integrity Verified" and a single bidder's amount is not a record the case file has; the sheet shows the chosen event's record as on desktop (Published fields, or the bids table stacked as records).
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).
