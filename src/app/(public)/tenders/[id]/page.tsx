@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ButtonLink } from "@/components/Button/Button";
 import { CancelTender } from "@/components/CancelTender/CancelTender";
 import { SiteHeader } from "@/components/NavigationBar/SiteHeader";
 import { RecordHistoryDrawer } from "@/components/RecordHistory/RecordHistoryDrawer";
@@ -8,7 +9,7 @@ import { currentUser } from "@/lib/auth";
 import { loadCase } from "@/lib/load-case";
 import { tenderHistory } from "@/lib/record-history";
 import type { EventId } from "@/lib/tender-case";
-import { getTender, getUser } from "@/services/amanadb";
+import { getTender, getUser, listBidsForBidder } from "@/services/amanadb";
 
 // Shows verification and bid state, so it is never cached (CLAUDE.md, spec section 6).
 export const dynamic = "force-dynamic";
@@ -42,6 +43,31 @@ export default async function TenderPage(props: PageProps<"/tenders/[id]">) {
       cancel = <CancelTender tenderKey={tender.key} version={tender.version} reference={tender.data.reference} title={tender.data.title} />;
     }
   }
+  // B3 entry: while the tender is open, bidders get "Submit a bid" (or "View my bid" once they
+  // have sealed one) and signed-out visitors get "Sign in to bid".
+  let bid = null;
+  const bidPath = `/bidder/tenders/${id}/bid`;
+  if (tenderCase.status === "published" && !tenderCase.closed) {
+    if (!user) {
+      bid = (
+        <ButtonLink href={`/sign-in?next=${encodeURIComponent(bidPath)}`} size="small">
+          Sign in to bid
+        </ButtonLink>
+      );
+    } else if (user.role === "bidder") {
+      const mine = (await listBidsForBidder(user.userId)).some((b) => b.data.tenderId === id);
+      bid = mine ? (
+        <ButtonLink href="/bidder/bids" variant="secondary" size="small">
+          View my bid
+        </ButtonLink>
+      ) : (
+        <ButtonLink href={bidPath} size="small">
+          Submit a bid
+        </ButtonLink>
+      );
+    }
+  }
+
   const toast = published === "1" ? "Tender published" : cancelled === "1" ? "Tender cancelled" : undefined;
 
   // P3: ?history=1 opens the tender record's history over the case file.
@@ -57,7 +83,7 @@ export default async function TenderPage(props: PageProps<"/tenders/[id]">) {
       selected={selectedEvent}
       header={<SiteHeader active="tenders" />}
       toast={toast}
-      headerActions={cancel}
+      headerActions={cancel ?? bid}
       overlay={overlay}
       sheetOpen={requested !== null && history !== "1"}
     />

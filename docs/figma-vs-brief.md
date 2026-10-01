@@ -220,6 +220,11 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **Bottom sheet:** choosing an event opens its record (the desktop detail panel) as a bottom sheet with a handle, 12px top corners and a 25 percent scrim, at most 85 percent of the screen and scrolling inside. "Close details" (the frame's "Close Details") or a tap on the scrim closes it. The URL keeps the event (`?event=bids`), so the sheet survives a reload and Back closes it. The sheet is a page section, not a modal dialog, so Escape does not close it.
 - **Sheet content:** the frame's "Verification Details" with "Integrity Verified" and a single bidder's amount is not a record the case file has; the sheet shows the chosen event's record as on desktop (Published fields, or the bids table stacked as records).
 
+### Found after task 5 (way into B3)
+
+- **Submit a bid (not drawn):** no frame shows how a bidder reaches B3. While a tender is open, its case file shows "Submit a bid" beside the status for bidders, "View my bid" once they have sealed one, and "Sign in to bid" when signed out (it returns to B3 after sign-in). Staff see nothing there, except the admin's "Cancel tender".
+- **Already bid:** opening B3 for a tender the bidder has already bid on shows "You have already bid on this tender" with "Go to my bids", instead of the form.
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).

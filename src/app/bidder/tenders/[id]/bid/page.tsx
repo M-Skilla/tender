@@ -6,7 +6,8 @@ import { SubmitBidFlow } from "@/components/SubmitBid/SubmitBidFlow";
 import pageStyles from "@/components/CreateTender/CreateTenderPage.module.css";
 import { requirePageUser } from "@/lib/auth";
 import { formatDateTime } from "@/lib/format";
-import { getTender } from "@/services/amanadb";
+import { ButtonLink } from "@/components/Button/Button";
+import { getTender, listBidsForBidder } from "@/services/amanadb";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Submit bid" };
@@ -26,6 +27,27 @@ export default async function SubmitBidPage(props: PageProps<"/bidder/tenders/[i
   const tender = await getTender(id);
   if (!tender) notFound();
   const open = tender.data.status === "PUBLISHED" && Date.now() < new Date(tender.data.closeDate).getTime();
+  // One sealed bid per bidder per tender: say so before the form, not after sealing.
+  const already = open && (await listBidsForBidder(user.userId)).some((b) => b.data.tenderId === tender.key);
+  if (already) {
+    return (
+      <>
+        <SiteHeader active="tenders" />
+        <main className={pageStyles.page}>
+          <div className={states.sheet}>
+            <h1 className="text-section">You have already bid on this tender</h1>
+            <p className={states.text}>
+              Your sealed bid for {tender.data.reference} is recorded. A sealed bid cannot be replaced; you can withdraw it from My
+              bids before {formatDateTime(tender.data.closeDate)} and seal a new one.
+            </p>
+            <ButtonLink href="/bidder/bids" variant="secondary">
+              Go to my bids
+            </ButtonLink>
+          </div>
+        </main>
+      </>
+    );
+  }
   return (
     <>
       <SiteHeader active="tenders" />
