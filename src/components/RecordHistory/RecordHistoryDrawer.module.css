@@ -1,0 +1,180 @@
+/* P3: a 580px panel on the right below the navigation bar, with a light scrim over the case
+   file; the navigation bar stays undimmed, as drawn. */
+.drawer {
+  position: fixed;
+  inset: var(--nav-height) 0 0 auto;
+  width: var(--drawer-width);
+  max-width: 100vw;
+  height: calc(100dvh - var(--nav-height));
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.drawer::backdrop {
+  inset: var(--nav-height) 0 0 0;
+  background: var(--color-scrim-light);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  height: 100%;
+  padding: var(--space-32);
+  overflow-y: auto;
+  background: var(--color-sheet);
+  box-shadow: inset var(--border-width) 0 0 var(--color-rule), var(--shadow-drawer);
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: var(--size-preview-title);
+  font-weight: var(--weight-semibold);
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--icon-24);
+  height: var(--icon-24);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--color-ink-70);
+  cursor: pointer;
+}
+
+.close:hover {
+  color: var(--color-ink);
+}
+
+.subtitle {
+  margin-top: calc(-1 * var(--space-16));
+  font-size: var(--size-small);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink-70);
+}
+
+.rule {
+  width: 100%;
+  height: var(--border-width);
+  margin: 0;
+  border: 0;
+  background: var(--color-rule);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Each version: a ruled box, 16px padding, 8px between lines. */
+.version {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-8);
+  padding: var(--space-16);
+  border-radius: var(--radius-control);
+  outline: var(--border-width) solid var(--color-rule);
+  outline-offset: calc(-1 * var(--border-width));
+}
+
+.titleRow {
+  display: flex;
+  align-self: stretch;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-16);
+}
+
+.versionTitle,
+.latest {
+  font-size: var(--size-body);
+  font-weight: var(--weight-semibold);
+}
+
+.latest {
+  color: var(--color-pen-blue);
+}
+
+.time {
+  font-size: var(--size-tag);
+  color: var(--color-ink-70);
+}
+
+.actor {
+  font-size: var(--size-small);
+  color: var(--color-ink-70);
+}
+
+.actor strong {
+  font-weight: var(--weight-semibold);
+}
+
+/* The action on Paper; changed fields on Highlighter, old value struck through. */
+.action {
+  align-self: stretch;
+  padding: var(--space-8);
+  background: var(--color-paper);
+  font-size: var(--size-small);
+}
+
+.changed {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  gap: var(--space-12);
+  padding: var(--space-12);
+  background: var(--color-highlighter);
+}
+
+.change {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.changeLabel {
+  font-size: var(--size-tag);
+  font-weight: var(--weight-semibold);
+}
+
+.values {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+  font-size: var(--size-small);
+}
+
+.old {
+  color: var(--color-ink-70);
+}
+
+.arrow {
+  flex-shrink: 0;
+}
+
+.new {
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+}

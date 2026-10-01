@@ -124,6 +124,9 @@ function PublishedDetail({ tenderCase }: { tenderCase: TenderCase }) {
                 <span className={styles.proof}>
                   <FingerprintChip value={tenderCase.tenderFingerprint} />
                   <VerificationMark result={tenderCase.tenderRecordResult} />
+                  <a href="?event=published&history=1" className={styles.historyLink}>
+                    Record history
+                  </a>
                 </span>
               ),
             },
@@ -140,6 +143,7 @@ export function TenderDetailView({
   header,
   toast,
   headerActions,
+  overlay,
 }: {
   tenderCase: TenderCase;
   selected: EventId;
@@ -149,6 +153,8 @@ export function TenderDetailView({
   toast?: string;
   /** The procuring entity's controls on its own tender (H5 "Cancel tender"). */
   headerActions?: ReactNode;
+  /** P3's record history drawer, when open. */
+  overlay?: ReactNode;
 }) {
   const failed = tenderCase.check.mismatched > 0;
   return (
@@ -207,6 +213,7 @@ export function TenderDetailView({
                   pendingLabel={event.pendingLabel}
                   selected={event.id === selected}
                   href={event.selectable ? `?event=${event.id}` : undefined}
+                  versionHref={event.id === "published" ? `?event=${selected}&history=1` : undefined}
                 />
               ))}
             </Spine>
@@ -217,6 +224,7 @@ export function TenderDetailView({
         </div>
       </main>
       {toast ? <Toast>{toast}</Toast> : null}
+      {overlay}
     </>
   );
 }

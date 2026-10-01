@@ -40,6 +40,8 @@ export type SpineNodeProps = {
   selected?: boolean;
   /** Link that selects this node's record. Omit for events with nothing to show yet. */
   href?: string;
+  /** Link on the version mark to the record's history (P3). */
+  versionHref?: string;
 };
 
 function Marker({ state }: { state: SpineNodeState }) {
@@ -70,6 +72,7 @@ export function SpineNode({
   pendingLabel,
   selected = false,
   href,
+  versionHref,
 }: SpineNodeProps) {
   const pending = state === "upcoming" || state === "sealed";
   const mismatch = state === "mismatch";
@@ -103,7 +106,13 @@ export function SpineNode({
             <h3 className={styles.title}>{heading}</h3>
             {version !== undefined ? (
               <span className={styles.version}>
-                <VersionMark version={version} latest={latest} />
+                {versionHref ? (
+                  <a href={versionHref} className={styles.versionLink} aria-label={`Record history, version ${version}`}>
+                    <VersionMark version={version} latest={latest} />
+                  </a>
+                ) : (
+                  <VersionMark version={version} latest={latest} />
+                )}
               </span>
             ) : null}
           </div>

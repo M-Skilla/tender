@@ -36,6 +36,7 @@
   /* Colour: not in the brief's palette, found in frames */
   --color-field-disabled: #f0f1f4; /* read-only inputs in H2 */
   --color-scrim: rgba(34, 40, 58, 0.45); /* modal backdrop in C3 and H5 */
+  --color-scrim-light: rgba(34, 40, 58, 0.25); /* drawer backdrop in P3 */
   --color-on-fill: #ffffff; /* text on pen blue and wax red buttons */
 
   /* Colour: states the frames do not show (decided in task 1 review, see
@@ -114,6 +115,7 @@
 
   /* Elevation: one shadow, modals, drawers and toasts only (C3, H5) */
   --shadow-overlay: 0 16px 16px rgba(34, 40, 58, 0.15);
+  --shadow-drawer: -8px 0 12px rgba(34, 40, 58, 0.15); /* P3 record history drawer */
 
   /* Icon sizes found in the frames */
   --icon-12: 12px;
@@ -153,6 +155,9 @@
   /* Tender detail split (P2): 520px spine column with 24px inner right padding, 40px gap. */
   --spine-column-width: 520px;
   --detail-column-width: 680px;
+
+  /* P3 record history drawer. */
+  --drawer-width: 580px;
 
   /* H2 notice preview column. */
   --preview-width: 580px;

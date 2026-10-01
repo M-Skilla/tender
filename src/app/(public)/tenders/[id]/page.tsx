@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CancelTender } from "@/components/CancelTender/CancelTender";
 import { SiteHeader } from "@/components/NavigationBar/SiteHeader";
+import { RecordHistoryDrawer } from "@/components/RecordHistory/RecordHistoryDrawer";
 import { TenderDetailView } from "@/components/TenderDetail/TenderDetailView";
 import { currentUser } from "@/lib/auth";
 import { loadCase } from "@/lib/load-case";
+import { tenderHistory } from "@/lib/record-history";
 import type { EventId } from "@/lib/tender-case";
 import { getTender, getUser } from "@/services/amanadb";
 
@@ -21,7 +23,7 @@ export async function generateMetadata(props: PageProps<"/tenders/[id]">): Promi
 
 export default async function TenderPage(props: PageProps<"/tenders/[id]">) {
   const { id } = await props.params;
-  const { event, published, cancelled } = await props.searchParams;
+  const { event, published, cancelled, history } = await props.searchParams;
 
   const tenderCase = await loadCase(id);
   if (!tenderCase) notFound();
@@ -42,13 +44,21 @@ export default async function TenderPage(props: PageProps<"/tenders/[id]">) {
   }
   const toast = published === "1" ? "Tender published" : cancelled === "1" ? "Tender cancelled" : undefined;
 
+  // P3: ?history=1 opens the tender record's history over the case file.
+  const selectedEvent = requested ?? fallback;
+  const overlay =
+    history === "1" ? (
+      <RecordHistoryDrawer reference={tenderCase.reference} versions={await tenderHistory(id)} closeHref={`/tenders/${id}?event=${selectedEvent}`} />
+    ) : undefined;
+
   return (
     <TenderDetailView
       tenderCase={tenderCase}
-      selected={requested ?? fallback}
+      selected={selectedEvent}
       header={<SiteHeader active="tenders" />}
       toast={toast}
       headerActions={cancel}
+      overlay={overlay}
     />
   );
 }

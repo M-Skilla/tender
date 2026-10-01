@@ -185,6 +185,15 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **Validation:** "Give the reason for cancelling in at least 20 characters." A tender changed since loading is refused, as in H4.
 - **After (not drawn):** P2 shows "Tender cancelled" and a wax red note under the header, "Cancelled on <time>" and the reason. Spine events that will not happen read "Not reached". Cancelled tenders cannot be revealed, opened, bid on or awarded, and bidders cannot withdraw from them.
 
+### Found in task 5 (P3)
+
+- **Opening it (not drawn):** the version mark on the Published node ("v3") and a "Record history" link beside the record fingerprint in the Published panel open P3 (`?history=1`). Closing (the close button, Escape or a click on the scrim) returns to the case file. It is a native modal dialog, so focus stays inside.
+- **Behind the drawer:** the frame dims a stub of the header; the real case file is shown under a 25 percent Ink scrim. The drawer and scrim start below the navigation bar, which stays undimmed, as drawn.
+- **Copy:** "Record History" and "Version 6 (Latest)" in title case become "Record history" and "Version 3 (latest)". Field labels are A1's ("Status", "Bids opened"). A subtitle is added: "Every version of <reference>, newest first. Earlier versions stay in AmanaDB's history; none can be erased."
+- **Version box:** every version has "Actor:" and "Action:" on Paper (A1's plain verbs, such as Published, Opened bids, Awarded tender, Cancelled tender). Changed fields follow on Highlighter, old value struck through, an arrow, then the new value. The frame's free-text lines ("Tender clarification notes appended.") have no source in the data; a first version shows only its action.
+- **Actors:** the frame's "System", "System Initiative" and "Ministry Admin" are not used; the actor is the person written in the record at that version, as in A1.
+- **Fingerprint:** each version's own dataHash from its audit entry.
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).

@@ -320,3 +320,13 @@ export function IconCheckCircle24(props: IconProps) {
     </svg>
   );
 }
+
+/* Exported from Figma for P3 (drawer close). */
+
+export function IconXCircle14(props: IconProps) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <path d="M8.75014 5.24986L5.24986 8.75014M5.24986 5.24986L8.75014 8.75014M12.8338 7C12.8338 10.2219 10.2219 12.8338 7 12.8338C3.77808 12.8338 1.1662 10.2219 1.1662 7C1.1662 3.77808 3.77808 1.1662 7 1.1662C10.2219 1.1662 12.8338 3.77808 12.8338 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}

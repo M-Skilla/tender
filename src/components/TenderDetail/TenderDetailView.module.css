@@ -127,3 +127,10 @@
   font-weight: var(--weight-semibold);
   color: var(--color-wax-red);
 }
+
+.historyLink {
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  font-weight: var(--weight-semibold);
+  color: var(--color-pen-blue);
+}

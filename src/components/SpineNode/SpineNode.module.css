@@ -185,3 +185,15 @@
 .node[data-selected] .pendingBody .title {
   color: var(--color-pen-blue);
 }
+
+/* Sits above the title link's stretched hit area so it can be clicked on its own. */
+.versionLink {
+  position: relative;
+  z-index: 1;
+  border-radius: var(--radius-control);
+  text-decoration: none;
+}
+
+.versionLink:hover {
+  text-decoration: underline;
+}

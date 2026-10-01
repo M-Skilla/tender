@@ -199,11 +199,13 @@ export async function describeAuditRows(rows: AuditRow[]): Promise<AuditLogRow[]
             ? "Published"
             : opened
               ? "Opened bids"
-              : t.status === "CANCELLED"
+              : cancelled
                 ? "Cancelled tender"
-                : row.action === "DELETE"
-                  ? "Deleted tender"
-                  : "Amended tender";
+                : t.status === "AWARDED" && (previous?.data as unknown as Tender | undefined)?.status !== "AWARDED"
+                  ? "Awarded tender"
+                  : row.action === "DELETE"
+                    ? "Deleted tender"
+                    : "Amended tender";
         record = { label: t.reference, href: `/tenders/${row.key}` };
       } else if (row.collection === COLLECTIONS.bids && data) {
         const b = data as unknown as Bid;

@@ -426,6 +426,21 @@ export async function collectionAudit(collection: string): Promise<AuditRow[]> {
   return out;
 }
 
+/** One record's audit entries, oldest first (its per-record trail). Never for `users`. */
+export async function recordAuditRows(collection: string, key: string): Promise<AuditRow[]> {
+  if (collection === COLLECTIONS.users) throw new Error("The users collection is never read for audit views.");
+  const out: AuditRow[] = [];
+  let bookmark = "";
+  do {
+    const page = await db().collection(collection).recordAudit(key, { pageSize: PAGE_SIZE, bookmark });
+    for (const e of page.entries) {
+      out.push({ collection, key: e.key, action: e.action, version: e.resultingVersion, timestamp: e.timestamp, txId: e.txId, dataHash: e.dataHash ?? "" });
+    }
+    bookmark = page.fetchedRecordsCount > 0 ? page.bookmark : "";
+  } while (bookmark);
+  return out;
+}
+
 /** Every stored version of one record, by version number (AmanaDB history). Never for `users`. */
 export async function recordVersions<T>(collection: string, key: string): Promise<Map<number, StoredRecord<T>>> {
   if (collection === COLLECTIONS.users) throw new Error("The users collection is never read for audit views.");
