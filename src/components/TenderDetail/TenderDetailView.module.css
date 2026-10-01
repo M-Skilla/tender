@@ -106,3 +106,24 @@
   font-size: var(--size-ui);
   line-height: var(--leading-relaxed);
 }
+
+/* H5: a cancelled tender keeps its case file, with the reason under the header. */
+.cancelled {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-16) var(--space-20);
+  border-radius: var(--radius-control);
+  outline: var(--border-width) solid var(--color-wax-red);
+  outline-offset: calc(-1 * var(--border-width));
+  background: var(--color-wax-red-tint);
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink);
+}
+
+.cancelledTitle {
+  font-weight: var(--weight-semibold);
+  color: var(--color-wax-red);
+}

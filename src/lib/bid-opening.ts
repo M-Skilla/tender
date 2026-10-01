@@ -28,6 +28,7 @@ export async function submitReveal(
   if (!bid) throw new OpeningError("No sealed bid has this reference. Check the receipt.");
   const tender = await getTender(bid.data.tenderId);
   if (!tender) throw new OpeningError("The tender for this bid no longer exists.");
+  if (tender.data.status === "CANCELLED") throw new OpeningError("This tender was cancelled, so its bids are not opened.");
   if (!isClosed(tender.data.closeDate, now)) {
     throw new OpeningError("Bids can be revealed only after the closing time. Try again after the tender closes.");
   }
@@ -55,6 +56,7 @@ export async function openBids(tenderKey: string, user: SessionUser, now = new D
   const tender = await getTender(tenderKey);
   if (!tender) throw new OpeningError("This tender no longer exists.");
   if (tender.data.openedAt) throw new OpeningError("These bids were already opened.");
+  if (tender.data.status === "CANCELLED") throw new OpeningError("This tender was cancelled, so its bids are not opened.");
   if (!isClosed(tender.data.closeDate, now)) {
     throw new OpeningError("Bids cannot be opened before the closing time.");
   }

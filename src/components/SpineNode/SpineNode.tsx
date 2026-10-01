@@ -34,6 +34,8 @@ export type SpineNodeProps = {
   result?: VerificationResult;
   /** Short line for upcoming and sealed events, for example "28 Oct 2026". */
   note?: string;
+  /** Replaces "Upcoming" or "Sealed", for example "Not reached" on a cancelled tender. */
+  pendingLabel?: string;
   /** Shows the record box. Only one node on a spine is selected. */
   selected?: boolean;
   /** Link that selects this node's record. Omit for events with nothing to show yet. */
@@ -65,6 +67,7 @@ export function SpineNode({
   fingerprint,
   result,
   note,
+  pendingLabel,
   selected = false,
   href,
 }: SpineNodeProps) {
@@ -90,7 +93,7 @@ export function SpineNode({
         <div className={styles.pendingBody}>
           <h3 className={styles.title}>{heading}</h3>
           <p className={styles.meta}>
-            <span>{state === "sealed" ? "Sealed" : "Upcoming"}</span>
+            <span>{pendingLabel ?? (state === "sealed" ? "Sealed" : "Upcoming")}</span>
             {note ? <span>{note}</span> : null}
           </p>
         </div>

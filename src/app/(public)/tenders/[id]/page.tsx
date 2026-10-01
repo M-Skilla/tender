@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { CancelTender } from "@/components/CancelTender/CancelTender";
 import { SiteHeader } from "@/components/NavigationBar/SiteHeader";
 import { TenderDetailView } from "@/components/TenderDetail/TenderDetailView";
+import { currentUser } from "@/lib/auth";
 import { loadCase } from "@/lib/load-case";
 import type { EventId } from "@/lib/tender-case";
-import { getTender } from "@/services/amanadb";
+import { getTender, getUser } from "@/services/amanadb";
 
 // Shows verification and bid state, so it is never cached (CLAUDE.md, spec section 6).
 export const dynamic = "force-dynamic";
@@ -19,7 +21,7 @@ export async function generateMetadata(props: PageProps<"/tenders/[id]">): Promi
 
 export default async function TenderPage(props: PageProps<"/tenders/[id]">) {
   const { id } = await props.params;
-  const { event, published } = await props.searchParams;
+  const { event, published, cancelled } = await props.searchParams;
 
   const tenderCase = await loadCase(id);
   if (!tenderCase) notFound();
@@ -29,5 +31,24 @@ export default async function TenderPage(props: PageProps<"/tenders/[id]">) {
   const current = tenderCase.events.find((e) => e.state === "current" || e.state === "mismatch");
   const fallback: EventId = current && EVENTS.includes(current.id) ? current.id : "published";
 
-  return <TenderDetailView tenderCase={tenderCase} selected={requested ?? fallback} header={<SiteHeader active="tenders" />} toast={published === "1" ? "Tender published" : undefined} />;
+  // H5: the publishing entity's admins may cancel the tender until it is awarded.
+  let cancel = null;
+  const user = await currentUser();
+  if (user?.role === "pe_admin" && tenderCase.status !== "awarded" && tenderCase.status !== "cancelled") {
+    const [tender, account] = await Promise.all([getTender(id), getUser(user.userId)]);
+    if (tender && (tender.data.publishedBy === user.userId || tender.data.entity === account?.data.entity)) {
+      cancel = <CancelTender tenderKey={tender.key} version={tender.version} reference={tender.data.reference} title={tender.data.title} />;
+    }
+  }
+  const toast = published === "1" ? "Tender published" : cancelled === "1" ? "Tender cancelled" : undefined;
+
+  return (
+    <TenderDetailView
+      tenderCase={tenderCase}
+      selected={requested ?? fallback}
+      header={<SiteHeader active="tenders" />}
+      toast={toast}
+      headerActions={cancel}
+    />
+  );
 }

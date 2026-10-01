@@ -77,3 +77,10 @@
   line-height: var(--leading-normal);
   color: var(--color-ink);
 }
+
+.statusBlock {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--space-16);
+}

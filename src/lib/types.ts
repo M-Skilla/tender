@@ -38,6 +38,10 @@ export type Tender = {
   openedAt?: string;
   /** Added: app user id of the admin who opened the bids. */
   openedBy?: string;
+  /** Added (H5): when, by whom and why the tender was cancelled. */
+  cancelledAt?: string;
+  cancelledBy?: string;
+  cancellationReason?: string;
 };
 
 export type Bid = {

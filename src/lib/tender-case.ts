@@ -25,6 +25,8 @@ export type CaseEvent = {
   fingerprint?: string;
   result?: VerificationResult;
   note?: string;
+  /** Replaces "Upcoming" or "Sealed" for an event that will not happen (a cancelled tender). */
+  pendingLabel?: string;
   /** Has a record to show in the detail panel. */
   selectable: boolean;
 };
@@ -72,6 +74,8 @@ export type TenderCase = {
   check: { total: number; mismatched: number; documentMismatch: boolean; checkedAt: string };
   /** A2: the first bid whose stored document no longer matches, if any. */
   tamperedBid?: { bidderName: string; received: string };
+  /** H5: set when the tender was cancelled. */
+  cancellation?: { at: string; reason: string };
 };
 
 export type TenderCaseInput = {
@@ -274,6 +278,13 @@ export async function buildTenderCase(input: TenderCaseInput): Promise<TenderCas
       : { id: "awarded", title: "Awarded", state: "upcoming", selectable: false },
   );
 
+  // A cancelled tender's remaining events will not happen: no lock, no dates.
+  if (t.status === "CANCELLED") {
+    for (const e of events) {
+      if (e.state === "upcoming" || e.state === "sealed") Object.assign(e, { state: "upcoming", pendingLabel: "Not reached", note: undefined });
+    }
+  }
+
   // The latest event that has happened is the current one (pen blue ring), unless it failed
   // its check, in which case it keeps the mismatch marker and no earlier event is marked.
   const lastHappened = [...events].reverse().find((e) => e.state === "completed" || e.state === "mismatch");
@@ -307,6 +318,8 @@ export async function buildTenderCase(input: TenderCaseInput): Promise<TenderCas
     opened: Boolean(openedAt),
     openedAt: openedAt ? formatDateTime(openedAt) : undefined,
     tamperedBid: tamperedBid ? { bidderName: tamperedBid.bidderName, received: tamperedBid.received } : undefined,
+    cancellation:
+      t.status === "CANCELLED" ? { at: t.cancelledAt ? formatDateTime(t.cancelledAt) : "", reason: t.cancellationReason ?? "" } : undefined,
     check: {
       total: allResults.length,
       mismatched,

@@ -177,6 +177,14 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **Invalid (not drawn):** "Enter a fingerprint of 64 characters, 0 to 9 and a to f." under the field.
 - **Button:** "Verify Fingerprint" becomes "Check fingerprint".
 
+### Found in task 5 (H5)
+
+- **Where it opens (not drawn):** "Cancel tender" (secondary, small) beside the status on the case file (P2), for admins of the procuring entity that published it, until the tender is awarded.
+- **Copy:** "will remain visible on the public tracker… This action cannot be undone." becomes "stay on the public tracker with status Cancelled. This cannot be undone." The placeholder "Type the official justification for cancelling this procurement process..." becomes "The reason, as it will appear on the public record".
+- **What it writes:** the tender at the version the page loaded, with status CANCELLED, `cancelledAt`, `cancelledBy` and the reason. Not a delete, so the tender and its history stay readable.
+- **Validation:** "Give the reason for cancelling in at least 20 characters." A tender changed since loading is refused, as in H4.
+- **After (not drawn):** P2 shows "Tender cancelled" and a wax red note under the header, "Cancelled on <time>" and the reason. Spine events that will not happen read "Not reached". Cancelled tenders cannot be revealed, opened, bid on or awarded, and bidders cannot withdraw from them.
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).

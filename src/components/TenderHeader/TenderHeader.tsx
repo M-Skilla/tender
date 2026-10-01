@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { StatusLabel, type Status } from "../StatusLabel/StatusLabel";
 import styles from "./TenderHeader.module.css";
 
@@ -7,10 +8,12 @@ export type TenderHeaderProps = {
   status: Status;
   /** Labelled fields under the rule, in order (P2: procuring entity, budget ceiling, closes). */
   fields: { label: string; value: string }[];
+  /** Controls beside the status for the signed-in procuring entity (H5 "Cancel tender"). */
+  actions?: ReactNode;
 };
 
 /** The tender's header sheet (P2, A2): title, reference, status and key fields. */
-export function TenderHeader({ title, reference, status, fields }: TenderHeaderProps) {
+export function TenderHeader({ title, reference, status, fields, actions }: TenderHeaderProps) {
   return (
     <section className={styles.sheet} aria-labelledby="tender-title">
       <div className={styles.titleRow}>
@@ -20,7 +23,10 @@ export function TenderHeader({ title, reference, status, fields }: TenderHeaderP
           </h1>
           <p className={styles.reference}>Reference: {reference}</p>
         </div>
-        <StatusLabel status={status} />
+        <div className={styles.statusBlock}>
+          {actions}
+          <StatusLabel status={status} />
+        </div>
       </div>
       <hr className={styles.rule} />
       <dl className={styles.fields}>

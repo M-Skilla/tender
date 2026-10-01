@@ -37,7 +37,7 @@ Withdrawing a bid is a soft delete, so B2 (my bids) cannot find a bidder's withd
 
 ### 3. One project credential, so no per-user identity in the ledger
 
-Every write is made with the app's one project credential, so every audit entry has the same actor. Per-user attribution is written into record data instead (`publishedBy`, `openedBy`, `bidderName`, `evaluatorName`, `decidedBy`), and A1 reads the person from the record's data at each version (through `history`). This must be stated in the README.
+Every write is made with the app's one project credential, so every audit entry has the same actor. Per-user attribution is written into record data instead (`publishedBy`, `openedBy`, `cancelledBy`, `bidderName`, `evaluatorName`, `decidedBy`), and A1 reads the person from the record's data at each version (through `history`). This must be stated in the README.
 
 ### 4. No read restriction per collection
 
@@ -69,3 +69,4 @@ Not AmanaDB gaps, but deviations from `docs/spec.md` section 3, recorded so they
 | bids | `reference` | Readable bid reference on the receipt (B4). |
 | users | `entity` | The procuring entity a pe_admin publishes for (H2). |
 | tenders | `openedAt`, `openedBy` | When the bids were opened (H3) and by whom; amounts are shown only after `openedAt`. |
+| tenders | `cancelledAt`, `cancelledBy`, `cancellationReason` | H5: cancelling is an update to `status: CANCELLED` (the tender stays public), so when, by whom and why are kept on the record. |

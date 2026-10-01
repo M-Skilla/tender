@@ -191,7 +191,9 @@ export async function describeAuditRows(rows: AuditRow[]): Promise<AuditLogRow[]
       if (row.collection === COLLECTIONS.tenders && data) {
         const t = data as unknown as Tender;
         const opened = Boolean(t.openedAt) && !(previous?.data as unknown as Tender | undefined)?.openedAt;
-        actor = `${await userName(opened ? (t.openedBy ?? "") : t.publishedBy)} (Procuring entity)`;
+        const cancelled = t.status === "CANCELLED" && (previous?.data as unknown as Tender | undefined)?.status !== "CANCELLED";
+        const by = opened ? (t.openedBy ?? "") : cancelled ? (t.cancelledBy ?? "") : t.publishedBy;
+        actor = `${await userName(by)} (Procuring entity)`;
         action =
           row.action === "CREATE"
             ? "Published"

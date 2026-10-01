@@ -139,6 +139,7 @@ export function TenderDetailView({
   selected,
   header,
   toast,
+  headerActions,
 }: {
   tenderCase: TenderCase;
   selected: EventId;
@@ -146,6 +147,8 @@ export function TenderDetailView({
   header: ReactNode;
   /** Confirmation after an action that lands here, such as "Tender published". */
   toast?: string;
+  /** The procuring entity's controls on its own tender (H5 "Cancel tender"). */
+  headerActions?: ReactNode;
 }) {
   const failed = tenderCase.check.mismatched > 0;
   return (
@@ -161,7 +164,15 @@ export function TenderDetailView({
             { label: "Budget ceiling", value: formatTzs(tenderCase.budgetCeiling) },
             { label: "Closes", value: tenderCase.closes },
           ]}
+          actions={headerActions}
         />
+
+        {tenderCase.cancellation ? (
+          <section className={styles.cancelled} aria-label="Cancellation">
+            <p className={styles.cancelledTitle}>Cancelled{tenderCase.cancellation.at ? ` on ${tenderCase.cancellation.at}` : ""}</p>
+            <p>{tenderCase.cancellation.reason}</p>
+          </section>
+        ) : null}
 
         <VerificationBanner
           result={failed ? "does-not-match" : "matches"}
@@ -193,6 +204,7 @@ export function TenderDetailView({
                   fingerprint={event.fingerprint}
                   result={event.result}
                   note={event.note}
+                  pendingLabel={event.pendingLabel}
                   selected={event.id === selected}
                   href={event.selectable ? `?event=${event.id}` : undefined}
                 />
