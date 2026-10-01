@@ -157,6 +157,15 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **Validation:** "Give the reason for this award in at least 20 characters." A tender that changed since the page loaded is refused: "This tender changed since you opened the page. Reload it and check before you record the award."
 - **Not ready (not drawn):** a sheet in place of the form. "Bids are not opened yet", "Scoring is not finished" (with the count), "No bid can be awarded" or "This tender is cancelled", with "Back to worklist". An awarded tender goes to P4.
 
+### Found in task 5 (P4)
+
+- **Copy:** "Award Record", "Procurement transaction documentation for public auditability.", "Tender Award Details — Road Rehabilitation", title-case labels, "Matches Cryptographic Fingerprint", "Print Document" and "Verify Transaction" become "Award record", "The procuring entity's award decision, as recorded.", the tender's title, sentence-case labels, the shared "Matches" mark, "Print" and "Check this fingerprint" (P5 with the award's fingerprint).
+- **Decision body:** "Evaluation Committee, Ministry of Works". The award is written by the procuring entity admin (spec), so it reads "Procuring entity, Ministry of Works".
+- **Decision time:** drawn with "EAT"; every other time in the app is shown without a zone suffix and in East Africa Time.
+- **Fingerprint:** drawn as 48 characters; the shared chip (first 4 and last 3, full value in the tooltip). It turns wax red when the record does not match.
+- **Added (not drawn):** "View case file" (text button) back to P2; "Award recorded" toast after H4. Printing hides the buttons.
+- **Route and Awards link:** P4 is `/tenders/<key>/award`; a tender without an award is not found. No frame draws an awards list, so "Awards" in the navigation opens P1 filtered to Awarded.
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).

@@ -36,3 +36,20 @@
   line-height: var(--leading-normal);
   color: var(--color-ink);
 }
+
+.list[data-variant="document"] {
+  gap: 0;
+}
+
+.list[data-variant="document"] .row {
+  padding: var(--space-16) 0;
+}
+
+.list[data-variant="document"] .label {
+  flex-basis: var(--record-label-width-wide);
+}
+
+.list[data-variant="document"] .value {
+  font-size: var(--size-body);
+  line-height: var(--leading-relaxed);
+}

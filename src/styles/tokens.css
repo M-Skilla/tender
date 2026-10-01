@@ -148,6 +148,7 @@
 
   /* Record field list label column (B3 review list). */
   --record-label-width: 200px;
+  --record-label-width-wide: 280px; /* P4 award document */
 
   /* Tender detail split (P2): 520px spine column with 24px inner right padding, 40px gap. */
   --spine-column-width: 520px;

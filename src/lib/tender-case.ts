@@ -88,7 +88,11 @@ export type TenderCaseInput = {
   now: Date;
 };
 
-function auditResult(record: StoredRecord<unknown>, audited: Map<string, AuditedVersion>): VerificationResult {
+/**
+ * A record matches when the SDK re-hashed its data to the dataHash AmanaDB stored with it, and
+ * its latest audited write has the same version and dataHash.
+ */
+export function auditResult(record: StoredRecord<unknown>, audited: Map<string, AuditedVersion>): VerificationResult {
   const entry = audited.get(`${record.collection}/${record.key}`);
   const ok =
     record.integrity === "verified" &&
