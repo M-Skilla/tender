@@ -33,6 +33,8 @@ A record matches when all of these hold:
 
 `get`, `list` and `findBy` hide soft-deleted records. Their audit trail (`recordAudit`) and their versions (`history`) remain readable, so "remains visible in audit history" holds. Cancelling a tender is still an update to `status: CANCELLED`, so the tender stays readable.
 
+Withdrawing a bid is a soft delete, so B2 (my bids) cannot find a bidder's withdrawn bids through the `bidderId` index. It reads the bids audit log for DELETE entries and then each deleted bid's history to see whose it was. That is a scan of the whole collection's log on every B2 load. An index option that keeps deleted records, or `findBy(..., { includeDeleted: true })`, would remove the scan.
+
 ### 3. One project credential, so no per-user identity in the ledger
 
 Every write is made with the app's one project credential, so every audit entry has the same actor. Per-user attribution is written into record data instead (`publishedBy`, `openedBy`, `bidderName`, `evaluatorName`, `decidedBy`), and A1 reads the person from the record's data at each version (through `history`). This must be stated in the README.

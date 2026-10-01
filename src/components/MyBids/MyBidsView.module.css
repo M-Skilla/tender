@@ -1,0 +1,61 @@
+/* B2: 30px title row; the table follows 24px below (page gap). */
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-weight: var(--weight-semibold);
+  color: var(--color-pen-blue);
+  text-decoration: none;
+}
+
+.title:hover {
+  text-decoration: underline;
+}
+
+/* B2 row 4: a withdrawn bid's tender is Ink 70, not a link. */
+.withdrawnTitle {
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-70);
+}
+
+.muted {
+  color: var(--color-ink-70);
+}
+
+.state {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.error {
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-control);
+  outline: var(--border-width) solid var(--color-wax-red);
+  outline-offset: calc(-1 * var(--border-width));
+  background: var(--color-wax-red-tint);
+  color: var(--color-wax-red);
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+}
+
+/* Row actions are inline text, so a row keeps B2's 56px height. */
+.rowAction {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  font-weight: var(--weight-semibold);
+  color: var(--color-pen-blue);
+  text-decoration: underline;
+  text-underline-offset: var(--space-2);
+  cursor: pointer;
+}
+
+.rowAction:hover {
+  color: var(--color-pen-blue-hover);
+}

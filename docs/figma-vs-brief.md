@@ -117,6 +117,15 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **Who may open:** only the signed-in bidder who sealed the bid, only after closing, once per bid. Each refusal is a wax red banner in step 2: "This receipt belongs to another bidder's bid…", "Bids can be revealed only after the closing time…", "This bid has already been revealed. A reveal cannot be replaced."
 - **Mismatch:** "Your bid does not match. The amount, document or code you revealed does not recompute to the fingerprint sealed at submission. Contact the procuring entity." The reveal is still recorded, so H3 shows the bid as failing.
 
+### Found in task 5 (B2)
+
+- **Navigation:** B2 draws only the public links with Tenders active. Bidders get "My bids" as their first link (like Worklist, Evaluation queue and Audit log for staff), active on B2; nothing else in the app leads to B2.
+- **Withdrawn label:** drawn without an icon; it keeps its icon so the state is never shown by colour alone.
+- **Row actions (not drawn):** a sealed bid on an open tender has "Withdraw" next to its label; a sealed bid on a closed tender has "Open your bid" (B5). Both are inline text links, so rows keep their 56px height.
+- **Withdraw confirmation (not drawn):** the destructive modal (as H5): "Withdraw this bid?", the tender, "The bid leaves the tender and will not be opened. Its record and fingerprint stay in the audit history. You can seal a new bid before the closing time.", "Keep bid" and "Withdraw bid". Done shows "Bid withdrawn"; refusals (closed, not yours, changed) show a wax red line above the table.
+- **Opened states:** "Opened, matches" and "Opened, does not match" follow the bidder's own reveal (B5), whether or not the procuring entity has opened the tender yet.
+- **Empty:** "You have not submitted any bids. Bids you seal appear here with their fingerprint." with "Browse tenders".
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).

@@ -3,7 +3,7 @@ import { ButtonLink } from "../Button/Button";
 import { IconFileSearch20 } from "../icons";
 import styles from "./NavigationBar.module.css";
 
-export type NavSection = "worklist" | "queue" | "audit" | "tenders" | "awards" | "check";
+export type NavSection = "worklist" | "queue" | "audit" | "bids" | "tenders" | "awards" | "check";
 
 const PUBLIC_LINKS: { id: NavSection; label: string; href: string }[] = [
   { id: "tenders", label: "Tenders", href: "/" },
@@ -19,7 +19,8 @@ export type NavUser = { name: string; role: string };
  * `signOut` is the sign-out control, passed in so this component stays server-agnostic.
  */
 export function NavigationBar({ active, user, signOut }: { active?: NavSection; user?: NavUser; signOut?: ReactNode }) {
-  // Staff get their own first link: the worklist (H2), the evaluation queue (C2) or the audit log (A1).
+  // Each role gets its own first link: the worklist (H2), the evaluation queue (C2), the audit
+  // log (A1) or a bidder's bids (B2).
   const first =
     user?.role === "pe_admin"
       ? [{ id: "worklist" as const, label: "Worklist", href: "/entity" }]
@@ -27,7 +28,9 @@ export function NavigationBar({ active, user, signOut }: { active?: NavSection; 
         ? [{ id: "queue" as const, label: "Evaluation queue", href: "/committee" }]
         : user?.role === "auditor"
           ? [{ id: "audit" as const, label: "Audit log", href: "/audit" }]
-          : [];
+          : user?.role === "bidder"
+            ? [{ id: "bids" as const, label: "My bids", href: "/bidder/bids" }]
+            : [];
   const links = [...first, ...PUBLIC_LINKS];
   return (
     <header className={styles.bar}>

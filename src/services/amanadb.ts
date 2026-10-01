@@ -115,6 +115,7 @@ const PAGE_SIZE = 100;
 /** Every lookup field the app queries by (AmanaDB field indexes, declared by `defineIndexes`). */
 const INDEXES: [string, string][] = [
   [COLLECTIONS.bids, "tenderId"],
+  [COLLECTIONS.bids, "bidderId"],
   [COLLECTIONS.bidReveals, "tenderId"],
   [COLLECTIONS.evaluations, "tenderId"],
   [COLLECTIONS.awards, "tenderId"],
@@ -286,6 +287,38 @@ export async function insertTender(data: Tender): Promise<string> {
 
 export function getBid(key: string): Promise<StoredRecord<Bid> | null> {
   return getOrNull<Bid>(COLLECTIONS.bids, key);
+}
+
+/** A bidder's live (not withdrawn) bids, through the `bidderId` index. */
+export function listBidsForBidder(bidderId: string): Promise<StoredRecord<Bid>[]> {
+  return listByField<Bid>(COLLECTIONS.bids, "bidderId", bidderId);
+}
+
+/**
+ * A bidder's withdrawn bids. A soft-deleted record no longer reads or matches an index, so
+ * they are found through the bids audit log (DELETE entries) and read from record history.
+ */
+export async function listWithdrawnBidsForBidder(
+  bidderId: string,
+): Promise<{ bid: StoredRecord<Bid>; withdrawnAt: string }[]> {
+  const deletes = (await collectionAudit(COLLECTIONS.bids)).filter((row) => row.action === "DELETE");
+  const out: { bid: StoredRecord<Bid>; withdrawnAt: string }[] = [];
+  for (const row of deletes) {
+    const versions = await recordVersions<Bid>(COLLECTIONS.bids, row.key);
+    const last = versions.get(row.version) ?? [...versions.values()].sort((a, b) => b.version - a.version)[0];
+    if (last?.data.bidderId === bidderId) out.push({ bid: last, withdrawnAt: row.timestamp });
+  }
+  return out;
+}
+
+/** Withdraws a bid by soft delete at its current version; its history stays (spec section 2). */
+export async function withdrawBid(key: string, expectedVersion: number): Promise<void> {
+  try {
+    await db().collection<Bid>(COLLECTIONS.bids).delete(key, expectedVersion);
+  } catch (err) {
+    if (err instanceof AmanaDBError && err.statusCode === 409) throw new VersionConflictError();
+    throw err;
+  }
 }
 
 /** Stores a bidder's reveal with the result of recomputing its commitment. */
