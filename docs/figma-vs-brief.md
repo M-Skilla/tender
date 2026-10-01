@@ -109,6 +109,14 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **B4 fingerprint:** drawn untruncated with "Copied"; the shared chip shows the first 4 and last 3 characters and its own copied state.
 - **Bid reference:** a readable "BID-2026-0143-001" is stored on the bid (an added field).
 
+### Found in task 5 (B5)
+
+- **Sheet title:** "Decryption and verification results" becomes "Verification result". Nothing is encrypted; the bid is a commitment that is recomputed.
+- **Fingerprints:** drawn as 25 characters; the shared chip shows the first 4 and last 3 characters, with the full value in its tooltip. A recomputed fingerprint that differs uses the chip's wax red tone.
+- **Steps before the result** are not drawn. Step 1 loads the B4 receipt and the bid document, step 2 confirms the tender, amount and fingerprint, step 3 is the drawn result. They use B3's stepper and sheet.
+- **Who may open:** only the signed-in bidder who sealed the bid, only after closing, once per bid. Each refusal is a wax red banner in step 2: "This receipt belongs to another bidder's bid…", "Bids can be revealed only after the closing time…", "This bid has already been revealed. A reveal cannot be replaced."
+- **Mismatch:** "Your bid does not match. The amount, document or code you revealed does not recompute to the fingerprint sealed at submission. Contact the procuring entity." The reveal is still recorded, so H3 shows the bid as failing.
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).

@@ -23,7 +23,7 @@ const isClosed = (closeDate: string, now: Date) => now.getTime() >= new Date(clo
 export async function submitReveal(
   reveal: { bidKey: string; amount: number; docHash: string; salt: string },
   now = new Date(),
-): Promise<{ verified: boolean }> {
+): Promise<{ verified: boolean; sealed: string; recomputed: string }> {
   const bid = await getBid(reveal.bidKey);
   if (!bid) throw new OpeningError("No sealed bid has this reference. Check the receipt.");
   const tender = await getTender(bid.data.tenderId);
@@ -47,7 +47,7 @@ export async function submitReveal(
     revealedAt: now.toISOString(),
     verified,
   });
-  return { verified };
+  return { verified, sealed: bid.data.commitment, recomputed };
 }
 
 /** Opens a tender's bids: rejected before the closing time and when already opened. */

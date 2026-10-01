@@ -213,6 +213,69 @@ async function main() {
     }
   }
 
+  // TND-2026-0139: closed on 30 Sep 2026, 10:00, bids sealed but NOT revealed (B5). Each
+  // bidder's receipt (the B4 download) goes to storage/receipts/ and their bid document to
+  // storage/bid-documents/, as if both were still on the bidder's own computer.
+  const unrevealed = await seedTender(
+    {
+      reference: "TND-2026-0139",
+      title: "Laboratory equipment, Muhimbili National Hospital",
+      description:
+        "Supply, installation and commissioning of clinical chemistry and haematology analysers for the central laboratory.",
+      entity: "Muhimbili National Hospital",
+      category: "Goods",
+      budgetCeiling: 450000000,
+      openDate: eat("2026-09-02T09:00:00"),
+      closeDate: eat("2026-09-30T10:00:00"),
+      status: "PUBLISHED",
+    },
+    peAdmin,
+    ["Tender notice TND-2026-0139", "Muhimbili National Hospital", "Laboratory equipment", "Budget ceiling: TZS 450,000,000", "Closing: 30 Sep 2026, 10:00 (East Africa Time)"],
+  );
+  if (unrevealed.created) {
+    const bidDocs = path.join(process.cwd(), "storage", "bid-documents");
+    const receiptsDir = path.join(process.cwd(), "storage", "receipts");
+    await mkdir(bidDocs, { recursive: true });
+    await mkdir(receiptsDir, { recursive: true });
+    const sealedLab: [string, number, string][] = [
+      ["Mtera Builders", 412000000, "2026-09-26T10:15:00"],
+      ["Pemba Construction", 398500000, "2026-09-28T15:40:00"],
+      ["Tanga Roads Co", 431000000, "2026-09-29T09:05:00"],
+    ];
+    for (const [i, [name, amount, at]] of sealedLab.entries()) {
+      const docName = `${name.replace(/\W+/g, "-")}-TND-2026-0139-bid.pdf`;
+      const bytes = Buffer.from(`%PDF-1.4\n% ${name} bid for TND-2026-0139\n%%EOF\n`, "utf8");
+      const docHash = createHash("sha256").update(bytes).digest("hex");
+      await writeFile(path.join(bidDocs, docName), bytes);
+      const salt = randomBytes(16).toString("hex");
+      const commitment = await bidCommitment({ amount, docHash, salt });
+      const bidReference = `BID-2026-0139-${String(i + 1).padStart(3, "0")}`;
+      const bidKey = await insertBid({
+        tenderId: unrevealed.key,
+        bidderId: bidderIds.get(name)!,
+        bidderName: name,
+        commitment,
+        submittedAt: eat(at),
+        reference: bidReference,
+      });
+      const receipt = {
+        tender: "TND-2026-0139",
+        tenderTitle: "Laboratory equipment, Muhimbili National Hospital",
+        tenderKey: unrevealed.key,
+        bidKey,
+        bidReference,
+        amount,
+        docHash,
+        docName,
+        salt,
+        commitment,
+        submittedAt: eat(at),
+      };
+      await writeFile(path.join(receiptsDir, `receipt-${bidReference}.json`), JSON.stringify(receipt, null, 2));
+      console.log(`Sealed bid ${bidReference} from ${name} (receipt in storage/receipts/)`);
+    }
+  }
+
   await mkdir(path.dirname(RECEIPTS), { recursive: true });
   await writeFile(RECEIPTS, JSON.stringify({ receipts }, null, 2));
   console.log(`\nAccounts use the password ${process.env.SEED_PASSWORD ? "from SEED_PASSWORD" : `"${PASSWORD}"`}.`);
