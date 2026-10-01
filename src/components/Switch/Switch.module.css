@@ -1,0 +1,52 @@
+.wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* P1: 36x20 track; pen blue with the knob right when on, Rule with the knob left when off. */
+.track {
+  position: relative;
+  display: inline-block;
+  width: var(--switch-width);
+  height: var(--switch-height);
+  border-radius: var(--switch-height);
+  background: var(--color-control-border);
+}
+
+.knob {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  width: calc(var(--switch-height) - 2 * var(--space-2));
+  height: calc(var(--switch-height) - 2 * var(--space-2));
+  border-radius: var(--radius-circle);
+  background: var(--color-sheet);
+}
+
+.input:checked + .track {
+  background: var(--color-pen-blue);
+}
+
+.input:checked + .track .knob {
+  left: calc(var(--switch-width) - var(--switch-height) + var(--space-2));
+}
+
+.input:focus-visible + .track {
+  outline: var(--focus-ring-width) solid var(--color-pen-blue);
+  outline-offset: var(--focus-ring-offset);
+}

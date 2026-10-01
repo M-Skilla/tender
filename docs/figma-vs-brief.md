@@ -82,6 +82,14 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **A2 table heading:** "Fingerprint Status" (title case); "Fingerprint", with the mark beside the chip as drawn.
 - **Highlighter on the tampered row:** kept as drawn (user's choice), although the brief reserves Highlighter for changes between versions.
 
+### Found in task 5 (P1)
+
+- **Table header:** P1 draws the header row on Paper outside the white sheet; the shared ruled table keeps it inside the sheet, as in H3, A1 and P2.
+- **Copy:** "Tender Title", "Procuring Entity", "Budget Ceiling", "Closing Date", "Category: All Procurement" in title case; sentence case and "Category: All".
+- **Search placeholder:** the trailing "..." is dropped.
+- **Pagination:** shown only when there is more than one page; the summary always shows.
+- **Closed status:** a published tender past its closing time shows Closed before its record changes at opening.
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).

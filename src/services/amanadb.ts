@@ -153,6 +153,18 @@ async function getOrNull<T>(collection: string, key: string): Promise<StoredReco
   }
 }
 
+/** Every live tender (the public list filters and sorts; AmanaDB has no query or sort here). */
+export async function listTenders(): Promise<StoredRecord<Tender>[]> {
+  const out: StoredRecord<Tender>[] = [];
+  let bookmark = "";
+  do {
+    const page = await db().collection<Tender>(COLLECTIONS.tenders).list({ pageSize: PAGE_SIZE, bookmark });
+    for (const record of page.records) if (!record.deleted) out.push(toStored(record));
+    bookmark = page.fetchedRecordsCount > 0 ? page.bookmark : "";
+  } while (bookmark);
+  return out;
+}
+
 /** A user by email (lower-cased), or null. Server-side only: the record holds the password hash. */
 export async function findUserByEmail(email: string): Promise<StoredRecord<User> | null> {
   const [user] = await listByField<User>(COLLECTIONS.users, "email", email.trim().toLowerCase());

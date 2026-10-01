@@ -151,6 +151,10 @@
   --spine-column-width: 520px;
   --detail-column-width: 680px;
 
+  /* Switch (P1 "Closing soon"): 36x20. */
+  --switch-width: 36px;
+  --switch-height: 20px;
+
   /* Modals (C3, H5): 960px wide. */
   --modal-width: 960px;
 
