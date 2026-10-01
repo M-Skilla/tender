@@ -12,6 +12,8 @@ export type RuledTableColumn = {
    * width plus the 16px gap between cells, over the table width. Omit to share the rest.
    */
   width?: string;
+  /** "end" right-aligns the header and cells (C1's Action column). */
+  align?: "start" | "end";
 };
 
 export type RuledTableRow = {
@@ -33,7 +35,7 @@ export type RuledTableProps = {
   columns: RuledTableColumn[];
   rows: RuledTableRow[];
   /** default: 16px cells (P1, H3, B2). compact: 12px cells (P2 detail, A1). */
-  density?: "default" | "compact";
+  density?: "default" | "compact" | "relaxed";
   /** Shows static placeholder rows instead of data. */
   loading?: boolean;
   loadingRows?: number;
@@ -102,7 +104,7 @@ export function RuledTable({
             aria-current={row.selected ? "true" : undefined}
           >
             {columns.map((column) => (
-              <td key={column.key} className={styles.cell} data-label={column.header}>
+              <td key={column.key} className={styles.cell} data-align={column.align} data-label={column.header}>
                 {row.cells[column.key]}
               </td>
             ))}
@@ -151,7 +153,7 @@ export function RuledTable({
         <thead>
           <tr>
             {columns.map((column) => (
-              <th key={column.key} scope="col" className={styles.head}>
+              <th key={column.key} scope="col" className={styles.head} data-align={column.align}>
                 {column.header}
               </th>
             ))}

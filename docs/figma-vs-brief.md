@@ -126,6 +126,16 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **Opened states:** "Opened, matches" and "Opened, does not match" follow the bidder's own reveal (B5), whether or not the procuring entity has opened the tender yet.
 - **Empty:** "You have not submitted any bids. Bids you seal appear here with their fingerprint." with "Browse tenders".
 
+### Found in task 5 (C1)
+
+- **Subtitle:** "You are assigned to evaluate the following active tender procedures." The app has no per-tender committee assignment (every committee member sees every opened tender), so it reads "Opened tenders waiting for the committee's scores."
+- **Row padding:** C1 draws rows at 18px padding and the header at 16px, which puts row text 2px right of its header. Rows keep 18px above and below and 16px at the sides (a "relaxed" table density).
+- **Which tenders:** opened, not awarded or cancelled. Finished reviews stay, sorted last, until the award.
+- **Bids to score:** bids whose reveal recomputes to the sealed fingerprint. A bid that was not revealed, or does not match, cannot be scored.
+- **Scored:** every criterion has a score. The action goes to the first bid not fully scored, in order of submission: "Start scoring" (tinted, as drawn) when none is scored, "Continue scoring" otherwise, "Review complete" (pine tag, no link) when all are.
+- **No valid bids (not drawn):** "No bids to score" in Ink 70 in the action column.
+- **Empty (not drawn):** "No tenders are waiting for evaluation. Tenders appear here once the procuring entity opens their bids." with "Browse tenders".
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).

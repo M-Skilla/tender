@@ -1,0 +1,56 @@
+/* C1: title and subtitle 6px apart; the table follows 24px below (page gap). */
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.subtitle {
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  color: var(--color-ink-70);
+}
+
+/* C1 draws the tender in Public Sans 15 semibold, Ink. */
+.title {
+  font-size: var(--size-body);
+  font-weight: var(--weight-semibold);
+}
+
+.muted {
+  color: var(--color-ink-70);
+}
+
+.continue {
+  font-weight: var(--weight-semibold);
+  color: var(--color-pen-blue);
+  text-decoration: none;
+}
+
+.continue:hover {
+  text-decoration: underline;
+}
+
+/* "Start scoring" and "Review complete": 13px semibold on a 10 percent tint, 8 by 4 padding. */
+.tag {
+  display: inline-block;
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-control);
+  font-size: var(--size-small);
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+}
+
+.start {
+  background: var(--color-pen-blue-tint);
+  color: var(--color-pen-blue);
+}
+
+.start:hover {
+  text-decoration: underline;
+}
+
+.complete {
+  background: var(--color-pine-tint);
+  color: var(--color-pine);
+}
