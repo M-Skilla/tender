@@ -1,0 +1,224 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+/* H2: form column and a 580px preview column, 40px apart. */
+.columns {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-40);
+}
+
+.fields {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-24);
+  min-width: 0;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-16);
+}
+
+.upload {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.uploadLabel {
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+}
+
+/* H2 drop zone: dashed control border, 4px radius, 24px padding, centred. */
+.dropzone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  padding: var(--space-24);
+  border: var(--border-width) dashed var(--color-control-border);
+  border-radius: var(--radius-control);
+  background: var(--color-sheet);
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+  cursor: pointer;
+}
+
+.dropzone:hover {
+  background: var(--color-paper);
+}
+
+.dropzone:focus-within {
+  outline: var(--focus-ring-width) solid var(--color-pen-blue);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.dropzone[data-invalid] {
+  border-color: var(--color-wax-red);
+}
+
+.uploadIcon {
+  color: var(--color-ink-70);
+}
+
+/* The file input covers the zone so a click or a drop lands on it. */
+.fileInput {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.error {
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  line-height: var(--leading-normal);
+  color: var(--color-wax-red);
+}
+
+.previewColumn {
+  display: flex;
+  flex: 0 0 var(--preview-width);
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+/* H2 sets this in capitals; sentence case per the brief. */
+.previewLabel {
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+/* Preview sheet: 32px padding, 20px gaps, 1px Rule inside stroke. */
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+  padding: var(--space-32);
+  outline: var(--border-width) solid var(--color-rule);
+  outline-offset: calc(-1 * var(--border-width));
+  background: var(--color-sheet);
+}
+
+.previewTitle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.previewTitle h2 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--size-preview-title);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--size-small);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+.rule {
+  width: 100%;
+  height: var(--border-width);
+  margin: 0;
+  border: 0;
+  background: var(--color-rule);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-16) var(--space-24);
+  margin: 0;
+  font-family: var(--font-sans);
+  line-height: var(--leading-normal);
+}
+
+.grid dt {
+  font-size: var(--size-tag);
+  color: var(--color-ink-70);
+}
+
+.grid dd {
+  margin: var(--space-4) 0 0;
+  font-size: var(--size-ui);
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+}
+
+.description {
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink-70);
+  overflow-wrap: anywhere;
+}
+
+/* H2's note box: Paper, Rule edge, 12px padding, 13px. */
+.notice {
+  padding: var(--space-12);
+  outline: var(--border-width) solid var(--color-rule);
+  outline-offset: calc(-1 * var(--border-width));
+  background: var(--color-paper);
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+}
+
+.permanent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+.permanentIcon {
+  flex-shrink: 0;
+  color: var(--color-amber);
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+/* H2 draws Publish with 24px sides. */
+.buttons .publish {
+  padding-left: calc(var(--space-24) - var(--border-width));
+  padding-right: calc(var(--space-24) - var(--border-width));
+}

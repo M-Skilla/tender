@@ -90,6 +90,16 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **Pagination:** shown only when there is more than one page; the summary always shows.
 - **Closed status:** a published tender past its closing time shows Closed before its record changes at opening.
 
+### Found in task 5 (H2)
+
+- **Copy:** "Publish to Ledger", "on the verified registry ledger", "Live Ledger Notice Preview" (capitals) and "Notice will generate cryptographic hash upon block publication" become "Publish tender", "Publish a new public procurement notice.", "Notice preview" and "A fingerprint of the notice is recorded when you publish." Title-case labels become sentence case.
+- **Title:** H2 draws 32px bold; the page title style (30px semibold) is used, as on every other page.
+- **"Officer Portal" button** in the navigation: replaced by the signed-in name and "Sign out".
+- **Publishing confirmation (brief):** "Publish tender" opens a confirmation that the record is permanent and can be amended but not erased; publishing lands on the case file with "Tender published".
+- **Reference and entity:** read-only, as drawn; the reference is the next free TND-year-number, the entity comes from the admin's account.
+- **Closing time:** entered in East Africa Time; at least one hour ahead.
+- **Document:** one PDF up to 10 MB, stored on disk under its SHA-256; only the hash goes to AmanaDB.
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).

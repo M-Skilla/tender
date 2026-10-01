@@ -11,6 +11,8 @@ export type User = {
   passwordHash: string;
   active: boolean;
   createdAt: string;
+  /** Added: the procuring entity a pe_admin publishes for (H2 shows it read-only). */
+  entity?: string;
 };
 
 export type TenderStatus = "DRAFT" | "PUBLISHED" | "CLOSED" | "AWARDED" | "CANCELLED";

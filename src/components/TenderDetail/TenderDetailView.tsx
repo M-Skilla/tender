@@ -6,6 +6,7 @@ import { RecordFields } from "../RecordFields/RecordFields";
 import { RuledTable, type RuledTableColumn } from "../RuledTable/RuledTable";
 import { Spine, SpineNode } from "../SpineNode/SpineNode";
 import { TenderHeader } from "../TenderHeader/TenderHeader";
+import { Toast } from "../Toast/Toast";
 import { VerificationBanner, VerificationBannerAction, VerificationMark } from "../VerificationMark/VerificationMark";
 import styles from "./TenderDetailView.module.css";
 
@@ -137,11 +138,14 @@ export function TenderDetailView({
   tenderCase,
   selected,
   header,
+  toast,
 }: {
   tenderCase: TenderCase;
   selected: EventId;
   /** The navigation bar: SiteHeader on real pages (reads the session), NavigationBar in review. */
   header: ReactNode;
+  /** Confirmation after an action that lands here, such as "Tender published". */
+  toast?: string;
 }) {
   const failed = tenderCase.check.mismatched > 0;
   return (
@@ -200,6 +204,7 @@ export function TenderDetailView({
           </section>
         </div>
       </main>
+      {toast ? <Toast>{toast}</Toast> : null}
     </>
   );
 }

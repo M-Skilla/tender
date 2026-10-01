@@ -284,3 +284,21 @@ export function IconSearch16(props: IconProps) {
     </svg>
   );
 }
+
+/* Exported from Figma for H2 (publishing note, document drop zone). */
+
+export function IconAlertCircle16(props: IconProps) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <path d="M8 5.33312V8M8 10.6669H8.00667M14.6672 8C14.6672 11.6822 11.6822 14.6672 8 14.6672C4.31781 14.6672 1.3328 11.6822 1.3328 8C1.3328 4.31781 4.31781 1.3328 8 1.3328C11.6822 1.3328 14.6672 4.31781 14.6672 8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconCloudUpload24(props: IconProps) {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false" {...props}>
+      <path d="M12.0005 12.9998V21M16.0003 16.9999L12.0005 12.9998L8.00073 16.9999M4.0013 14.8991C3.25838 14.14 2.69794 13.2217 2.36242 12.2139C2.02691 11.2061 1.92512 10.1352 2.06477 9.08221C2.20441 8.02924 2.58183 7.02185 3.16844 6.13636C3.75504 5.25087 4.53545 4.51049 5.45055 3.97131C6.36565 3.43213 7.39143 3.10829 8.45021 3.02431C9.50899 2.94033 10.573 3.09843 11.5616 3.48661C12.5503 3.87479 13.4376 4.48289 14.1565 5.26484C14.8753 6.04679 15.4068 6.98208 15.7106 7.99988H17.5005C18.466 7.99977 19.4059 8.31021 20.1814 8.88535C20.9569 9.46048 21.5268 10.2698 21.8071 11.1938C22.0873 12.1178 22.063 13.1074 21.7376 14.0164C21.4123 14.9255 20.8032 15.7058 20.0004 16.2421" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}

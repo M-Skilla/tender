@@ -1,0 +1,68 @@
+/* Modal (C3, H5): 960px max, 8px radius, overlay shadow, 32px padding, 24px gaps. */
+.modal {
+  width: min(var(--modal-width), calc(100vw - 2 * var(--space-16)));
+  max-width: none;
+  margin: auto;
+  padding: var(--space-32);
+  border: 0;
+  border-radius: var(--radius-overlay);
+  background: var(--color-sheet);
+  box-shadow: var(--shadow-overlay);
+  color: var(--color-ink);
+}
+
+.modal[open] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+.modal::backdrop {
+  background: var(--color-scrim);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--size-section);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+}
+
+.title svg {
+  flex-shrink: 0;
+  color: var(--color-amber);
+}
+
+/* H5: the destructive title and icon are wax red. */
+.modal[data-tone="destructive"] .title,
+.modal[data-tone="destructive"] .title svg {
+  color: var(--color-wax-red);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  font-family: var(--font-sans);
+  font-size: var(--size-body);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+.rule {
+  width: 100%;
+  height: var(--border-width);
+  margin: 0;
+  border: 0;
+  background: var(--color-rule);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-12);
+}

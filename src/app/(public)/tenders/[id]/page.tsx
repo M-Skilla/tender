@@ -19,7 +19,7 @@ export async function generateMetadata(props: PageProps<"/tenders/[id]">): Promi
 
 export default async function TenderPage(props: PageProps<"/tenders/[id]">) {
   const { id } = await props.params;
-  const { event } = await props.searchParams;
+  const { event, published } = await props.searchParams;
 
   const tenderCase = await loadCase(id);
   if (!tenderCase) notFound();
@@ -29,5 +29,5 @@ export default async function TenderPage(props: PageProps<"/tenders/[id]">) {
   const current = tenderCase.events.find((e) => e.state === "current" || e.state === "mismatch");
   const fallback: EventId = current && EVENTS.includes(current.id) ? current.id : "published";
 
-  return <TenderDetailView tenderCase={tenderCase} selected={requested ?? fallback} header={<SiteHeader active="tenders" />} />;
+  return <TenderDetailView tenderCase={tenderCase} selected={requested ?? fallback} header={<SiteHeader active="tenders" />} toast={published === "1" ? "Tender published" : undefined} />;
 }
