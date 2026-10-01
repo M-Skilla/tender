@@ -48,6 +48,8 @@ export type Bid = {
   /** sha256(canonicalJson({ amount, docHash, salt })), computed in the browser. */
   commitment: string;
   submittedAt: string;
+  /** Added: readable reference shown on the receipt (B4), such as "BID-2026-0142-003". */
+  reference?: string;
 };
 
 export type BidReveal = {

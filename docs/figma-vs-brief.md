@@ -100,6 +100,15 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **Closing time:** entered in East Africa Time; at least one hour ahead.
 - **Document:** one PDF up to 10 MB, stored on disk under its SHA-256; only the hash goes to AmanaDB.
 
+### Found in task 5 (B3 and B4)
+
+- **B3 context line:** "SUBMIT BID FOR TENDER: TND-2026-0142" in capitals; "Submit a bid for TND-2026-0142".
+- **B3 review fields:** delivery timeline, technical approach and equipment list are not in the data model; the review shows tender, amount, document, document fingerprint and closing time.
+- **B3 steps 1 and 3** are not drawn: they use the review step's sheet, notice and action row. The bid document is hashed in the browser and not uploaded until the bid is opened (B5).
+- **B4 subtitle:** "Official proof of cryptographic submission." becomes "Your sealed bid has been recorded."
+- **B4 fingerprint:** drawn untruncated with "Copied"; the shared chip shows the first 4 and last 3 characters and its own copied state.
+- **Bid reference:** a readable "BID-2026-0143-001" is stored on the bid (an added field).
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).

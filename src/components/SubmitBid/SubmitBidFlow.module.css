@@ -1,0 +1,246 @@
+.flow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+.context {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* B3 draws this line in capitals in pen blue; sentence case per the brief. */
+.contextLine {
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  color: var(--color-pen-blue);
+}
+
+.contextTitle {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--size-preview-title);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+}
+
+/* B3 notice: amber tint and edge, 4px radius, 12/24 padding, 14px medium. */
+.notice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: calc(var(--space-12) - var(--border-width)) calc(var(--space-24) - var(--border-width));
+  border: var(--border-width) solid var(--color-amber);
+  border-radius: var(--radius-control);
+  background: var(--color-amber-tint);
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-normal);
+  color: var(--color-amber);
+}
+
+.noticeIcon {
+  flex-shrink: 0;
+}
+
+/* B3 sheet: 32px padding, 24px gaps, 4px radius as drawn. */
+.sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  padding: var(--space-32);
+  outline: var(--border-width) solid var(--color-rule);
+  outline-offset: calc(-1 * var(--border-width));
+  border-radius: var(--radius-control);
+  background: var(--color-sheet);
+}
+
+.sheetTitle {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--size-section);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+}
+
+.upload {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.uploadLabel {
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+}
+
+.dropzone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-24);
+  border: var(--border-width) dashed var(--color-control-border);
+  border-radius: var(--radius-control);
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+  cursor: pointer;
+}
+
+.dropzone:hover {
+  background: var(--color-paper);
+}
+
+.dropzone:focus-within {
+  outline: var(--focus-ring-width) solid var(--color-pen-blue);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.dropzone[data-invalid] {
+  border-color: var(--color-wax-red);
+}
+
+.uploadIcon {
+  color: var(--color-ink-70);
+}
+
+.fileInput {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.docLine {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  color: var(--color-ink-70);
+}
+
+.muted {
+  max-width: var(--reading-width);
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-70);
+}
+
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-6);
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  line-height: var(--leading-normal);
+  color: var(--color-wax-red);
+}
+
+/* B3 action row: Back on the left, the next step on the right, 24/12 buttons. */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-12);
+}
+
+.actions .wide {
+  padding: calc(var(--space-12) - var(--border-width)) calc(var(--space-24) - var(--border-width));
+}
+
+/* B4 receipt: centred 680px sheet, 8px radius as drawn, 40px padding, 24px gaps. */
+.receipt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  width: 100%;
+  max-width: var(--detail-column-width);
+  margin: 0 auto;
+  padding: var(--space-40);
+  outline: var(--border-width) solid var(--color-rule);
+  outline-offset: calc(-1 * var(--border-width));
+  border-radius: var(--radius-overlay);
+  background: var(--color-sheet);
+}
+
+.receiptHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  text-align: center;
+}
+
+.rule {
+  width: 100%;
+  height: var(--border-width);
+  margin: 0;
+  border: 0;
+  background: var(--color-rule);
+}
+
+.receiptRows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  line-height: var(--leading-normal);
+}
+
+.receiptRows > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  padding-bottom: var(--space-12);
+  box-shadow: inset 0 calc(-1 * var(--border-width)) 0 var(--color-rule);
+}
+
+.receiptRows > div:last-child {
+  padding-bottom: var(--space-4);
+  box-shadow: none;
+}
+
+.receiptRows dt {
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-70);
+}
+
+.receiptRows dd {
+  margin: 0;
+  font-weight: var(--weight-medium);
+  color: var(--color-ink);
+  text-align: right;
+}
+
+.receiptFooter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+.keep {
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  text-align: center;
+}
+
+/* B4 draws Download receipt with 20/10 padding at 13px. */
+.receiptFooter .download {
+  padding: calc(var(--space-10) - var(--border-width)) calc(var(--space-20) - var(--border-width));
+}

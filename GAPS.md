@@ -60,4 +60,6 @@ Not AmanaDB gaps, but deviations from `docs/spec.md` section 3, recorded so they
 | tenders | `publishedBy` | Per-user attribution (open item 3). |
 | bids | `bidderName` | Public pages show bidder names without reading the sensitive `users` collection. |
 | evaluations | `evaluatorName`, `comment`, criterion `weight`, nullable `score` | C2 and C3 show who saved a version and compare an overall comment; weights keep each version self-describing; a criterion can be unscored. |
+| bids | `reference` | Readable bid reference on the receipt (B4). |
+| users | `entity` | The procuring entity a pe_admin publishes for (H2). |
 | tenders | `openedAt`, `openedBy` | When the bids were opened (H3) and by whom; amounts are shown only after `openedAt`. |
