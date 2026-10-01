@@ -166,6 +166,17 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **Added (not drawn):** "View case file" (text button) back to P2; "Award recorded" toast after H4. Printing hides the buttons.
 - **Route and Awards link:** P4 is `/tenders/<key>/award`; a tender without an award is not found. No frame draws an awards list, so "Awards" in the navigation opens P1 filtered to Awarded.
 
+### Found in task 5 (P5)
+
+- **Intro copy:** "unique cryptographic fingerprint based on the system state", "immutable document identifier" and "upload any signed verification document" describe things the app does not do. Rewritten to say what a fingerprint is (SHA-256 of a record version, kept in AmanaDB's audit trail; documents and sealed bids have them too) and what the check shows.
+- **Document check:** the frame's "upload" becomes "Or choose a document to fingerprint it on this computer". The file is hashed in the browser and only its fingerprint is sent (a GET of `/check?fingerprint=`), so no file is uploaded.
+- **What it finds:** a version of any tender, bid, reveal, evaluation or award record (latest matching version), a tender notice document, a revealed bid document, or a sealed bid (the B4 receipt fingerprint).
+- **Banner:** "Fingerprint matches a valid system state" / "This transaction is authentic…" becomes "Fingerprint matches a recorded version" (or "…a tender document", "…a bid document", "…a sealed bid") and one plain sentence: which record, version and time, and whether it is still the current version.
+- **Details sheet:** "Associated Record Meta-Data" becomes "Record details", with "Open case file". "Last Actor" becomes "Recorded by" (the person at that version, as in A1); "Status Log: Verified State" becomes "Current record" with the shared mark (re-hash plus audit trail, as on P2); documents show whether the procuring entity's stored copy still matches.
+- **Not found (not drawn):** wax red banner, "No record has this fingerprint", saying a changed document has a different fingerprint.
+- **Invalid (not drawn):** "Enter a fingerprint of 64 characters, 0 to 9 and a to f." under the field.
+- **Button:** "Verify Fingerprint" becomes "Check fingerprint".
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).

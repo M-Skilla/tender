@@ -1,0 +1,228 @@
+/* P5: 40px top, 80px sides, 24px between blocks. */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  max-width: calc(var(--content-width) + 2 * var(--page-margin));
+  margin: 0 auto;
+  padding: var(--space-40) var(--page-margin) var(--space-80);
+}
+
+/* Intro: 720px wide, 12px between title and paragraphs. */
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  max-width: var(--reading-width);
+}
+
+.lead {
+  font-family: var(--font-sans);
+  font-size: var(--size-body);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink-70);
+}
+
+/* The tool box: a white sheet with 24px padding. */
+.toolBox {
+  padding: var(--space-24);
+  outline: var(--border-width) solid var(--color-rule);
+  outline-offset: calc(-1 * var(--border-width));
+  background: var(--color-sheet);
+}
+
+.tool {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+/* P5 draws the field on Paper with a 16px hash icon, 16 by 10 padding. */
+.field {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--space-8);
+  min-width: 0;
+  padding: var(--space-10) var(--space-16);
+  border-radius: var(--radius-control);
+  outline: var(--border-width) solid var(--color-control-border);
+  outline-offset: calc(-1 * var(--border-width));
+  background: var(--color-paper);
+}
+
+.field:focus-within {
+  outline: var(--focus-ring-width) solid var(--color-pen-blue);
+}
+
+.field[data-invalid] {
+  outline-color: var(--color-wax-red);
+}
+
+.hashIcon {
+  flex-shrink: 0;
+  color: var(--color-ink-70);
+}
+
+.input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: var(--size-ui);
+  color: var(--color-ink);
+}
+
+.input::placeholder {
+  font-family: var(--font-sans);
+  color: var(--color-ink-70);
+}
+
+.submit {
+  flex-shrink: 0;
+  padding-left: calc(var(--space-24) - var(--border-width));
+  padding-right: calc(var(--space-24) - var(--border-width));
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  color: var(--color-wax-red);
+}
+
+.fileLabel {
+  align-self: flex-start;
+  font-family: var(--font-sans);
+  font-size: var(--size-small);
+  font-weight: var(--weight-semibold);
+  color: var(--color-pen-blue);
+  text-decoration: underline;
+  text-underline-offset: var(--space-2);
+  cursor: pointer;
+}
+
+.fileLabel:focus-within {
+  outline: var(--focus-ring-width) solid var(--color-pen-blue);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.fileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+}
+
+/* Result banner: 20px padding, 16px gap, 24px icon, title 15 semibold over a 14px sentence. */
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  padding: var(--space-20);
+  border-radius: var(--radius-control);
+  outline: var(--border-width) solid currentColor;
+  outline-offset: calc(-1 * var(--border-width));
+  font-family: var(--font-sans);
+  font-size: var(--size-ui);
+}
+
+.banner[data-tone="pine"] {
+  background: var(--color-pine-tint);
+  color: var(--color-pine);
+}
+
+.banner[data-tone="waxRed"] {
+  background: var(--color-wax-red-tint);
+  color: var(--color-wax-red);
+}
+
+.bannerIcon {
+  flex-shrink: 0;
+}
+
+.bannerText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bannerTitle {
+  font-size: var(--size-body);
+  font-weight: var(--weight-semibold);
+}
+
+.sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--space-24);
+  outline: var(--border-width) solid var(--color-rule);
+  outline-offset: calc(-1 * var(--border-width));
+  background: var(--color-sheet);
+}
+
+.sheetHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rule {
+  width: 100%;
+  height: var(--border-width);
+  margin: 0;
+  border: 0;
+  background: var(--color-rule);
+}
+
+/* Fields side by side, 48px apart: label 13 Ink 70 over value 14 semibold. */
+.split {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-16) var(--space-48);
+  margin: 0;
+  font-family: var(--font-sans);
+}
+
+.split > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.split dt {
+  font-size: var(--size-small);
+  color: var(--color-ink-70);
+}
+
+.split dd {
+  margin: 0;
+  font-size: var(--size-ui);
+  font-weight: var(--weight-semibold);
+}
+
+.split dd[data-tone="pine"] {
+  color: var(--color-pine);
+}
+
+.split dd[data-tone="waxRed"] {
+  color: var(--color-wax-red);
+}

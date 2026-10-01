@@ -167,7 +167,8 @@ function cached<T>(load: (key: string) => Promise<T>) {
   };
 }
 
-async function detail(rows: AuditRow[]): Promise<AuditLogRow[]> {
+/** Actor, plain action, record link and changed fields for each audit entry (A1, and P5 for a matched version). */
+export async function describeAuditRows(rows: AuditRow[]): Promise<AuditLogRow[]> {
   const versionsOf = cached((id: string) => {
     const [collection, key] = id.split("/") as [string, string];
     return recordVersions<unknown>(collection, key);
@@ -266,10 +267,10 @@ export async function auditLogPage(filters: AuditFilters, page: number, now = ne
   const pageCount = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
   const current = Math.min(Math.max(1, page), pageCount);
   const slice = rows.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
-  return { rows: await detail(slice), total: rows.length, page: current, pageCount };
+  return { rows: await describeAuditRows(slice), total: rows.length, page: current, pageCount };
 }
 
 /** Every filtered entry with detail, for the CSV export. */
 export async function auditLogAll(filters: AuditFilters, now = new Date()): Promise<AuditLogRow[]> {
-  return detail(await filteredRows(filters, now));
+  return describeAuditRows(await filteredRows(filters, now));
 }
