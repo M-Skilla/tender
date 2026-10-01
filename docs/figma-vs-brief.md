@@ -136,6 +136,17 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **No valid bids (not drawn):** "No bids to score" in Ink 70 in the action column.
 - **Empty (not drawn):** "No tenders are waiting for evaluation. Tenders appear here once the procuring entity opens their bids." with "Browse tenders".
 
+### Found in task 5 (H1)
+
+- **Title:** drawn 32px bold, as in H2; the page title style (30px semibold) is used.
+- **Subtitle:** "Procuring officer dashboard. Review, publish, evaluate, and award outstanding tenders." becomes "<Entity>: tenders to open, score, award or watch as they close."
+- **"Officer Portal" button:** replaced by the signed-in name and "Sign out", as in H2.
+- **Publish tender (not drawn):** a primary button at the right of the title row, the only way to H2.
+- **Whose tenders:** the admin's procuring entity (from their account, else from tenders they published).
+- **Waiting for scores:** "4 of 6 scored by evaluation panel" becomes "1 of 5 scored by the committee", counting only bids that can be scored (as C1). "View evaluations" becomes "View tender" (P2), since there is no evaluation summary page for the procuring entity.
+- **Ready to award:** "All evaluations completed and validated" becomes "All N bids scored". Nothing in the data validates an evaluation beyond its scores.
+- **Empty sections (not drawn):** every section stays, with one Ink 70 line: "No closed tenders are waiting to be opened.", "No opened tenders are waiting for the committee.", "No tenders have all their bids scored yet.", "No tenders close in the next seven days."
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).
