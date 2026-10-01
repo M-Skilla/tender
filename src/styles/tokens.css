@@ -194,10 +194,23 @@
   /* Fingerprint tooltip: wide enough for a 64-character SHA-256 on one line. */
   --tooltip-max-width: 560px;
 
-  /* Layout (desktop frames are 1440 wide with 80px margins) */
+  /* Layout (desktop frames are 1440 wide with 80px margins, 40px above the content and 80px
+     below; the 390px mobile frames use 16px all round, see the media query below) */
   --page-margin: 80px;
+  --page-top: 40px;
+  --page-bottom: 80px;
   --content-width: 1280px;
   --reading-width: 720px;
+}
+
+/* Mobile frames (390 wide): 16px margins (brief section 3: 4 columns, 16px margins).
+   Breakpoint matches the table and modal layouts; media queries cannot read tokens. */
+@media (max-width: 599px) {
+  :root {
+    --page-margin: 16px;
+    --page-top: 16px;
+    --page-bottom: 32px;
+  }
 }
 
 /*
@@ -281,4 +294,11 @@
   font-size: var(--size-small);
   line-height: var(--leading-mono);
   font-weight: var(--weight-regular);
+}
+
+/* Page titles in the mobile frames are 22px (b1 to b5). After the text styles, so it wins. */
+@media (max-width: 599px) {
+  .text-title {
+    font-size: var(--size-section);
+  }
 }

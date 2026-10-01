@@ -134,8 +134,11 @@
     gap: 0;
   }
 
+  /* Four tabs (a role link plus three) wrap a long label onto two lines. */
   .link {
-    white-space: nowrap;
+    padding: 0 var(--space-4);
+    line-height: var(--leading-normal);
+    text-wrap: balance;
   }
 
   .links li {

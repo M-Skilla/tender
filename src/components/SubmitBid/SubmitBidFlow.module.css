@@ -244,3 +244,59 @@
 .receiptFooter .download {
   padding: calc(var(--space-10) - var(--border-width)) calc(var(--space-20) - var(--border-width));
 }
+
+/* b3-mobile and b4-mobile: the title on the white band (20px), 16px sheet padding, buttons
+   full width with the primary first. */
+@media (max-width: 599px) {
+  .contextTitle {
+    font-size: var(--size-subsection);
+  }
+
+  .notice {
+    padding: calc(var(--space-12) - var(--border-width)) calc(var(--space-16) - var(--border-width));
+    font-size: var(--size-small);
+  }
+
+  .sheet {
+    gap: var(--space-16);
+    padding: var(--space-16);
+  }
+
+  .sheetTitle {
+    font-size: var(--size-record);
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .actions > *,
+  .actions .wide {
+    width: 100%;
+    min-height: var(--tap-target);
+  }
+}
+
+@media (max-width: 599px) {
+  .receipt {
+    padding: var(--space-20);
+  }
+
+  .receiptRows > div {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  .receiptRows dt {
+    flex-basis: auto;
+    font-size: var(--size-tag);
+  }
+}
+
+@media (max-width: 599px) {
+  .receiptFooter .download {
+    width: 100%;
+    min-height: var(--tap-target);
+  }
+}

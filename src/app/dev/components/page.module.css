@@ -4,7 +4,7 @@
   gap: var(--space-40);
   max-width: calc(var(--content-width) + 2 * var(--page-margin));
   margin: 0 auto;
-  padding: var(--space-40) var(--page-margin) var(--space-80);
+  padding: var(--page-top) var(--page-margin) var(--page-bottom);
 }
 
 .section {

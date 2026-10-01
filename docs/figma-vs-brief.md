@@ -204,6 +204,15 @@ Findings from task 1 (tokens and primitives). The Figma file (`fDxmmTV6IGXNi3Dnk
 - **Cards:** the frames' 6px radius is a new token. Every title is a pen blue link (the frame draws closed tenders' titles in Ink); the date row reads "Closes" or "Closed" and is shown on every card. "View history" opens P3.
 - **Labels:** title case ("Procuring Entity", "Budget Ceiling", "Closing Date") becomes sentence case.
 
+### Found in task 5 (mobile: b1 to b5)
+
+- **Margins:** `--page-margin`, `--page-top` and `--page-bottom` become 16, 16 and 32px below 600px, so every page gets the frames' 16px margins. Page titles are 22px there (the `.text-title` style).
+- **Title band:** b1, b2, b3 and b5 put the page title on a white band under the navigation, ruled below (`mobile-band`). On b1 the sign-in card's title moves out to the band and the form becomes the card. The bands' subtitles in the frames ("Cryptographic receipts and statuses", "Access your submitted bids and receipts") are kept only where the desktop page has one.
+- **b2 cards:** title (pen blue link, Ink 70 when withdrawn), "Submitted: <time>", then the fingerprint chip and the state over a rule. "Withdraw bid" or "Open your bid" (not drawn) follow as full-width secondary buttons.
+- **b3:** the title band keeps the desktop context line and tender title (20px), not the frame's "Review Bid" / "Dodoma to Mtera section (TND-2026-0142)". The stepper becomes a full-width band on one line with the frame's short names (Details, Review, Seal); screen readers still hear the full names. The review fields are the desktop ones (the frame's delivery timeline and technical approach are not in the data). Labels sit above values in sentence case, not the frame's capitals. Buttons are full width, primary first.
+- **b4:** "Official proof of cryptographic submission" stays "Your sealed bid has been recorded."; the fingerprint is the shared chip, not the frame's full value with "Copied". A dev preview (`/dev/screens/b4`) shows the receipt without sealing a real bid.
+- **b5:** "Decryption Verification" stays "Verification result" (as desktop B5). The stepper's "Load receipt" is "Receipt" on mobile.
+
 ## Copy in the frames that breaks the brief's rules
 
 - All-caps labels: "Your changes", "Latest saved (v4)" (C3); "Live Ledger Notice Preview" (H2).

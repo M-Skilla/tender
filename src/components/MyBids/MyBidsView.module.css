@@ -59,3 +59,77 @@
 .rowAction:hover {
   color: var(--color-pen-blue-hover);
 }
+
+.cards {
+  display: none;
+}
+
+/* b2-mobile: one card per bid (title, submitted, then fingerprint and state over a rule). The
+   withdraw and open actions, not drawn, sit below as full-width secondary buttons. */
+@media (max-width: 599px) {
+  .tableWrap {
+    display: none;
+  }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    padding: var(--space-16);
+    border-radius: var(--radius-card);
+    outline: var(--border-width) solid var(--color-rule);
+    outline-offset: calc(-1 * var(--border-width));
+    background: var(--color-sheet);
+    font-family: var(--font-sans);
+  }
+
+  .cardHeader {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .cardTitle,
+  .cardWithdrawn {
+    font-size: var(--size-ui);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-card-title);
+  }
+
+  .cardTitle {
+    color: var(--color-pen-blue);
+    text-decoration: none;
+  }
+
+  .cardWithdrawn {
+    color: var(--color-ink-70);
+  }
+
+  .cardMeta {
+    font-size: var(--size-tag);
+    color: var(--color-ink-70);
+  }
+
+  .cardFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-12);
+    padding-top: var(--space-12);
+    box-shadow: inset 0 var(--border-width) 0 var(--color-rule);
+  }
+
+  .cardButton {
+    width: 100%;
+    min-height: var(--tap-target);
+  }
+}

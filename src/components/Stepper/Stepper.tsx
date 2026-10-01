@@ -8,13 +8,15 @@ export type StepperProps = {
   current: number;
   /** Describes the sequence for screen readers, for example "Submit bid". */
   label: string;
+  /** Shorter names shown on mobile (b3-mobile: "Details", "Review", "Seal"). */
+  shortSteps?: string[];
 };
 
 /**
  * Three-step sequence (B3). Numbered because it is a real sequence (brief section 7);
  * B3 draws the circles empty, so the numbers and the completed look are review decisions.
  */
-export function Stepper({ steps, current, label }: StepperProps) {
+export function Stepper({ steps, current, label, shortSteps }: StepperProps) {
   return (
     <nav className={styles.stepper} aria-label={label}>
       <ol className={styles.list}>
@@ -27,11 +29,16 @@ export function Stepper({ steps, current, label }: StepperProps) {
                 <span className={styles.number} aria-hidden="true">
                   {index + 1}
                 </span>
-                <span className={styles.name}>
+                <span className={styles.name} data-has-short={shortSteps?.[index] ? true : undefined}>
                   <span className="visually-hidden">{`Step ${index + 1}: `}</span>
                   {step}
                   {state === "completed" ? <span className="visually-hidden">, completed</span> : null}
                 </span>
+                {shortSteps?.[index] ? (
+                  <span className={styles.short} aria-hidden="true">
+                    {shortSteps[index]}
+                  </span>
+                ) : null}
               </li>
             </Fragment>
           );

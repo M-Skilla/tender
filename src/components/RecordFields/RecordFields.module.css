@@ -53,3 +53,16 @@
   font-size: var(--size-body);
   line-height: var(--leading-relaxed);
 }
+
+/* Mobile frames (b3, b4, b5): each label sits above its value. */
+@media (max-width: 599px) {
+  .row {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .label {
+    flex-basis: auto;
+    font-size: var(--size-tag);
+  }
+}

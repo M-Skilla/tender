@@ -45,7 +45,7 @@ export function MyBidsView({ rows }: { rows: MyBidRow[] }) {
 
   return (
     <>
-      <div className={styles.titleRow}>
+      <div className={`${styles.titleRow} mobile-band`}>
         <h1 className="text-title">My bids</h1>
       </div>
       {error ? (
@@ -53,6 +53,43 @@ export function MyBidsView({ rows }: { rows: MyBidRow[] }) {
           {error}
         </p>
       ) : null}
+      {/* b2-mobile: the same bids as cards; the table is hidden there when it has rows. */}
+      {rows.length > 0 ? (
+        <ul className={styles.cards} aria-label="My bids">
+          {rows.map((row) => (
+            <li key={row.key} className={styles.card}>
+              <div className={styles.cardHeader}>
+                {row.status === "withdrawn" ? (
+                  <span className={styles.cardWithdrawn}>{row.tenderTitle}</span>
+                ) : (
+                  <a href={`/tenders/${row.tenderKey}`} className={styles.cardTitle}>
+                    {row.tenderTitle}
+                  </a>
+                )}
+                <span className={styles.cardMeta}>Submitted: {row.submitted}</span>
+              </div>
+              <div className={styles.cardFooter}>
+                <FingerprintChip value={row.fingerprint} />
+                <StatusLabel status={row.status} />
+              </div>
+              {row.canWithdraw || row.awaitingOpen ? (
+                <div className={styles.cardActions}>
+                  {row.canWithdraw ? (
+                    <Button variant="secondary" className={styles.cardButton} onClick={() => setConfirming(row)}>
+                      Withdraw bid
+                    </Button>
+                  ) : (
+                    <ButtonLink href="/bidder/open" variant="secondary" className={styles.cardButton}>
+                      Open your bid
+                    </ButtonLink>
+                  )}
+                </div>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      <div className={rows.length > 0 ? styles.tableWrap : undefined}>
       <RuledTable
         caption="My bids"
         columns={COLUMNS}
@@ -95,6 +132,7 @@ export function MyBidsView({ rows }: { rows: MyBidRow[] }) {
           ),
         }}
       />
+      </div>
 
       {confirming ? (
         <ConfirmModal

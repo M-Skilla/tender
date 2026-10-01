@@ -14,7 +14,7 @@ import { Stepper } from "../Stepper/Stepper";
 import styles from "./SubmitBidFlow.module.css";
 
 type Doc = { name: string; hash: string };
-type Receipt = {
+export type Receipt = {
   tender: string;
   tenderTitle: string;
   tenderKey: string;
@@ -106,71 +106,16 @@ export function SubmitBidFlow({
     });
   }
 
-  function download() {
-    if (!receipt) return;
-    const blob = new Blob([JSON.stringify(receipt, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `receipt-${receipt.bidReference}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
+  if (receipt) return <BidReceipt receipt={receipt} />;
 
-  if (receipt) {
-    return (
-      <section className={styles.receipt} aria-labelledby="receipt-title">
-        <div className={styles.receiptHeader}>
-          <h1 id="receipt-title" className="text-title">
-            Bid submitted
-          </h1>
-          <p className={styles.muted}>Your sealed bid has been recorded.</p>
-        </div>
-        <hr className={styles.rule} />
-        <dl className={styles.receiptRows}>
-          <div>
-            <dt>Tender</dt>
-            <dd>{receipt.tenderTitle}</dd>
-          </div>
-          <div>
-            <dt>Bid reference</dt>
-            <dd>{receipt.bidReference}</dd>
-          </div>
-          <div>
-            <dt>Fingerprint</dt>
-            <dd>
-              <FingerprintChip value={receipt.commitment} />
-            </dd>
-          </div>
-          <div>
-            <dt>Submitted</dt>
-            <dd>{formatDateTime(receipt.submittedAt)}</dd>
-          </div>
-          <div>
-            <dt>Status</dt>
-            <dd>
-              <StatusLabel status="sealed" />
-            </dd>
-          </div>
-        </dl>
-        <hr className={styles.rule} />
-        <div className={styles.receiptFooter}>
-          <p className={styles.keep}>Keep this receipt. You need it to open your bid.</p>
-          <Button variant="secondary" size="small" className={styles.download} onClick={download}>
-            Download receipt
-          </Button>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <div className={styles.flow}>
-      <div className={styles.context}>
+      <div className={`${styles.context} mobile-band`}>
         <p className={styles.contextLine}>Submit a bid for {reference}</p>
         <h1 className={styles.contextTitle}>{title}</h1>
       </div>
-      <Stepper label="Submit bid" steps={STEPS} current={step} />
+      <Stepper label="Submit bid" steps={STEPS} shortSteps={["Details", "Review", "Seal"]} current={step} />
       <p className={styles.notice}>
         <IconLock14 className={styles.noticeIcon} />
         Only a fingerprint of your bid is stored until the closing time. Your bid details remain sealed.
@@ -262,5 +207,63 @@ export function SubmitBidFlow({
         </section>
       )}
     </div>
+  );
+}
+
+/** B4: the receipt after sealing, with the file the bidder keeps to open the bid (B5). */
+export function BidReceipt({ receipt }: { receipt: Receipt }) {
+  function download() {
+    const blob = new Blob([JSON.stringify(receipt, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `receipt-${receipt.bidReference}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  return (
+    <section className={styles.receipt} aria-labelledby="receipt-title">
+      <div className={styles.receiptHeader}>
+        <h1 id="receipt-title" className="text-title">
+          Bid submitted
+        </h1>
+        <p className={styles.muted}>Your sealed bid has been recorded.</p>
+      </div>
+      <hr className={styles.rule} />
+      <dl className={styles.receiptRows}>
+        <div>
+          <dt>Tender</dt>
+          <dd>{receipt.tenderTitle}</dd>
+        </div>
+        <div>
+          <dt>Bid reference</dt>
+          <dd>{receipt.bidReference}</dd>
+        </div>
+        <div>
+          <dt>Fingerprint</dt>
+          <dd>
+            <FingerprintChip value={receipt.commitment} />
+          </dd>
+        </div>
+        <div>
+          <dt>Submitted</dt>
+          <dd>{formatDateTime(receipt.submittedAt)}</dd>
+        </div>
+        <div>
+          <dt>Status</dt>
+          <dd>
+            <StatusLabel status="sealed" />
+          </dd>
+        </div>
+      </dl>
+      <hr className={styles.rule} />
+      <div className={styles.receiptFooter}>
+        <p className={styles.keep}>Keep this receipt. You need it to open your bid.</p>
+        <Button variant="secondary" size="small" className={styles.download} onClick={download}>
+          Download receipt
+        </Button>
+      </div>
+    </section>
   );
 }

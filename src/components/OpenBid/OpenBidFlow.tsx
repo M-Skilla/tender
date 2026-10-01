@@ -72,7 +72,7 @@ export function OpenBidFlow() {
   if (result && receipt) {
     return (
       <div className={styles.flow}>
-        <h1 className="text-title">Open your bid</h1>
+        <h1 className="text-title mobile-band">Open your bid</h1>
         {result.verified ? (
           <VerificationBanner result="matches">Your bid matches. The sealed fingerprint matches the bid you submitted.</VerificationBanner>
         ) : (
@@ -119,8 +119,8 @@ export function OpenBidFlow() {
 
   return (
     <div className={styles.flow}>
-      <h1 className="text-title">Open your bid</h1>
-      <Stepper label="Open your bid" steps={["Load receipt", "Confirm", "Result"]} current={step} />
+      <h1 className="text-title mobile-band">Open your bid</h1>
+      <Stepper label="Open your bid" steps={["Load receipt", "Confirm", "Result"]} shortSteps={["Receipt", "Confirm", "Result"]} current={step} />
       <section className={styles.sheet} aria-labelledby="open-title">
         <h2 id="open-title" className={styles.sheetTitle}>
           {step === 0 ? "Load your receipt" : "Confirm your bid"}
