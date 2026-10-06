@@ -5,6 +5,7 @@ import { FingerprintChip } from "../FingerprintChip/FingerprintChip";
 import { RecordFields } from "../RecordFields/RecordFields";
 import { RuledTable, type RuledTableColumn } from "../RuledTable/RuledTable";
 import { Spine, SpineNode } from "../SpineNode/SpineNode";
+import { StatusLabel } from "../StatusLabel/StatusLabel";
 import { TenderHeader } from "../TenderHeader/TenderHeader";
 import { Toast } from "../Toast/Toast";
 import { VerificationBanner, VerificationBannerAction, VerificationMark } from "../VerificationMark/VerificationMark";
@@ -16,6 +17,13 @@ const BID_COLUMNS: RuledTableColumn[] = [
   { key: "bidder", header: "Bidder", width: "37.65%" },
   { key: "received", header: "Received", width: "25.88%" },
   { key: "fingerprint", header: "Fingerprint" },
+];
+
+// Not drawn: P2's opened event, after H3's opened table without the fingerprint column.
+const OPENED_COLUMNS: RuledTableColumn[] = [
+  { key: "bidder", header: "Bidder", width: "37.65%" },
+  { key: "amount", header: "Revealed amount", width: "25.88%" },
+  { key: "result", header: "Result" },
 ];
 
 function bannerSentence(tenderCase: TenderCase): string {
@@ -78,6 +86,41 @@ function BidsDetail({ tenderCase }: { tenderCase: TenderCase }) {
           },
         }))}
         empty={{ message: "No bids yet. Bids appear here once bidders submit them." }}
+      />
+    </>
+  );
+}
+
+// Each revealed amount and whether it recomputes to the fingerprint sealed at submission.
+function OpenedDetail({ tenderCase }: { tenderCase: TenderCase }) {
+  return (
+    <>
+      <div className={styles.detailHeader}>
+        <h2 className={styles.detailTitle}>Opened</h2>
+        <p className={styles.detailText}>
+          Opened by the procuring entity on {tenderCase.openedAt}. Each amount is checked against the fingerprint sealed when
+          the bid was submitted.
+        </p>
+      </div>
+      <RuledTable
+        caption={`Opened bids for ${tenderCase.reference}`}
+        density="compact"
+        columns={OPENED_COLUMNS}
+        rows={tenderCase.bids.map((bid) => ({
+          id: bid.key,
+          cells: bid.revealed
+            ? {
+                bidder: bid.bidderName,
+                amount: <span className={styles.amount}>{formatTzs(bid.revealed.amount)}</span>,
+                result: <VerificationMark result={bid.revealed.result} />,
+              }
+            : {
+                bidder: bid.bidderName,
+                amount: <span className={styles.secondary}>Not revealed</span>,
+                result: <StatusLabel status="sealed" />,
+              },
+        }))}
+        empty={{ message: "No bids were submitted, so there was nothing to open." }}
       />
     </>
   );
@@ -229,7 +272,13 @@ export function TenderDetailView({
           {sheetOpen ? <a href="?" className={styles.scrim} aria-hidden="true" tabIndex={-1} /> : null}
           <section className={styles.detail} aria-live="polite" data-sheet-open={sheetOpen || undefined}>
             <span className={styles.handle} aria-hidden="true" />
-            {selected === "published" ? <PublishedDetail tenderCase={tenderCase} /> : <BidsDetail tenderCase={tenderCase} />}
+            {selected === "published" ? (
+              <PublishedDetail tenderCase={tenderCase} />
+            ) : selected === "opened" && tenderCase.opened ? (
+              <OpenedDetail tenderCase={tenderCase} />
+            ) : (
+              <BidsDetail tenderCase={tenderCase} />
+            )}
             <a href="?" className={styles.closeSheet}>
               Close details
             </a>

@@ -235,7 +235,7 @@ export async function buildTenderCase(input: TenderCaseInput): Promise<TenderCas
           actor: "Procuring entity",
           fingerprint: await groupFingerprint(reveals),
           result: reveals.length ? worst(revealResults) : undefined,
-          selectable: false,
+          selectable: true,
         }
       : closed
         ? { id: "opened", title: "Opened", state: "upcoming", note: "Ready to open", selectable: false }

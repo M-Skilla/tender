@@ -14,7 +14,7 @@ import { getTender, getUser, listBidsForBidder } from "@/services/amanadb";
 // Shows verification and bid state, so it is never cached (CLAUDE.md, spec section 6).
 export const dynamic = "force-dynamic";
 
-const EVENTS: EventId[] = ["published", "bids"];
+const EVENTS: EventId[] = ["published", "bids", "opened"];
 
 export async function generateMetadata(props: PageProps<"/tenders/[id]">): Promise<Metadata> {
   const { id } = await props.params;

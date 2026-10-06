@@ -59,6 +59,10 @@
   color: var(--color-ink-70);
 }
 
+.amount {
+  font-weight: var(--weight-medium);
+}
+
 /* A2 sets the mark 8px after the chip, which keeps a mismatched bid on one line. */
 .proof {
   display: inline-flex;

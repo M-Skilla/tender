@@ -334,3 +334,12 @@ Agreed after the task 1 review ("insert your own appropriate states"). Later tas
 | What A2 detects | After opening, each revealed bid's document (`storage/documents/<fingerprint>/`) is re-hashed on every load. A copy that no longer matches the fingerprint recorded at reveal fails that bid's row, the "Bids received" node and the page (Tampered, A2's banner). AmanaDB's records are unchanged. |
 | Detail panel | The alert takes the place of the "Bids received" heading, as drawn; the table follows with the tampered row on Highlighter, a wax red chip and "Does not match". |
 | Tamper demo | `pnpm tamper-demo` (optionally `TAMPER_BIDDER="Zuri Civil"`) appends a line to a revealed bid's stored document and keeps a backup; `pnpm tamper-demo:restore` puts it back byte for byte. |
+
+### Outcome visibility decisions (P2 opened, award link, B2 award)
+
+No frame draws these. The spec gives the public "published tenders and awards" and a timeline through "opened, evaluated, awarded" (sections 2 and 5.7), but P2 only made Published and Bids received selectable, so revealed amounts and the award record were reachable only from staff screens.
+
+| Question | Decision |
+|---|---|
+| P2 opened event | Selectable once the bids are opened (still sealed or upcoming before). Its panel: "Opened", "Opened by the procuring entity on <time>. Each amount is checked against the fingerprint sealed when the bid was submitted.", then H3's opened table without the fingerprint column (that is on Bids received): Bidder, Revealed amount, Result. A bid with no reveal reads "Not revealed" with the Sealed label, as on H3. |
+| `?event=opened` before opening | Falls back to Bids received; no amounts are rendered. |
