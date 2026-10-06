@@ -343,3 +343,4 @@ No frame draws these. The spec gives the public "published tenders and awards" a
 |---|---|
 | P2 opened event | Selectable once the bids are opened (still sealed or upcoming before). Its panel: "Opened", "Opened by the procuring entity on <time>. Each amount is checked against the fingerprint sealed when the bid was submitted.", then H3's opened table without the fingerprint column (that is on Bids received): Bidder, Revealed amount, Result. A bid with no reveal reads "Not revealed" with the Sealed label, as on H3. |
 | `?event=opened` before opening | Falls back to Bids received; no amounts are rendered. |
+| P2 awarded event | Once an award exists, "Awarded" links to the award record (P4) rather than opening a panel: P4 is the award's full record, so the case file does not repeat it. Before an award it stays upcoming and unlinked. |

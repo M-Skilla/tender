@@ -29,6 +29,8 @@ export type CaseEvent = {
   pendingLabel?: string;
   /** Has a record to show in the detail panel. */
   selectable: boolean;
+  /** Opens the event's own page instead of the detail panel (the award record, P4). */
+  href?: string;
 };
 
 export type BidRow = {
@@ -274,6 +276,7 @@ export async function buildTenderCase(input: TenderCaseInput): Promise<TenderCas
           fingerprint: award.dataHash,
           result: awardResults[0],
           selectable: false,
+          href: `/tenders/${tender.key}/award`,
         }
       : { id: "awarded", title: "Awarded", state: "upcoming", selectable: false },
   );

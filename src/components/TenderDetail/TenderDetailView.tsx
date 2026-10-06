@@ -263,7 +263,7 @@ export function TenderDetailView({
                   note={event.note}
                   pendingLabel={event.pendingLabel}
                   selected={event.id === selected}
-                  href={event.selectable ? `?event=${event.id}` : undefined}
+                  href={event.href ?? (event.selectable ? `?event=${event.id}` : undefined)}
                   versionHref={event.id === "published" ? `?event=${selected}&history=1` : undefined}
                 />
               ))}
