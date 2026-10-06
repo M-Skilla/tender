@@ -2,12 +2,11 @@ import "server-only";
 
 // Reads everything the case file needs through the AmanaDB service and builds it. Shared by the
 // public case file (P2) and bid opening (H3).
+import { checkDocument, checkStoredDocument } from "@/lib/documents";
 import { buildTenderCase, type TenderCase } from "@/lib/tender-case";
 import type { AuditedVersion } from "@/lib/types";
 import {
   auditedVersions,
-  checkDocument,
-  checkStoredDocument,
   COLLECTIONS,
   getTender,
   listAwardsForTender,

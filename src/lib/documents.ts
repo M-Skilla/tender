@@ -4,8 +4,9 @@ import "server-only";
 // on the server's disk, and only its SHA-256 is written to AmanaDB. This is file storage, not a
 // database.
 import { createHash } from "node:crypto";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import type { DocumentCheck } from "@/lib/types";
 
 const DOCUMENTS = path.join(process.cwd(), "storage", "documents");
 
@@ -25,4 +26,33 @@ export async function storeDocument(file: File): Promise<{ docHash: string; docN
   await mkdir(dir, { recursive: true });
   await writeFile(path.join(dir, docName), bytes);
   return { docHash, docName };
+}
+
+/**
+ * Re-hashes a stored document (storage/documents/<docHash>/<docName>) and compares it with the
+ * SHA-256 recorded in AmanaDB.
+ */
+export async function checkDocument(docHash: string, docName: string): Promise<DocumentCheck> {
+  const file = path.join(DOCUMENTS, docHash, path.basename(docName));
+  try {
+    const bytes = await readFile(file);
+    const actual = createHash("sha256").update(bytes).digest("hex");
+    return actual === docHash ? "matches" : "does-not-match";
+  } catch {
+    return "missing";
+  }
+}
+
+/**
+ * Re-hashes the one stored file under storage/documents/<docHash>/ (used for bid documents,
+ * whose file name is not recorded) and compares it with the recorded SHA-256.
+ */
+export async function checkStoredDocument(docHash: string): Promise<DocumentCheck> {
+  try {
+    const files = await readdir(path.join(DOCUMENTS, docHash));
+    if (files.length !== 1) return "missing";
+    return checkDocument(docHash, files[0]!);
+  } catch {
+    return "missing";
+  }
 }

@@ -3,7 +3,8 @@ import { CreateTenderForm } from "@/components/CreateTender/CreateTenderForm";
 import { SiteHeader } from "@/components/NavigationBar/SiteHeader";
 import styles from "@/components/CreateTender/CreateTenderPage.module.css";
 import { requirePageUser } from "@/lib/auth";
-import { getUser, listTenders, nextTenderReference } from "@/services/amanadb";
+import { getUser, listTenders } from "@/services/amanadb";
+import { nextTenderReference } from "@/lib/tender-reference";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Create tender notice" };

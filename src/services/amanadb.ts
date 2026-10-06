@@ -1,127 +1,61 @@
 import "server-only";
 
-// The only module that imports @amanadb/sdk (CLAUDE.md rule 7). Server-only: the project
-// credential and the SDK never reach a client bundle. Pattern follows ~/Desktop/crud.
-import { createHash, createPrivateKey, createSign } from "node:crypto";
-import { readdir, readFile } from "node:fs/promises";
-import path from "node:path";
+// The only module that imports @amanadb/sdk (CLAUDE.md rule 7), and every AmanaDB call the app
+// makes. Server-only: the project credential and the SDK never reach a client bundle. Paging,
+// mapping, configuration and key naming are in ./amanadb-helpers. Pattern follows ~/Desktop/crud.
+import { AmanaDBClient, AmanaDBError, toCanonicalDerSignature } from "@amanadb/sdk";
+import type { AuditedVersion, Award, Bid, BidReveal, Evaluation, StoredRecord, Tender, User } from "@/lib/types";
 import {
-  AmanaDBClient,
-  AmanaDBError,
-  toCanonicalDerSignature,
-  type StorageRecord,
-  type Wallet,
-  type WalletSigner,
-} from "@amanadb/sdk";
-import type {
-  AuditedVersion,
-  Award,
-  Bid,
-  BidReveal,
-  DocumentCheck,
-  Evaluation,
-  StoredRecord,
-  Tender,
-  User,
-} from "@/lib/types";
+  assertAuditable,
+  awardKey,
+  COLLECTIONS,
+  evaluationKey,
+  INDEXES,
+  nodeSha256Signer,
+  normalizeEmail,
+  PAGE_SIZE,
+  readAllPages,
+  readCredentials,
+  summarizeAudit,
+  toAuditRow,
+  toStored,
+  VersionConflictError,
+  type AuditRow,
+} from "./amanadb-helpers";
 
-export const COLLECTIONS = {
-  users: "users",
-  tenders: "tenders",
-  bids: "bids",
-  bidReveals: "bid_reveals",
-  evaluations: "evaluations",
-  awards: "awards",
-} as const;
+export {
+  awardKey,
+  COLLECTIONS,
+  evaluationKey,
+  NotConfiguredError,
+  VersionConflictError,
+  type AuditRow,
+} from "./amanadb-helpers";
 
-/** Someone saved a newer version first; the caller's expectedVersion is stale (AmanaDB 409). */
-export class VersionConflictError extends Error {
-  constructor() {
-    super("A newer version was saved first.");
-    this.name = "VersionConflictError";
-  }
-}
-
-/** Thrown when the app has no AmanaDB credential configured. */
-export class NotConfiguredError extends Error {
-  constructor() {
-    super(
-      "AmanaDB is not configured. Provision a wallet with `amanadb wallet-init --token <token>`, " +
-        "then run the app through `sops exec-env .amanadb-wallet.enc.json -- <start command>`.",
-    );
-    this.name = "NotConfiguredError";
-  }
-}
-
-function env(name: string): string | undefined {
-  const value = process.env[name];
-  return value && value.length > 0 ? value : undefined;
-}
-
-// .env files cannot hold real newlines, so a PEM stored there may be escaped as "\n".
-function normalizePem(value: string): string {
-  return value.replace(/\\n/g, "\n");
-}
-
-// node:crypto signer (there is no browser, so no createBrowserSigner). The private key is
-// parsed on first use so building the wallet never throws on a malformed key.
-function createNodeWallet(certificatePem: string, privateKeyPem: string): Wallet {
-  let privateKey: ReturnType<typeof createPrivateKey> | undefined;
-  const signer: WalletSigner = {
-    async sign(message) {
-      if (!privateKey) privateKey = createPrivateKey(privateKeyPem);
-      const sign = createSign("SHA256");
-      sign.update(message);
-      sign.end();
-      return toCanonicalDerSignature(new Uint8Array(sign.sign(privateKey)));
-    },
-  };
-  return { certificatePem, signer };
-}
+// =============================================================================================
+// Client
 
 let client: AmanaDBClient | undefined;
 
 /** Built on first use, so importing this module (for example during a build) needs no env. */
 function db(): AmanaDBClient {
   if (client) return client;
-  const baseUrl = env("AMANADB_BASE_URL");
-  const projectApiKey = env("AMANADB_PROJECT_API_KEY");
-  const certificatePem = env("AMANADB_CERT_PEM");
-  const privateKeyPem = env("AMANADB_KEY_PEM");
-  if (!baseUrl || !projectApiKey || !certificatePem || !privateKeyPem) throw new NotConfiguredError();
+  const { baseUrl, projectApiKey, certificatePem, privateKeyPem } = readCredentials();
+  const sign = nodeSha256Signer(privateKeyPem);
   client = new AmanaDBClient({
     baseUrl,
     projectApiKey,
-    wallet: createNodeWallet(normalizePem(certificatePem), normalizePem(privateKeyPem)),
+    wallet: {
+      certificatePem,
+      signer: { sign: async (message) => toCanonicalDerSignature(sign(message)) },
+    },
   });
   return client;
 }
 
-function toStored<T>(record: StorageRecord<T>): StoredRecord<T> {
-  return {
-    collection: record.collection,
-    key: record.key,
-    version: record.version,
-    createdAt: record.createdAt,
-    updatedAt: record.updatedAt,
-    data: record.data,
-    dataHash: record.dataHash ?? "",
-    integrity: record.integrity,
-  };
+function isStatus(err: unknown, statusCode: number): boolean {
+  return err instanceof AmanaDBError && err.statusCode === statusCode;
 }
-
-const PAGE_SIZE = 100;
-
-/** Every lookup field the app queries by (AmanaDB field indexes, declared by `defineIndexes`). */
-const INDEXES: [string, string][] = [
-  [COLLECTIONS.bids, "tenderId"],
-  [COLLECTIONS.bids, "bidderId"],
-  [COLLECTIONS.bidReveals, "tenderId"],
-  [COLLECTIONS.evaluations, "tenderId"],
-  [COLLECTIONS.awards, "tenderId"],
-  [COLLECTIONS.users, "email"],
-  [COLLECTIONS.tenders, "reference"],
-];
 
 /**
  * Declares the lookup fields the app queries by. A write, so it runs from setup and the seed
@@ -131,17 +65,8 @@ export async function defineIndexes(): Promise<void> {
   for (const [collection, field] of INDEXES) await db().collection(collection).defineIndex(field);
 }
 
-/** Every live record in a collection whose indexed `field` equals `value`. */
-async function listByField<T>(collection: string, field: string, value: string): Promise<StoredRecord<T>[]> {
-  const out: StoredRecord<T>[] = [];
-  let bookmark = "";
-  do {
-    const page = await db().collection<T>(collection).findBy(field, value, { pageSize: PAGE_SIZE, bookmark });
-    for (const record of page.records) out.push(toStored(record));
-    bookmark = page.fetchedRecordsCount > 0 ? page.bookmark : "";
-  } while (bookmark);
-  return out;
-}
+// =============================================================================================
+// Read: get by key, list, find by indexed field
 
 /** A record by key, or null when it does not exist or was soft-deleted. */
 async function getOrNull<T>(collection: string, key: string): Promise<StoredRecord<T> | null> {
@@ -149,36 +74,39 @@ async function getOrNull<T>(collection: string, key: string): Promise<StoredReco
     const record = await db().collection<T>(collection).get(key);
     return record.deleted ? null : toStored(record);
   } catch (err) {
-    if (err instanceof AmanaDBError && err.statusCode === 404) return null;
+    if (isStatus(err, 404)) return null;
     throw err;
   }
 }
 
-/** Every live tender (the public list filters and sorts; AmanaDB has no query or sort here). */
-export async function listTenders(): Promise<StoredRecord<Tender>[]> {
-  const out: StoredRecord<Tender>[] = [];
-  let bookmark = "";
-  do {
-    const page = await db().collection<Tender>(COLLECTIONS.tenders).list({ pageSize: PAGE_SIZE, bookmark });
-    for (const record of page.records) if (!record.deleted) out.push(toStored(record));
-    bookmark = page.fetchedRecordsCount > 0 ? page.bookmark : "";
-  } while (bookmark);
-  return out;
+/** Every live record in a collection whose indexed `field` equals `value`. */
+function listByField<T>(collection: string, field: string, value: string): Promise<StoredRecord<T>[]> {
+  return readAllPages(
+    (bookmark) => db().collection<T>(collection).findBy(field, value, { pageSize: PAGE_SIZE, bookmark }),
+    (page) => page.records.map(toStored),
+  );
 }
 
-/** A user by email (lower-cased), or null. Server-side only: the record holds the password hash. */
-export async function findUserByEmail(email: string): Promise<StoredRecord<User> | null> {
-  const [user] = await listByField<User>(COLLECTIONS.users, "email", email.trim().toLowerCase());
-  return user ?? null;
+/** Every live tender (the public list filters and sorts; AmanaDB has no query or sort here). */
+export function listTenders(): Promise<StoredRecord<Tender>[]> {
+  return readAllPages(
+    (bookmark) => db().collection<Tender>(COLLECTIONS.tenders).list({ pageSize: PAGE_SIZE, bookmark }),
+    (page) => page.records.filter((record) => !record.deleted).map(toStored),
+  );
 }
 
 export function getUser(key: string): Promise<StoredRecord<User> | null> {
   return getOrNull<User>(COLLECTIONS.users, key);
 }
 
-export async function insertUser(data: User): Promise<string> {
-  const { id } = await db().collection<User>(COLLECTIONS.users).insert({ ...data, email: data.email.trim().toLowerCase() });
-  return id;
+/** A user by email (lower-cased), or null. Server-side only: the record holds the password hash. */
+export async function findUserByEmail(email: string): Promise<StoredRecord<User> | null> {
+  const [user] = await listByField<User>(COLLECTIONS.users, "email", normalizeEmail(email));
+  return user ?? null;
+}
+
+export function getTender(key: string): Promise<StoredRecord<Tender> | null> {
+  return getOrNull<Tender>(COLLECTIONS.tenders, key);
 }
 
 export async function findTenderByReference(reference: string): Promise<StoredRecord<Tender> | null> {
@@ -186,28 +114,25 @@ export async function findTenderByReference(reference: string): Promise<StoredRe
   return tender ?? null;
 }
 
-/** The next free reference for a year: TND-2026-0143 after the highest TND-2026-NNNN. */
-export async function nextTenderReference(year: number): Promise<string> {
-  const prefix = `TND-${year}-`;
-  const numbers = (await listTenders())
-    .map((t) => t.data.reference)
-    .filter((r) => r.startsWith(prefix))
-    .map((r) => Number(r.slice(prefix.length)))
-    .filter((n) => Number.isInteger(n));
-  const next = (numbers.length ? Math.max(...numbers) : 0) + 1;
-  return `${prefix}${String(next).padStart(4, "0")}`;
-}
-
-export function getTender(key: string): Promise<StoredRecord<Tender> | null> {
-  return getOrNull<Tender>(COLLECTIONS.tenders, key);
+export function getBid(key: string): Promise<StoredRecord<Bid> | null> {
+  return getOrNull<Bid>(COLLECTIONS.bids, key);
 }
 
 export function listBidsForTender(tenderId: string): Promise<StoredRecord<Bid>[]> {
   return listByField<Bid>(COLLECTIONS.bids, "tenderId", tenderId);
 }
 
+/** A bidder's live (not withdrawn) bids, through the `bidderId` index. */
+export function listBidsForBidder(bidderId: string): Promise<StoredRecord<Bid>[]> {
+  return listByField<Bid>(COLLECTIONS.bids, "bidderId", bidderId);
+}
+
 export function listRevealsForTender(tenderId: string): Promise<StoredRecord<BidReveal>[]> {
   return listByField<BidReveal>(COLLECTIONS.bidReveals, "tenderId", tenderId);
+}
+
+export function getEvaluation(key: string): Promise<StoredRecord<Evaluation> | null> {
+  return getOrNull<Evaluation>(COLLECTIONS.evaluations, key);
 }
 
 export function listEvaluationsForTender(tenderId: string): Promise<StoredRecord<Evaluation>[]> {
@@ -218,112 +143,17 @@ export function listAwardsForTender(tenderId: string): Promise<StoredRecord<Awar
   return listByField<Award>(COLLECTIONS.awards, "tenderId", tenderId);
 }
 
-/**
- * The last audited write for each of `keys`, from each record's own audit trail (readable with
- * the app's reader or writer credential). Never called for `users`.
- */
-export async function auditedVersions(collection: string, keys: string[]): Promise<Map<string, AuditedVersion>> {
-  if (collection === COLLECTIONS.users) throw new Error("The users collection is never read for audit views.");
-  const out = new Map<string, AuditedVersion>();
-  await Promise.all(
-    keys.map(async (key) => {
-      let bookmark = "";
-      let first: string | undefined;
-      let last: { version: number; dataHash: string; at: string; txId: string } | undefined;
-      do {
-        const page = await db().collection(collection).recordAudit(key, { pageSize: PAGE_SIZE, bookmark });
-        for (const entry of page.entries) {
-          if (!first || entry.timestamp < first) first = entry.timestamp;
-          if (!last || entry.resultingVersion >= last.version) {
-            last = { version: entry.resultingVersion, dataHash: entry.dataHash ?? "", at: entry.timestamp, txId: entry.txId };
-          }
-        }
-        bookmark = page.fetchedRecordsCount > 0 ? page.bookmark : "";
-      } while (bookmark);
-      if (first && last) {
-        out.set(key, { version: last.version, dataHash: last.dataHash, firstWriteAt: first, lastWriteAt: last.at, lastTxId: last.txId });
-      }
-    }),
-  );
-  return out;
-}
+// =============================================================================================
+// Write: insert, update at a version, upsert under a fixed key, soft delete
 
-const DOCUMENTS_DIR = path.join(process.cwd(), "storage", "documents");
-
-/**
- * Re-hashes an off-chain document (storage/documents/<docHash>/<docName>) and compares it with
- * the SHA-256 recorded in AmanaDB. The file is plain disk storage, not a database.
- */
-export async function checkDocument(docHash: string, docName: string): Promise<DocumentCheck> {
-  const file = path.join(DOCUMENTS_DIR, docHash, path.basename(docName));
-  try {
-    const bytes = await readFile(file);
-    const actual = createHash("sha256").update(bytes).digest("hex");
-    return actual === docHash ? "matches" : "does-not-match";
-  } catch {
-    return "missing";
-  }
-}
-
-/**
- * Re-hashes the one stored file under storage/documents/<docHash>/ (used for bid documents,
- * whose file name is not recorded) and compares it with the recorded SHA-256.
- */
-export async function checkStoredDocument(docHash: string): Promise<DocumentCheck> {
-  try {
-    const files = await readdir(path.join(DOCUMENTS_DIR, docHash));
-    if (files.length !== 1) return "missing";
-    return checkDocument(docHash, files[0]!);
-  } catch {
-    return "missing";
-  }
+export async function insertUser(data: User): Promise<string> {
+  const { id } = await db().collection<User>(COLLECTIONS.users).insert({ ...data, email: normalizeEmail(data.email) });
+  return id;
 }
 
 /** Publishes a tender record. Returns its generated key. */
 export async function insertTender(data: Tender): Promise<string> {
   const { id } = await db().collection<Tender>(COLLECTIONS.tenders).insert(data);
-  return id;
-}
-
-export function getBid(key: string): Promise<StoredRecord<Bid> | null> {
-  return getOrNull<Bid>(COLLECTIONS.bids, key);
-}
-
-/** A bidder's live (not withdrawn) bids, through the `bidderId` index. */
-export function listBidsForBidder(bidderId: string): Promise<StoredRecord<Bid>[]> {
-  return listByField<Bid>(COLLECTIONS.bids, "bidderId", bidderId);
-}
-
-/**
- * A bidder's withdrawn bids. A soft-deleted record no longer reads or matches an index, so
- * they are found through the bids audit log (DELETE entries) and read from record history.
- */
-export async function listWithdrawnBidsForBidder(
-  bidderId: string,
-): Promise<{ bid: StoredRecord<Bid>; withdrawnAt: string }[]> {
-  const deletes = (await collectionAudit(COLLECTIONS.bids)).filter((row) => row.action === "DELETE");
-  const out: { bid: StoredRecord<Bid>; withdrawnAt: string }[] = [];
-  for (const row of deletes) {
-    const versions = await recordVersions<Bid>(COLLECTIONS.bids, row.key);
-    const last = versions.get(row.version) ?? [...versions.values()].sort((a, b) => b.version - a.version)[0];
-    if (last?.data.bidderId === bidderId) out.push({ bid: last, withdrawnAt: row.timestamp });
-  }
-  return out;
-}
-
-/** Withdraws a bid by soft delete at its current version; its history stays (spec section 2). */
-export async function withdrawBid(key: string, expectedVersion: number): Promise<void> {
-  try {
-    await db().collection<Bid>(COLLECTIONS.bids).delete(key, expectedVersion);
-  } catch (err) {
-    if (err instanceof AmanaDBError && err.statusCode === 409) throw new VersionConflictError();
-    throw err;
-  }
-}
-
-/** Stores a bidder's reveal with the result of recomputing its commitment. */
-export async function insertReveal(data: BidReveal): Promise<string> {
-  const { id } = await db().collection<BidReveal>(COLLECTIONS.bidReveals).insert(data);
   return id;
 }
 
@@ -338,23 +168,20 @@ export async function insertBid(data: Bid): Promise<string> {
   return id;
 }
 
-/** One award per tender, under a fixed key: a second award shows as a new version, never a second record. */
-export function awardKey(tenderKey: string): string {
-  return `award-${tenderKey}`;
+/** Withdraws a bid by soft delete at its current version; its history stays (spec section 2). */
+export async function withdrawBid(key: string, expectedVersion: number): Promise<void> {
+  try {
+    await db().collection<Bid>(COLLECTIONS.bids).delete(key, expectedVersion);
+  } catch (err) {
+    if (isStatus(err, 409)) throw new VersionConflictError();
+    throw err;
+  }
 }
 
-/** Writes a tender's award (spec section 4, step 6). The caller then marks the tender AWARDED. */
-export async function recordAward(data: Award): Promise<void> {
-  await db().collection<Award>(COLLECTIONS.awards).upsert(awardKey(data.tenderId), data);
-}
-
-/** One shared evaluation per bid, under a fixed key so every committee member edits the same record. */
-export function evaluationKey(bidKey: string): string {
-  return `eval-${bidKey}`;
-}
-
-export function getEvaluation(key: string): Promise<StoredRecord<Evaluation> | null> {
-  return getOrNull<Evaluation>(COLLECTIONS.evaluations, key);
+/** Stores a bidder's reveal with the result of recomputing its commitment. */
+export async function insertReveal(data: BidReveal): Promise<string> {
+  const { id } = await db().collection<BidReveal>(COLLECTIONS.bidReveals).insert(data);
+  return id;
 }
 
 /** The bid's evaluation, created empty (version 1) the first time anyone opens it. */
@@ -376,9 +203,24 @@ export async function saveEvaluation(key: string, data: Evaluation, expectedVers
   try {
     await db().collection<Evaluation>(COLLECTIONS.evaluations).update(key, data, expectedVersion);
   } catch (err) {
-    if (err instanceof AmanaDBError && err.statusCode === 409) throw new VersionConflictError();
+    if (isStatus(err, 409)) throw new VersionConflictError();
     throw err;
   }
+}
+
+/** Writes a tender's award (spec section 4, step 6). The caller then marks the tender AWARDED. */
+export async function recordAward(data: Award): Promise<void> {
+  await db().collection<Award>(COLLECTIONS.awards).upsert(awardKey(data.tenderId), data);
+}
+
+// =============================================================================================
+// History and audit (never for `users`)
+
+/** Every stored version of one record, by version number (AmanaDB history). */
+export async function recordVersions<T>(collection: string, key: string): Promise<Map<number, StoredRecord<T>>> {
+  assertAuditable(collection);
+  const versions = await db().collection<T>(collection).history(key);
+  return new Map(versions.map((v) => [v.record.version, toStored(v.record)]));
 }
 
 /** An earlier version of an evaluation, from AmanaDB's record history. */
@@ -388,62 +230,36 @@ export async function evaluationAtVersion(key: string, version: number): Promise
   return match ? toStored(match.record) : null;
 }
 
-/** One entry of a collection's audit log, as the audit views use it. */
-export type AuditRow = {
-  collection: string;
-  key: string;
-  action: string;
-  version: number;
-  timestamp: string;
-  txId: string;
-  dataHash: string;
-};
-
 /**
  * Every audit entry of one collection (readable by the app's credential from chaincode 1.2).
  * AmanaDB returns them oldest first with no time filter, so callers sort and filter
- * (GAPS.md: no reverse or time-range audit query). Never called for `users`.
+ * (GAPS.md: no reverse or time-range audit query).
  */
-export async function collectionAudit(collection: string): Promise<AuditRow[]> {
-  if (collection === COLLECTIONS.users) throw new Error("The users collection is never read for audit views.");
-  const out: AuditRow[] = [];
-  let bookmark = "";
-  do {
-    const page = await db().collection(collection).audit({ pageSize: PAGE_SIZE, bookmark });
-    for (const e of page.entries) {
-      out.push({
-        collection,
-        key: e.key,
-        action: e.action,
-        version: e.resultingVersion,
-        timestamp: e.timestamp,
-        txId: e.txId,
-        dataHash: e.dataHash ?? "",
-      });
-    }
-    bookmark = page.fetchedRecordsCount > 0 ? page.bookmark : "";
-  } while (bookmark);
-  return out;
+export function collectionAudit(collection: string): Promise<AuditRow[]> {
+  assertAuditable(collection);
+  return readAllPages(
+    (bookmark) => db().collection(collection).audit({ pageSize: PAGE_SIZE, bookmark }),
+    (page) => page.entries.map((entry) => toAuditRow(collection, entry)),
+  );
 }
 
-/** One record's audit entries, oldest first (its per-record trail). Never for `users`. */
-export async function recordAuditRows(collection: string, key: string): Promise<AuditRow[]> {
-  if (collection === COLLECTIONS.users) throw new Error("The users collection is never read for audit views.");
-  const out: AuditRow[] = [];
-  let bookmark = "";
-  do {
-    const page = await db().collection(collection).recordAudit(key, { pageSize: PAGE_SIZE, bookmark });
-    for (const e of page.entries) {
-      out.push({ collection, key: e.key, action: e.action, version: e.resultingVersion, timestamp: e.timestamp, txId: e.txId, dataHash: e.dataHash ?? "" });
-    }
-    bookmark = page.fetchedRecordsCount > 0 ? page.bookmark : "";
-  } while (bookmark);
-  return out;
+/** One record's audit entries, oldest first (its per-record trail). */
+export function recordAuditRows(collection: string, key: string): Promise<AuditRow[]> {
+  assertAuditable(collection);
+  return readAllPages(
+    (bookmark) => db().collection(collection).recordAudit(key, { pageSize: PAGE_SIZE, bookmark }),
+    (page) => page.entries.map((entry) => toAuditRow(collection, entry)),
+  );
 }
 
-/** Every stored version of one record, by version number (AmanaDB history). Never for `users`. */
-export async function recordVersions<T>(collection: string, key: string): Promise<Map<number, StoredRecord<T>>> {
-  if (collection === COLLECTIONS.users) throw new Error("The users collection is never read for audit views.");
-  const versions = await db().collection<T>(collection).history(key);
-  return new Map(versions.map((v) => [v.record.version, toStored(v.record)]));
+/** The last audited write for each of `keys`, from each record's own audit trail. */
+export async function auditedVersions(collection: string, keys: string[]): Promise<Map<string, AuditedVersion>> {
+  const out = new Map<string, AuditedVersion>();
+  await Promise.all(
+    keys.map(async (key) => {
+      const summary = summarizeAudit(await recordAuditRows(collection, key));
+      if (summary) out.set(key, summary);
+    }),
+  );
+  return out;
 }

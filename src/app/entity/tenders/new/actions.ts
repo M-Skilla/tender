@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { NotAuthorizedError, requireActionUser } from "@/lib/auth";
 import { MAX_DOCUMENT_BYTES, storeDocument } from "@/lib/documents";
 import { CATEGORIES } from "@/lib/tender-form";
-import { getUser, insertTender, listTenders, nextTenderReference } from "@/services/amanadb";
+import { getUser, insertTender, listTenders } from "@/services/amanadb";
+import { nextTenderReference } from "@/lib/tender-reference";
 
 export type PublishState = {
   values?: Record<string, string>;

@@ -4,7 +4,15 @@ import "server-only";
 import type { Status } from "@/components/StatusLabel/StatusLabel";
 import { formatDateTime } from "@/lib/format";
 import type { Bid, StoredRecord, Tender } from "@/lib/types";
-import { getTender, listAwardsForTender, listBidsForBidder, listRevealsForTender, listWithdrawnBidsForBidder } from "@/services/amanadb";
+import {
+  collectionAudit,
+  COLLECTIONS,
+  getTender,
+  listAwardsForTender,
+  listBidsForBidder,
+  listRevealsForTender,
+  recordVersions,
+} from "@/services/amanadb";
 
 export type MyBidRow = {
   key: string;
@@ -21,6 +29,21 @@ export type MyBidRow = {
   /** The tender has an award record (P4): every bid on it links there, the winning one reads Awarded. */
   awardHref?: string;
 };
+
+/**
+ * A bidder's withdrawn bids. A soft-deleted record no longer reads or matches an index, so
+ * they are found through the bids audit log (DELETE entries) and read from record history.
+ */
+async function listWithdrawnBidsForBidder(bidderId: string): Promise<{ bid: StoredRecord<Bid>; withdrawnAt: string }[]> {
+  const deletes = (await collectionAudit(COLLECTIONS.bids)).filter((row) => row.action === "DELETE");
+  const out: { bid: StoredRecord<Bid>; withdrawnAt: string }[] = [];
+  for (const row of deletes) {
+    const versions = await recordVersions<Bid>(COLLECTIONS.bids, row.key);
+    const last = versions.get(row.version) ?? [...versions.values()].sort((a, b) => b.version - a.version)[0];
+    if (last?.data.bidderId === bidderId) out.push({ bid: last, withdrawnAt: row.timestamp });
+  }
+  return out;
+}
 
 export async function myBids(bidderId: string, now = new Date()): Promise<MyBidRow[]> {
   const [live, withdrawn] = await Promise.all([listBidsForBidder(bidderId), listWithdrawnBidsForBidder(bidderId)]);

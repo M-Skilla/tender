@@ -5,12 +5,12 @@ import "server-only";
 // fingerprints stored inside records (tender docHash, reveal docHash, bid commitment).
 import type { VerificationResult } from "@/components/VerificationMark/VerificationMark";
 import { describeAuditRows } from "@/lib/audit-log";
+import { checkStoredDocument } from "@/lib/documents";
 import { formatDateTime } from "@/lib/format";
 import { auditResult } from "@/lib/tender-case";
 import type { DocumentCheck, StoredRecord, Tender } from "@/lib/types";
 import {
   auditedVersions,
-  checkStoredDocument,
   collectionAudit,
   COLLECTIONS,
   getUser,
