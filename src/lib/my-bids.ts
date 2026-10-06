@@ -4,7 +4,7 @@ import "server-only";
 import type { Status } from "@/components/StatusLabel/StatusLabel";
 import { formatDateTime } from "@/lib/format";
 import type { Bid, StoredRecord, Tender } from "@/lib/types";
-import { getTender, listBidsForBidder, listRevealsForTender, listWithdrawnBidsForBidder } from "@/services/amanadb";
+import { getTender, listAwardsForTender, listBidsForBidder, listRevealsForTender, listWithdrawnBidsForBidder } from "@/services/amanadb";
 
 export type MyBidRow = {
   key: string;
@@ -18,6 +18,8 @@ export type MyBidRow = {
   canWithdraw: boolean;
   /** Sealed and the tender closed (not cancelled): the bidder should open it (B5). */
   awaitingOpen: boolean;
+  /** The tender has an award record (P4): every bid on it links there, the winning one reads Awarded. */
+  awardHref?: string;
 };
 
 export async function myBids(bidderId: string, now = new Date()): Promise<MyBidRow[]> {
@@ -30,11 +32,13 @@ export async function myBids(bidderId: string, now = new Date()): Promise<MyBidR
   const tenderIds = [...new Set(all.map(({ bid }) => bid.data.tenderId))];
   const tenders = new Map<string, StoredRecord<Tender> | null>();
   const revealed = new Map<string, boolean>();
+  const winners = new Map<string, string>();
   await Promise.all(
     tenderIds.map(async (id) => {
-      const [tender, reveals] = await Promise.all([getTender(id), listRevealsForTender(id)]);
+      const [tender, reveals, awards] = await Promise.all([getTender(id), listRevealsForTender(id), listAwardsForTender(id)]);
       tenders.set(id, tender);
       for (const r of reveals) revealed.set(r.data.bidId, r.data.verified);
+      if (awards[0]) winners.set(id, awards[0].data.winningBidId);
     }),
   );
 
@@ -43,13 +47,16 @@ export async function myBids(bidderId: string, now = new Date()): Promise<MyBidR
     .map(({ bid, withdrawn: isWithdrawn }) => {
       const tender = tenders.get(bid.data.tenderId)?.data;
       const verified = revealed.get(bid.key);
+      const winner = winners.get(bid.data.tenderId);
       const status: Status = isWithdrawn
         ? "withdrawn"
-        : verified === undefined
-          ? "sealed"
-          : verified
-            ? "opened-matches"
-            : "opened-does-not-match";
+        : winner === bid.key
+          ? "awarded"
+          : verified === undefined
+            ? "sealed"
+            : verified
+              ? "opened-matches"
+              : "opened-does-not-match";
       const closed = !tender || now.getTime() >= new Date(tender.closeDate).getTime() || tender.status !== "PUBLISHED";
       return {
         key: bid.key,
@@ -61,6 +68,7 @@ export async function myBids(bidderId: string, now = new Date()): Promise<MyBidR
         status,
         canWithdraw: status === "sealed" && !closed,
         awaitingOpen: status === "sealed" && closed && tender?.status !== "CANCELLED",
+        awardHref: winner !== undefined && !isWithdrawn ? `/tenders/${bid.data.tenderId}/award` : undefined,
       };
     });
 }

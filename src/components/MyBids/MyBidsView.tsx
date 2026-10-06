@@ -72,17 +72,21 @@ export function MyBidsView({ rows }: { rows: MyBidRow[] }) {
                 <FingerprintChip value={row.fingerprint} />
                 <StatusLabel status={row.status} />
               </div>
-              {row.canWithdraw || row.awaitingOpen ? (
+              {row.canWithdraw || row.awaitingOpen || row.awardHref ? (
                 <div className={styles.cardActions}>
                   {row.canWithdraw ? (
                     <Button variant="secondary" className={styles.cardButton} onClick={() => setConfirming(row)}>
                       Withdraw bid
                     </Button>
-                  ) : (
+                  ) : row.awaitingOpen ? (
                     <ButtonLink href="/bidder/open" variant="secondary" className={styles.cardButton}>
                       Open your bid
                     </ButtonLink>
-                  )}
+                  ) : row.awardHref ? (
+                    <ButtonLink href={row.awardHref} variant="secondary" className={styles.cardButton}>
+                      View award
+                    </ButtonLink>
+                  ) : null}
                 </div>
               ) : null}
             </li>
@@ -117,6 +121,11 @@ export function MyBidsView({ rows }: { rows: MyBidRow[] }) {
                 {row.awaitingOpen ? (
                   <a href="/bidder/open" className={styles.rowAction}>
                     Open your bid
+                  </a>
+                ) : null}
+                {row.awardHref ? (
+                  <a href={row.awardHref} className={styles.rowAction}>
+                    View award
                   </a>
                 ) : null}
               </span>
