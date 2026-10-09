@@ -17,16 +17,18 @@ export const COLLECTIONS = {
 
 export const PAGE_SIZE = 100;
 
-/** Every lookup field the app queries by (AmanaDB field indexes, declared by `defineIndexes`). */
-export const INDEXES: [string, string][] = [
-  [COLLECTIONS.bids, "tenderId"],
-  [COLLECTIONS.bids, "bidderId"],
-  [COLLECTIONS.bidReveals, "tenderId"],
-  [COLLECTIONS.evaluations, "tenderId"],
-  [COLLECTIONS.awards, "tenderId"],
-  [COLLECTIONS.users, "email"],
-  [COLLECTIONS.tenders, "reference"],
-];
+/**
+ * Every lookup field the app queries by, per collection (the SDK's `ensureIndexes` spec). An index
+ * cannot be removed in AmanaDB, so review any change here.
+ */
+export const INDEXES: Record<string, readonly string[]> = {
+  [COLLECTIONS.bids]: ["tenderId", "bidderId"],
+  [COLLECTIONS.bidReveals]: ["tenderId"],
+  [COLLECTIONS.evaluations]: ["tenderId"],
+  [COLLECTIONS.awards]: ["tenderId"],
+  [COLLECTIONS.users]: ["email"],
+  [COLLECTIONS.tenders]: ["reference"],
+};
 
 // ---------------------------------------------------------------------------------------------
 // Errors

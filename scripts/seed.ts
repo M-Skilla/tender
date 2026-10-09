@@ -22,7 +22,7 @@ import { bidCommitment } from "@/lib/commitment";
 import { hashPassword } from "@/lib/password";
 import type { Tender, UserRole } from "@/lib/types";
 import {
-  defineIndexes,
+  ensureIndexes,
   ensureEvaluation,
   findTenderByReference,
   findUserByEmail,
@@ -166,8 +166,8 @@ async function seedScoredTender(
 }
 
 async function main() {
-  await defineIndexes();
-  console.log("Lookup indexes are defined");
+  await ensureIndexes();
+  console.log("Lookup indexes are ready");
 
   const peAdmin = await ensureUser("pe.admin@works.go.tz", "Joseph Mwangi", "pe_admin");
   const amina = await ensureUser("amina.mussa@works.go.tz", "Amina Mussa", "evaluator");

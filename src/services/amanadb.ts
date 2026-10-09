@@ -3,7 +3,7 @@ import "server-only";
 // The only module that imports @amanadb/sdk (CLAUDE.md rule 7), and every AmanaDB call the app
 // makes. Server-only: the project credential and the SDK never reach a client bundle. Paging,
 // mapping, configuration and key naming are in ./amanadb-helpers. Pattern follows ~/Desktop/crud.
-import { AmanaDBClient, AmanaDBError, toCanonicalDerSignature } from "@amanadb/sdk";
+import { AmanaDBClient, AmanaDBError, toCanonicalDerSignature, type EnsureIndexesResult } from "@amanadb/sdk";
 import type { AuditedVersion, Award, Bid, BidReveal, Evaluation, StoredRecord, Tender, User } from "@/lib/types";
 import {
   assertAuditable,
@@ -57,12 +57,19 @@ function isStatus(err: unknown, statusCode: number): boolean {
   return err instanceof AmanaDBError && err.statusCode === statusCode;
 }
 
+let indexesReady: Promise<EnsureIndexesResult> | undefined;
+
 /**
- * Declares the lookup fields the app queries by. A write, so it runs from setup and the seed
- * script, never on page loads. Idempotent.
+ * Makes sure every lookup index in INDEXES exists (SDK 1.3+ `ensureIndexes`): one read per
+ * collection, a write only for a missing index. Shared by the whole process; a failure is
+ * forgotten so the next call tries again. Returns the indexes this call created.
  */
-export async function defineIndexes(): Promise<void> {
-  for (const [collection, field] of INDEXES) await db().collection(collection).defineIndex(field);
+export async function ensureIndexes(): Promise<EnsureIndexesResult["created"]> {
+  const pending = (indexesReady ??= db().ensureIndexes(INDEXES).catch((err) => {
+    indexesReady = undefined;
+    throw err;
+  }));
+  return (await pending).created;
 }
 
 // =============================================================================================
@@ -79,8 +86,9 @@ async function getOrNull<T>(collection: string, key: string): Promise<StoredReco
   }
 }
 
-/** Every live record in a collection whose indexed `field` equals `value`. */
-function listByField<T>(collection: string, field: string, value: string): Promise<StoredRecord<T>[]> {
+/** Every live record in a collection whose indexed `field` equals `value`. Waits for the indexes. */
+async function listByField<T>(collection: string, field: string, value: string): Promise<StoredRecord<T>[]> {
+  await ensureIndexes();
   return readAllPages(
     (bookmark) => db().collection<T>(collection).findBy(field, value, { pageSize: PAGE_SIZE, bookmark }),
     (page) => page.records.map(toStored),

@@ -8,11 +8,12 @@ The first build of this app hit five gaps in chaincode 1.0 and SDK 1.0.3. They w
 
 | Gap in 1.0 | Fix in 1.1 | Used by the app |
 |---|---|---|
-| No lookup by field: "bids for this tender" meant listing the whole collection | `defineIndex(field)` and `findBy(field, value)`, maintained by the chaincode | `listByField` in `src/services/amanadb.ts`; indexes on `tenderId` are declared by `pnpm setup` and `pnpm seed` |
+| No lookup by field: "bids for this tender" meant listing the whole collection | `defineIndex(field)` and `findBy(field, value)`, maintained by the chaincode | `listByField` in `src/services/amanadb.ts`; the lookup indexes are created by `ensureIndexes` (see below) |
 | No per-record audit log in the SDK, and the collection audit log is owner-only, so a project credential could not read audit data at all | `recordAudit(id)`, readable at the reader role | `auditedVersions` reads each record's own trail |
 | No stored fingerprint: records had no content hash | `dataHash` (SHA-256 of the stored data) on every record and audit entry; the SDK re-hashes on read and reports `integrity` | Record fingerprints on the spine are AmanaDB's `dataHash` |
 | No way to read earlier versions | `history(id)` from the ledger's history database | A1's changed fields and actors; C3's "version you started from" |
 | The collection audit log was owner-only, so a project credential could not list a collection's history (chaincode 1.2, SDK 1.1.1) | `GetCollectionAuditLog` at the reader role | A1 reads each collection's log |
+| Indexes had to be declared by a separate setup run before any lookup, so a fresh project could not list bids until `pnpm setup` ran (SDK 1.3.0; the app is on 1.4.0) | `ensureIndexes(spec)`: checks each collection's indexed fields and creates only the missing ones; repeat calls on the same client make no network calls | `listByField` waits for `ensureIndexes()` once per process (spec: `INDEXES` in `amanadb-helpers.ts`); `pnpm setup` is now optional |
 
 ### What "matches" means on the tender page
 
@@ -47,11 +48,7 @@ To confirm: whether a credential can be kept out of `users` while reading other 
 
 Bidders submit their reveal data after the closing time (B5), and the procuring entity opens the bids later (H3). Between the two, the reveals are stored in `bid_reveals`, which any credential of the project can read. AmanaDB cannot hold a record back until an event, so the app hides revealed amounts until the tender's `openedAt` is set; the rule lives in app code only (`BidOpeningView`, the case file). A time-lock or per-record read restriction in AmanaDB would make it enforceable.
 
-### 6. Indexes must be declared before lookups
-
-`findBy` rejects a field that was never declared with `defineIndex`. Declaring is a write, so it runs from `pnpm setup` (and `pnpm seed`), not on page loads. A fresh project needs `pnpm setup` once before the app can list bids.
-
-### 7. No transaction across records
+### 6. No transaction across records
 
 Recording an award is two writes: the tender's status becomes AWARDED (at the version the page loaded, so a second admin or a cancellation cannot be overwritten), then the award record is written under the fixed key `award-<tender key>`. If the second write fails, the tender is AWARDED with no award; H4 then lets the admin record it again, completing the pair. Opening bids and withdrawing bids are single writes. A batch write in AmanaDB (several records in one Fabric transaction) would make the pair atomic.
 
